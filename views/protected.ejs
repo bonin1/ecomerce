@@ -11,6 +11,12 @@
         <h2><%= row.emri %></h2>
         <h2><%= row.mbiemri %></h2>
         <h2><%= row.email %></h2>
+        <form action="/delete/<%= row.id %>" method="POST">
+            <input type="submit" value="X">
+        </form>
     <% }) %>
 </body>
 </html>
+
+
+

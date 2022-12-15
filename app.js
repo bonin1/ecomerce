@@ -47,6 +47,11 @@ app.get('/protected',(req,res)=>{
     res.render('protected')
 })
 
+app.post('/delete/:id',(req,res)=>{
+    db.execute(`DELETE FROM admin_information WHERE id = ?`,[req.params.id])
+    res.redirect('/protected')
+})
+
 app.post('/logout',(req,res)=>{
     req.session.destroy(err=>{
         if(err){
@@ -57,8 +62,8 @@ app.post('/logout',(req,res)=>{
 })
 app.post('/create',(req,res)=>{
     const{emri,mbiemri,email,password,oldpassword} = req.body
-    const query = `SELECT email FROM login_information WHERE email = '${email}'`
-    db.query(query,async(err,results,fields)=>{
+    const query = `SELECT email FROM login_information WHERE email = ? `
+    db.query(query,email,async(err,results,fields)=>{
         if(err){
             console.log(err)
         }
@@ -74,15 +79,15 @@ app.post('/create',(req,res)=>{
             if(err){
                 console.log(err)
             }
-            res.render('profile',{message:'Youve been registered succesfuly!'})
+            res.render('login',{message:''})
         })
     })
 })
 
 app.post('/login',(req,res)=>{
     const {email,password} = req.body
-    const query =`SELECT * FROM login_information WHERE email = '${email}'`
-    db.query(query, async(err,results,fields)=>{
+    const query =`SELECT * FROM login_information WHERE email = ?`
+    db.query(query,email, async(err,results,fields)=>{
         if(err){
             console.log(err)
         }
@@ -96,8 +101,8 @@ app.post('/login',(req,res)=>{
 
 app.post('/changepassword',(req,res)=>{
     const{email,oldpassword,newpassword} = req.body
-    const query = `SELECT password FROM login_information WHERE email = '${email}'`
-    db.query(query,(err,results)=>{
+    const query = `SELECT password FROM login_information WHERE email = ?`
+    db.query(query,email,(err,results)=>{
         if(err){
             console.log(err)
         }
@@ -135,7 +140,7 @@ app.post('/admin',(req,res)=>{
             return res.render('admin',{message:'passwordi ose emaili jon keq'})
         }
         req.session.isLogged = email
-        res.redirect('protected')
+        res.redirect('/protected')
     })
 })
 
