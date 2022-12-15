@@ -3,6 +3,7 @@ const app = express()
 const session = require('express-session')
 const db = require('./databaze')
 const bcrypt = require('bcryptjs');
+const { render } = require('ejs');
 
 app.use('/static',express.static('static'))
 app.set('view engine','ejs')
@@ -32,7 +33,8 @@ app.get('/register',(req,res)=>{
     res.render('register',{message:''})
 })
 app.get('/login',(req,res)=>{
-    res.render('login',{message:''})
+    // db.execute(`SELECT * FROM login_information WHERE id = ?`,[req.params.id])
+    res.render('login',{message:'',data:results})
 })
 app.get('/changepassword',(req,res)=>{
     res.render('changepassword')
@@ -43,12 +45,9 @@ app.get('/profile',(req,res)=>{
 app.get('/admin',(req,res)=>{
     res.render('admin')
 })
-app.get('/protected',(req,res)=>{
-    res.render('protected')
-})
 
 app.post('/delete/:id',(req,res)=>{
-    db.execute(`DELETE FROM admin_information WHERE id = ?`,[req.params.id])
+    db.execute(`DELETE FROM login_information WHERE id = ?`,[req.params.id])
     res.redirect('/protected')
 })
 
@@ -57,11 +56,18 @@ app.post('/logout',(req,res)=>{
         if(err){
             console.log(console.err)
         }
+        const query =  `UPDATE login_information SET status = 'logged_out'`
+        db.query(query,(err,results,fields)=>{
+            if(err){
+                console.log(err)
+            }
+        })
         res.redirect('/login')
     })
+
 })
 app.post('/create',(req,res)=>{
-    const{emri,mbiemri,email,password,oldpassword} = req.body
+    const{emri,mbiemri,email,password,oldpassword,status} = req.body
     const query = `SELECT email FROM login_information WHERE email = ? `
     db.query(query,email,async(err,results,fields)=>{
         if(err){
@@ -74,7 +80,7 @@ app.post('/create',(req,res)=>{
             return res.render('register',{message:'password do not match'})
         }
         let hashpassword = await bcrypt.hash(password,8)
-        const iquery = `INSERT INTO login_information (emri,mbiemri,email,password) VALUES ('${emri}','${mbiemri}','${email}','${hashpassword}')`
+        const iquery = `INSERT INTO login_information (emri,mbiemri,email,password,status) VALUES ('${emri}','${mbiemri}','${email}','${hashpassword}','logged_out')`
         db.query(iquery,(err,results,fields)=>{
             if(err){
                 console.log(err)
@@ -84,16 +90,23 @@ app.post('/create',(req,res)=>{
     })
 })
 
-app.post('/login',(req,res)=>{
+app.post('/login/:id',(req,res)=>{
     const {email,password} = req.body
     const query =`SELECT * FROM login_information WHERE email = ?`
+    
     db.query(query,email, async(err,results,fields)=>{
         if(err){
             console.log(err)
         }
         if(results.length == 0 || !(await bcrypt.compare(password,results[0].password))) {
-            return res.render('login',{message:'Your email or password is wrong!'})
+            return res.render('login',{message:'passwordin ose emailin e ki keq'})
         }
+        const iquery = `UPDATE login_information SET status = 'logged_in'`
+        db.query(iquery,(err,results,fields)=>{
+            if(err){
+                console.log(err)
+            }
+        })
         req.session.isLogged = email
         res.render('profile',{data:results})
     })
