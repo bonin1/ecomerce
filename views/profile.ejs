@@ -7,14 +7,14 @@
     <title>Document</title>
 </head>
 <body>
-    <% data.forEach(row=>{ %>
-        <h2><%= row.emri %></h2>
-    <% }) %>
-    <form action="/logout" method="POST">
-        <input type="submit" value="Submit">
-    </form>
-    <form action="/logout" method="POST">
+    
+    <form action="/logout" method="POST" enctype="application/x-www-form-urlencoded">
+        <input type="hidden" name="email" >
         <input type="submit" value="logout">
-    </form>
+      </form>
+      <% data.forEach(row => { %>
+        <%= row.emri %>
+      <% }); %>
+      
 </body>
 </html>
