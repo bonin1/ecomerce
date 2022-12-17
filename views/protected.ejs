@@ -7,10 +7,39 @@
     <title>Document</title>
 </head>
 <body>
-    <% data.forEach(row=>{ %>
-        <h2><%= row.emri %></h2>
-        <h2><%= row.mbiemri %></h2>
-        <h2><%= row.email %></h2>
-    <% }) %>
+    
+    <form id="search-form">
+        <input type="text" name="keyword" placeholder="Search by id or name">
+    </form>
+      
+    <div id="search-results"></div>
+<script>
+    const form = document.getElementById('search-form');
+    const resultsDiv = document.getElementById('search-results');
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const keyword = form.elements.keyword.value;
+
+        if (!keyword) {
+            resultsDiv.innerHTML = '';
+            return;
+        }
+        
+        fetch(`/search?keyword=${keyword}`)
+        .then((response) => response.json())
+        .then((data) => {
+            resultsDiv.innerHTML = '';
+            data.forEach((item) => {
+                const div = document.createElement('div');
+                div.innerHTML = `<p>${item.id} - ${item.emri}</p>`;
+                resultsDiv.appendChild(div);
+            });
+        });
+    });
+
+    </script>
 </body>
 </html>
+
+
+

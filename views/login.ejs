@@ -8,16 +8,17 @@
 </head>
 <body>
 
-    <form action="/login" method="POST" >
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" name="email" required id="">
-            <label for="password">Password:</label>
-            <input type="password" name="password" required>
-            <input type="submit" value="Login">
-        <a href="/changepassword">Change your password</a>
-        </div>
-    </form>
+
+                <form action="/login" method="POST" >
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" name="email" required id="">
+                        <label for="password">Password:</label>
+                        <input type="password" name="password" required>
+                        <input type="submit" value="Login">
+                    <a href="/changepassword">Change your password</a>
+                    </div>
+                </form>
 
     <% if(message){ %>
         <h4><%= message %></h4>

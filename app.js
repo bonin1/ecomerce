@@ -3,6 +3,7 @@ const app = express()
 const session = require('express-session')
 const db = require('./databaze')
 const bcrypt = require('bcryptjs');
+const { render } = require('ejs');
 
 app.use('/static',express.static('static'))
 app.set('view engine','ejs')
@@ -15,14 +16,36 @@ app.use(session({
     saveUninitialized:false,
     cookie:{maxAge: 10 * 1000} //1 minut 
 }))
-app.get('/protected',(req,res)=>{
-    db.query(`SELECT * FROM login_information`,(err,results)=>{
-        if(err){
-            console.log(err)
+app.get('/protected', (req, res) => {
+    if (!req.session.isLogged) {
+        return res.redirect('/admin');
+    }
+    db.query(`SELECT * FROM login_information`, (err, results) => {
+        if (err) {
+            console.error(err);
+            return;
         }
-        res.render('protected',{data:results})
-    })
-})
+        res.render('protected', { data: results });
+    });
+});
+app.get('/search', (req, res) => {
+    const keyword = req.query.keyword;
+    const query = `SELECT id, emri FROM login_information WHERE id LIKE ? OR emri LIKE ?`;
+    const values = [`%${keyword}%`, `%${keyword}%`];
+    if (!keyword) {
+        return res.redirect('/protected');
+    }
+
+    db.query(query, values, (err, results, fields) => {
+        if (err) {
+            console.error(err);
+            return;
+        } 
+        res.json(results);
+    });
+});
+
+
 
 
 app.get('/',(req,res)=>{
@@ -31,34 +54,45 @@ app.get('/',(req,res)=>{
 app.get('/register',(req,res)=>{
     res.render('register',{message:''})
 })
-app.get('/login',(req,res)=>{
-    res.render('login',{message:''})
-})
+
 app.get('/changepassword',(req,res)=>{
     res.render('changepassword')
-})
-app.get('/profile',(req,res)=>{
-    res.render('profile')
 })
 app.get('/admin',(req,res)=>{
     res.render('admin')
 })
-app.get('/protected',(req,res)=>{
-    res.render('protected')
+
+app.get('/login',(req,res)=>{
+    res.render('login',{message:''})
 })
+
+app.post('/delete/:id',(req,res)=>{
+    db.execute(`DELETE FROM login_information WHERE id = ?`,[req.params.id])
+    res.redirect('/protected')
+})
+
+app.get('/profile',(req,res)=>{
+    const data = JSON.parse(decodeURIComponent(req.query.data));
+    res.render('profile', { data });
+})
+
 
 app.post('/logout',(req,res)=>{
     req.session.destroy(err=>{
         if(err){
             console.log(console.err)
         }
+        
         res.redirect('/login')
+        })
     })
-})
+
+
+
 app.post('/create',(req,res)=>{
-    const{emri,mbiemri,email,password,oldpassword} = req.body
-    const query = `SELECT email FROM login_information WHERE email = '${email}'`
-    db.query(query,async(err,results,fields)=>{
+    const{emri,mbiemri,email,password,oldpassword,status} = req.body
+    const query = `SELECT email FROM login_information WHERE email = ? `
+    db.query(query,email,async(err,results,fields)=>{
         if(err){
             console.log(err)
         }
@@ -69,35 +103,41 @@ app.post('/create',(req,res)=>{
             return res.render('register',{message:'password do not match'})
         }
         let hashpassword = await bcrypt.hash(password,8)
-        const iquery = `INSERT INTO login_information (emri,mbiemri,email,password) VALUES ('${emri}','${mbiemri}','${email}','${hashpassword}')`
-        db.query(iquery,(err,results,fields)=>{
-            if(err){
-                console.log(err)
+        const iquery = `INSERT INTO login_information (emri,mbiemri,email,password) VALUES (?,?,?,?)`;
+        const data = [emri, mbiemri, email, hashpassword];
+        db.query(iquery, data, (error, results, fields) => {
+            if (error) {
+                console.log(error);
             }
-            res.render('profile',{message:'Youve been registered succesfuly!'})
-        })
+            res.render('login', { message: '' });
+        });
     })
 })
 
+
+
+
 app.post('/login',(req,res)=>{
     const {email,password} = req.body
-    const query =`SELECT * FROM login_information WHERE email = '${email}'`
-    db.query(query, async(err,results,fields)=>{
+    const query =`SELECT * FROM login_information WHERE email = ?`
+    
+    
+    db.query(query,email, async(err,results,fields)=>{
         if(err){
             console.log(err)
         }
         if(results.length == 0 || !(await bcrypt.compare(password,results[0].password))) {
-            return res.render('login',{message:'Your email or password is wrong!'})
+            return res.render('login',{message:'passwordin ose emailin e ki keq'})
         }
         req.session.isLogged = email
-        res.render('profile',{data:results})
+        res.redirect(`/profile?data=${encodeURIComponent(JSON.stringify(results))}`);
     })
 })
 
 app.post('/changepassword',(req,res)=>{
     const{email,oldpassword,newpassword} = req.body
-    const query = `SELECT password FROM login_information WHERE email = '${email}'`
-    db.query(query,(err,results)=>{
+    const query = `SELECT password FROM login_information WHERE email = ?`
+    db.query(query,email,(err,results)=>{
         if(err){
             console.log(err)
         }
@@ -113,10 +153,16 @@ app.post('/changepassword',(req,res)=>{
             }
             else{
                 bcrypt.hash(newpassword,8,(err,hash)=>{
-                    const updatequery = `UPDATE login_information SET password = '${hash}' WHERE email = '${email}'`
-                    db.execute(updatequery)
-                    console.log('Your password is changed')
-                    res.redirect('/')
+                    const updatequery = `UPDATE login_information SET password = ? WHERE email = ?`;
+                    const data = [hash, email];
+                    db.execute(updatequery, data, (error, results) => {
+                        if (error) {
+                        console.log(error);
+                            } else {
+                    console.log('Your password is changed');
+                        res.redirect('/');
+                            }
+                    });
                 })
             }
         })
@@ -126,8 +172,8 @@ app.post('/changepassword',(req,res)=>{
 
 app.post('/admin',(req,res)=>{
     const {email,password} = req.body
-    const query =`SELECT * FROM admin_information WHERE admin_email = '${email}'`
-    db.query(query, async(err,results,fields)=>{
+    const query =`SELECT * FROM admin_information WHERE admin_email = ?`
+    db.query(query,[email], async(err,results,fields)=>{
         if(err){
             console.log(err)
         }
@@ -135,7 +181,7 @@ app.post('/admin',(req,res)=>{
             return res.render('admin',{message:'passwordi ose emaili jon keq'})
         }
         req.session.isLogged = email
-        res.redirect('protected')
+        res.redirect('/protected')
     })
 })
 
