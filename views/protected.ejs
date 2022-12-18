@@ -5,14 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="../static/css/protected.css">
 </head>
 <body>
-    
-    <form id="search-form">
-        <input type="text" name="keyword" placeholder="Search by id or name">
-    </form>
-      
-    <div id="search-results"></div>
+        <div class="left-page">
+            <form id="search-form">
+                <input type="text" name="keyword" class="search-input" placeholder="Search by id or name">
+                <div id="search-results"></div>
+            </form>
+        </div>
+        <div class="right-page">
+            <form id="search-form">
+                <input type="text" name="keyword" class="search-input" placeholder="Search by id or name">
+                <div id="search-results">
+                </div>
+            </form>
+        </div>
 <script>
     const form = document.getElementById('search-form');
     const resultsDiv = document.getElementById('search-results');
@@ -22,17 +30,43 @@
 
         if (!keyword) {
             resultsDiv.innerHTML = '';
+            resultsDiv.style.display = 'none';
             return;
         }
-        
         fetch(`/search?keyword=${keyword}`)
         .then((response) => response.json())
         .then((data) => {
+            if (data.length === 0) {
+                resultsDiv.innerHTML = '';
+                resultsDiv.style.display = 'none';
+                return;
+            }
             resultsDiv.innerHTML = '';
+            resultsDiv.style.display = 'flex';
+            resultsDiv.style.justifyContent = 'space-between'
+            resultsDiv.style.alignItems = 'center'
             data.forEach((item) => {
                 const div = document.createElement('div');
-                div.innerHTML = `<p>${item.id} - ${item.emri}</p>`;
+                div.innerHTML = `<p>${item.id} - ${item.emri} - ${item.email}</p>`;
+
+                const deleteButton = document.createElement('button');
+                deleteButton.innerHTML = 'X';
+                deleteButton.style.cssText = `
+                    position: absolute;
+                    top:0px;
+                    right:0px;
+                    
+                `
+                deleteButton.addEventListener('click', () => {
+                    fetch(`/delete/${item.id}`, { method: 'DELETE' })
+                    .then(() => {
+                        resultsDiv.removeChild(div);
+                    });
+                });
+            
+                div.appendChild(deleteButton);
                 resultsDiv.appendChild(div);
+                console.log(item);
             });
         });
     });

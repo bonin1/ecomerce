@@ -14,7 +14,7 @@ app.use(session({
     secret:process.env.SESSION_SECRET,
     resave:false,
     saveUninitialized:false,
-    cookie:{maxAge: 10 * 1000} //1 minut 
+    cookie:{maxAge: 10 * 5000} //5 minuta 
 }))
 app.get('/protected', (req, res) => {
     if (!req.session.isLogged) {
@@ -30,8 +30,8 @@ app.get('/protected', (req, res) => {
 });
 app.get('/search', (req, res) => {
     const keyword = req.query.keyword;
-    const query = `SELECT id, emri FROM login_information WHERE id LIKE ? OR emri LIKE ?`;
-    const values = [`%${keyword}%`, `%${keyword}%`];
+    const query = `SELECT id, emri, email FROM login_information WHERE id LIKE ? OR emri LIKE ? OR email LIKE ?`;
+    const values = [`%${keyword}%`, `%${keyword}%`,`%${keyword}%`];
     if (!keyword) {
         return res.redirect('/protected');
     }
@@ -42,6 +42,8 @@ app.get('/search', (req, res) => {
             return;
         } 
         res.json(results);
+        console.log(results);
+
     });
 });
 
@@ -66,10 +68,10 @@ app.get('/login',(req,res)=>{
     res.render('login',{message:''})
 })
 
-app.post('/delete/:id',(req,res)=>{
-    db.execute(`DELETE FROM login_information WHERE id = ?`,[req.params.id])
-    res.redirect('/protected')
-})
+app.delete('/delete/:id', (req, res) => {
+    db.execute(`DELETE FROM login_information WHERE id = ?`, [req.params.id]);
+    res.sendStatus(200);
+    });
 
 app.get('/profile',(req,res)=>{
     const data = JSON.parse(decodeURIComponent(req.query.data));
