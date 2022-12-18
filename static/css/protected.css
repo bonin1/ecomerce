@@ -28,9 +28,38 @@ body{
 #search-results{
     display: none;
     background-color: white;
-    display: flex !important;
+    width: 500px;
+    display: flex;
     flex-direction: row;
-    
+    justify-content: center;
+    align-items: center;
+}
+.item {
+    border: 1px solid gray;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: underline;
+    text-decoration: none;
+    padding: 10px 0px;
+}
+.delete-button{
+    display: flex;
+    justify-content: center !important;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    border: none;
+    background-color: transparent;
+    background-color: red;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    margin-right: 10px;
+}
+.delete-button:hover{
+    background-color: rgb(121, 2, 2);
+    cursor: pointer;
 }
 
 .search-input{
@@ -43,6 +72,7 @@ body{
     outline: none !important;
     border-bottom: 2px solid black !important;
 }
+
 #search-form{
     position: fixed;
     top: 50px;

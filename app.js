@@ -14,7 +14,7 @@ app.use(session({
     secret:process.env.SESSION_SECRET,
     resave:false,
     saveUninitialized:false,
-    cookie:{maxAge: 10 * 5000} //5 minuta 
+    cookie:{maxAge: 30 * 60 * 1000} 
 }))
 app.get('/protected', (req, res) => {
     if (!req.session.isLogged) {
@@ -27,7 +27,12 @@ app.get('/protected', (req, res) => {
         }
         res.render('protected', { data: results });
     });
+    
 });
+
+
+
+
 app.get('/search', (req, res) => {
     const keyword = req.query.keyword;
     const query = `SELECT id, emri, email FROM login_information WHERE id LIKE ? OR emri LIKE ? OR email LIKE ?`;
