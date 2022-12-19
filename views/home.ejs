@@ -13,5 +13,14 @@
         <a href="/register">Regjistrohu</a>
         <a href="/login">Kyqu</a>
     </nav>
+
+
+
+    <% data.forEach(row=>{ %>
+        <h2>Emri: <%= row.emri_produktit %></h2>
+        <h3>Pershkrimi :<%= row.pershkrimi_produktit %></h3>
+        <h3>Cmimi: <%= row.cmimi_produktit %></h3>
+        <h4>Sasia: <%= row.sasia_produktit %></h4>
+    <% }) %>
 </body>
 </html>

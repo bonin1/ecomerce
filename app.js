@@ -20,7 +20,7 @@ app.get('/protected', (req, res) => {
     if (!req.session.isLogged) {
         return res.redirect('/admin');
     }
-    db.query(`SELECT * FROM login_information`, (err, results) => {
+    db.query(`SELECT * FROM produktet`, (err, results) => {
         if (err) {
             console.error(err);
             return;
@@ -30,33 +30,13 @@ app.get('/protected', (req, res) => {
     
 });
 
-
-
-
-app.get('/search', (req, res) => {
-    const keyword = req.query.keyword;
-    const query = `SELECT id, emri, email FROM login_information WHERE id LIKE ? OR emri LIKE ? OR email LIKE ?`;
-    const values = [`%${keyword}%`, `%${keyword}%`,`%${keyword}%`];
-    if (!keyword) {
-        return res.redirect('/protected');
-    }
-
-    db.query(query, values, (err, results, fields) => {
-        if (err) {
-            console.error(err);
-            return;
-        } 
-        res.json(results);
-        console.log(results);
-
-    });
-});
-
-
-
-
 app.get('/',(req,res)=>{
-    res.render('home')
+    db.query(`SELECT * FROM produktet`,(err,results)=>{
+        if(err){
+            console.log(err)
+        }
+        res.render('home',{data:results})
+    })
 })
 app.get('/register',(req,res)=>{
     res.render('register',{message:''})
@@ -72,11 +52,6 @@ app.get('/admin',(req,res)=>{
 app.get('/login',(req,res)=>{
     res.render('login',{message:''})
 })
-
-app.delete('/delete/:id', (req, res) => {
-    db.execute(`DELETE FROM login_information WHERE id = ?`, [req.params.id]);
-    res.sendStatus(200);
-    });
 
 app.get('/profile',(req,res)=>{
     const data = JSON.parse(decodeURIComponent(req.query.data));
@@ -123,7 +98,6 @@ app.post('/create',(req,res)=>{
 
 
 
-
 app.post('/login',(req,res)=>{
     const {email,password} = req.body
     const query =`SELECT * FROM login_information WHERE email = ?`
@@ -140,6 +114,8 @@ app.post('/login',(req,res)=>{
         res.redirect(`/profile?data=${encodeURIComponent(JSON.stringify(results))}`);
     })
 })
+
+
 
 app.post('/changepassword',(req,res)=>{
     const{email,oldpassword,newpassword} = req.body
@@ -177,6 +153,7 @@ app.post('/changepassword',(req,res)=>{
 })
 
 
+
 app.post('/admin',(req,res)=>{
     const {email,password} = req.body
     const query =`SELECT * FROM admin_information WHERE admin_email = ?`
@@ -192,6 +169,19 @@ app.post('/admin',(req,res)=>{
     })
 })
 
+
+
+app.post('/produkt/register',(req,res)=>{
+    const {emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit} = req.body
+    const query = `INSERT INTO produktet (emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit) VALUES (?,?,?,?,?)`
+    const data = [emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit]
+    db.query(query,data,(err,results,fields)=>{
+        if(err){
+            console.log(err)
+        }
+        res.redirect('/protected')
+    })
+})
 
 
 
