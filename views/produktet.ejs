@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <% data.forEach(row=>{ %>
+        <form action="/edit/<%= row.id %>" method="POST">
+            <input type="text" name="emri_produktit" placeholder="emri produktit" value="<%= row.emri_produktit %>">
+            <textarea name="pershkrimi_produktit" placeholder="pershkrimi produktit"  id="" cols="30" rows="10"><%= row.pershkrimi_produktit %></textarea>
+            <input type="text" name="cmimi_produktit" placeholder="cmimi produktit" value="<%= row.cmimi_produktit %>">
+            <input type="text" name="origjina_produktit" placeholder="origjina produktit" value="<%= row.origjina_produktit %>">
+            <input type="number" name="sasia_produktit" placeholder="sasia" value="<%= row.sasia_produktit %>" id="">
+            <input type="submit" value="Submit">
+        </form>
+    <% }) %>
+</body>
+</html>

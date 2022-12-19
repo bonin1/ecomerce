@@ -18,6 +18,52 @@
         <input type="number" name="sasia_produktit" placeholder="sasia" id="">
         <input type="submit" value="submit">
     </form>
+    <form id="search-form">
+        <input type="text" id="search-query" placeholder="Search...">
+        <button type="submit">Search</button>
+    </form>
+    <div id="search-results"></div>
+
+
+<script>
+    document.getElementById('search-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        var searchQuery = document.getElementById('search-query').value;
+        if (searchQuery === '') {
+            var searchResultsDiv = document.getElementById('search-results');
+            searchResultsDiv.innerHTML = '';
+            return;
+        }
+
+        fetch('/search', {
+            method: 'POST',
+            body: JSON.stringify({
+                query: document.getElementById('search-query').value
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(results) {
+            var searchResultsDiv = document.getElementById('search-results');
+            searchResultsDiv.innerHTML = '';
+            for (var i = 0; i < results.length; i++) {
+                (function(i) {
+                    var resultItem = document.createElement('div');
+                    resultItem.innerHTML = results[i].emri_produktit;
+                    resultItem.addEventListener('click', function() {
+                        window.location = '/item/' + results[i].id;
+                    });
+                searchResultsDiv.appendChild(resultItem);
+                })(i);
+            }
+        });
+    });
+    </script>   
 </body>
 </html>
 

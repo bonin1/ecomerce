@@ -182,8 +182,58 @@ app.post('/produkt/register',(req,res)=>{
         res.redirect('/protected')
     })
 })
+app.post('/search', (req, res) => {
+    var query = req.body.query;
+    if (query === '') {
+        res.send([]);
+        return;
+    }
+    db.query(`SELECT * FROM produktet WHERE emri_produktit LIKE '%${query}%'`, (err, results) => {
+        if (err) {
+            console.error(err);
+            res.send([]);
+            return;
+        }
+        res.send(results);
+    });
+});
 
+app.get('/item/:id',(req,res)=>{
+    if (!req.session.isLogged) {
+        return res.redirect('/admin');
+    }
+    const {id} = req.params
+    const query = `SELECT * FROM produktet WHERE id = ?`
+    db.query(query,id,(err,results,fields)=>{
+        if(err){
+            console.log(err)
+        }
+        res.render('produktet',{data:results})
+    })
+})
 
+app.get('/edit/:id',(req,res)=>{
+    if (!req.session.isLogged) {
+        return res.redirect('/admin');
+    }
+    const {id} = req.params
+    const query = `SELECT * FROM produktet WHERE id = ?`
+    db.query(query,id,(err,results,fields)=>{
+        res.render('produktet',{data:results})
+    })
+})
+app.post('/edit/:id',(req,res)=>{
+    if(!req.session.isLogged){
+        return res.redirect('/admin')
+    }
+    const {id} = req.params
+    const{emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit} = req.body
+    const query = `UPDATE produktet SET emri_produktit = ?, pershkrimi_produktit = ?, cmimi_produktit = ?, origjina_produktit = ?, sasia_produktit = ? WHERE id = ?`
+    const data = [emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,id]
+    db.query(query,data,(err,results,fields)=>{
+        res.render('produktet',{data:results})
+    })
+})
 
 const middleware = (req,res,next)=>{
     if(!req.session.isLogged){
