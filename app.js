@@ -57,7 +57,20 @@ app.get('/profile',(req,res)=>{
     const data = JSON.parse(decodeURIComponent(req.query.data));
     res.render('profile', { data });
 })
-
+app.get('/produktet',(req,res)=>{
+    if (!req.session.isLogged) {
+        return res.redirect('/admin');
+    }
+    const { alert } = req.query;
+    db.query(`SELECT * FROM produktet`, (err, results) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        res.render('protected', { data: results, alert: decodeURIComponent(alert) });
+    });
+    
+})
 
 app.post('/logout',(req,res)=>{
     req.session.destroy(err=>{
@@ -173,13 +186,25 @@ app.post('/admin',(req,res)=>{
 
 app.post('/produkt/register',(req,res)=>{
     const {emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit} = req.body
-    const query = `INSERT INTO produktet (emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit) VALUES (?,?,?,?,?)`
-    const data = [emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit]
+    const query = `SELECT * FROM produktet WHERE emri_produktit = ?`
+    const data = [emri_produktit]
     db.query(query,data,(err,results,fields)=>{
         if(err){
             console.log(err)
         }
-        res.redirect('/protected')
+        if(results.length > 0){
+            res.render('protected', { alert: 'Ky produkt ekziston' });
+        }
+        else{
+            const query = `INSERT INTO produktet (emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit) VALUES (?,?,?,?,?)`
+            const data = [emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit]
+            db.query(query,data,(err,results,fields)=>{
+                if(err){
+                    console.log(err)
+                }
+                res.render('protected', { alert: 'Produkti u krijua me sukses' });
+            })
+        }
     })
 })
 app.post('/search', (req, res) => {
@@ -219,7 +244,7 @@ app.get('/edit/:id',(req,res)=>{
     const {id} = req.params
     const query = `SELECT * FROM produktet WHERE id = ?`
     db.query(query,id,(err,results,fields)=>{
-        res.render('produktet',{data:results})
+        res.redirect('/produktet')
     })
 })
 app.post('/edit/:id',(req,res)=>{
@@ -231,9 +256,22 @@ app.post('/edit/:id',(req,res)=>{
     const query = `UPDATE produktet SET emri_produktit = ?, pershkrimi_produktit = ?, cmimi_produktit = ?, origjina_produktit = ?, sasia_produktit = ? WHERE id = ?`
     const data = [emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,id]
     db.query(query,data,(err,results,fields)=>{
-        res.render('produktet',{data:results})
+        res.redirect(`/produktet?alert=Produkti%20u%20perditsua`)
     })
 })
+app.post('/delete/:id',(req,res)=>{
+    const {id} = req.params
+    const query = `DELETE from produktet WHERE id = ?`
+    db.query(query,id,(err,results,fields)=>{
+        if(err){
+            console.log(err)
+        }
+        res.redirect(`/produktet?alert=Produkti%20eshte%20fshire`);
+    })
+})
+
+
+
 
 const middleware = (req,res,next)=>{
     if(!req.session.isLogged){
