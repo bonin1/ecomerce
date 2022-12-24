@@ -12,6 +12,12 @@
         <a href="/">Home</a>
         <a href="/register">Regjistrohu</a>
         <a href="/login">Kyqu</a>
+        <form id="search-form">
+            <input type="text" id="search-input" autocomplete="off">
+            <button type="submit">Search</button>
+        </form>
+        
+        <div id="recommendations"></div>
     </nav>
 
 
@@ -21,6 +27,66 @@
         <h3>Pershkrimi :<%= row.pershkrimi_produktit %></h3>
         <h3>Cmimi: <%= row.cmimi_produktit %></h3>
         <h4>Sasia: <%= row.sasia_produktit %></h4>
+        <button class="add-to-cart" data-id="<%= row.id %>">Add to cart</button>
     <% }) %>
+
+    <script>
+        const searchForm = document.getElementById('search-form')
+        const searchInput = document.getElementById('search-input')
+        const recommendations = document.getElementById('recommendations')
+
+        searchInput.addEventListener('input', function() {
+            if (this.value === '') {
+                recommendations.innerHTML = ''
+            } else {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '/search?q=' + this.value, true)
+                xhr.send()
+                xhr.onload = function() {
+                    if (this.status === 200) {
+                        const results = JSON.parse(this.responseText);
+                        recommendations.innerHTML = ''
+                        for (let i = 0; i < 4; i++) {  
+                            const result = results[i];
+                            if (!result) break; 
+                            const li = document.createElement('li')
+                            li.textContent = result.emri_produktit
+                            li.setAttribute('data-id', result.id)
+                            recommendations.appendChild(li)
+                        }
+                    }
+                }
+            }
+            recommendations.addEventListener('click', function(e) {
+                if (e.target.tagName === 'LI') {
+                    const itemId = e.target.getAttribute('data-id')
+                    window.location.href = '/produkt/' + itemId
+                }
+            })
+        })
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+        });
+
+        const addToCartButtons = document.querySelectorAll('.add-to-cart');
+addToCartButtons.forEach(button => {
+  button.addEventListener('click', e => {
+    const itemId = e.target.getAttribute('data-id');
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/cart', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({ id: itemId, quantity: 1 }));
+    xhr.onload = function() {
+      if (this.status === 200) {
+        console.log('Item added to cart');
+      } else {
+        console.error('Error adding item to cart');
+      }
+    }
+  });
+});
+
+
+    </script>
 </body>
 </html>

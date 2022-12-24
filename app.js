@@ -31,13 +31,77 @@ app.get('/protected', (req, res) => {
 });
 
 app.get('/',(req,res)=>{
-    db.query(`SELECT * FROM produktet`,(err,results)=>{
+    db.query(`SELECT * FROM produktet ORDER BY RAND() LIMIT 8`,(err,results)=>{
         if(err){
             console.log(err)
         }
         res.render('home',{data:results})
     })
 })
+app.get('/search', (req, res) => {
+    const searchQuery = req.query.q;
+    db.query(`SELECT * FROM produktet WHERE emri_produktit LIKE '%${searchQuery}%'`, (err, results) => {
+        if (err) {
+            console.log(err);
+            res.sendStatus(500);
+        } else {
+            res.json(results);
+        }
+    });
+});
+app.get('/produkt/:id',(req,res)=>{
+    const id = req.params.id
+    const query = (`SELECT * FROM produktet WHERE id = ?`)
+    db.query(query,id,(err,results,fields)=>{
+        if(err){
+            console.log(err)
+        }else{
+            res.render('produkt',{data:results})
+        }
+    })
+})
+
+app.post('/cart', (req, res) => {
+    const itemId = req.body.id;
+    const quantity = req.body.quantity;
+    db.query('INSERT INTO cart (produkt_id, quantity) VALUES (?, ?)', [itemId, quantity], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.sendStatus(500);
+            return;
+        }
+        res.sendStatus(200);
+    });
+});
+
+app.get('/cart', (req, res) => {
+    db.query(
+        'SELECT produktet.*, cart.produkt_id FROM produktet INNER JOIN cart ON produktet.id = cart.produkt_id',
+        (err, results) => {
+            if (err) {
+                console.error(err);
+                res.sendStatus(500);
+                return;
+            }
+            res.render('cart', { items: results });
+        }
+    );
+    
+});
+
+app.delete('/cart/:itemId', (req, res) => {
+    const itemId = req.params.itemId;
+    db.query('DELETE FROM cart WHERE produkt_id = ?', [itemId], (err, results) => {
+      if (err) {
+        console.error(err);
+        res.sendStatus(500);
+        return;
+      }
+      res.sendStatus(200);
+    });
+  });
+  
+
 app.get('/register',(req,res)=>{
     res.render('register',{message:''})
 })
@@ -290,4 +354,4 @@ app.get('/protected',middleware,(req,res)=>{
 
 app.listen(8080,()=>{
     console.log('Ready!')
-})aa
+})

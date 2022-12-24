@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <% items.forEach(item => { %>
+        <div class="item">
+            <h2><%= item.emri_produktit %></h2>
+            <h4><%= item.pershkrimi_produktit %></h4>
+            <h2><%= item.cmimi_produktit %></h2>
+            <p>Quantity: <%= item.quantity %></p>
+            <button class="remove-item" data-id="<%= item.produkt_id %>">Remove</button>
+        </div>
+    <% }); %>
+
+    <script>
+        const removeButtons = document.querySelectorAll('.remove-item');
+
+        removeButtons.forEach(button => {
+            button.addEventListener('click', e => {
+                const itemId = e.target.getAttribute('data-id');
+                const xhr = new XMLHttpRequest();
+                xhr.open('DELETE', `/cart/${itemId}`, true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send();
+                xhr.onload = function() {
+                    if (this.status === 200) {
+                        console.log('Item removed from cart');
+                        e.target.parentNode.remove();
+                    } else {
+                        console.error('Error removing item from cart');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
