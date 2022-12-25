@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    
 </head>
 <body>
     <nav>
@@ -19,7 +20,7 @@
         
         <div id="recommendations"></div>
 
-        <div class="cart-count"></div>
+        <a href="/cart" class="cart-count"></a>
     </nav>
 
 
@@ -30,7 +31,7 @@
         <h3>Cmimi: <%= row.cmimi_produktit %></h3>
         <% if (row.sasia_produktit > 0) { %>
             <h2>Sasia: <%= row.sasia_produktit %></h2>
-            <button class="add-to-cart" data-id="<%= row.id %>">Add to cart</button>
+            <button class="add-to-cart" data-id="<%= row.id %>" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
         <% } else { %>
             <p>Out of stock</p>
         <% } %>
@@ -79,6 +80,10 @@
         const addToCartButtons = document.querySelectorAll('.add-to-cart');
         addToCartButtons.forEach(button => {
             button.addEventListener('click', e => {
+                const isLoggedIn = e.target.getAttribute('data-is-logged-in') === 'true';
+                if (!isLoggedIn) {
+                    return window.location.href = '/login';
+                }
                 const itemId = e.target.getAttribute('data-id');
                 const xhr = new XMLHttpRequest();
                 xhr.open('POST', '/cart', true);
@@ -93,6 +98,8 @@
                 }
             });
         });
+        
+
         
         const xhr = new XMLHttpRequest();
         xhr.open('GET', '/cart/count', true);

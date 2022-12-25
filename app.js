@@ -34,11 +34,12 @@ app.get('/protected', (req, res) => {
 });
 
 app.get('/',(req,res)=>{
+    const isLoggedIn = req.session.isLoggedIn;
     db.query(`SELECT * FROM produktet ORDER BY RAND() LIMIT 8`,(err,results)=>{
         if(err){
             console.log(err)
         }
-        res.render('home',{data:results})
+        res.render('home',{data:results, isLoggedIn})
     })
 })
 app.get('/search', (req, res) => {
@@ -64,22 +65,42 @@ app.get('/produkt/:id',(req,res)=>{
     })
 })
 
+
+
 app.post('/cart', (req, res) => {
+    if (!req.session.isLoggedIn) {
+        return res.redirect('/login');
+    }
+
+
+    const userId = req.session.userId;
     const itemId = req.body.id;
     const quantity = req.body.quantity;
-    db.query('INSERT INTO cart (produkt_id, quantity) VALUES (?, ?)', [itemId, quantity], (err, results) => {
-        if (err) {
-            console.error(err);
-            res.sendStatus(500);
-            return;
+
+    db.query(
+        'INSERT INTO cart (user_id, produkt_id, quantity) VALUES (?, ?, ?)',
+        [userId, itemId, quantity],
+        (err, results) => {
+            if (err) {
+                console.error(err);
+                res.sendStatus(500);
+                return;
+            }
+            res.render('cart');
         }
-        res.render('cart')
-    });
+    );
 });
 
+
 app.get('/cart', (req, res) => {
+    if (!req.session.isLoggedIn) {
+        return res.redirect('/login');
+    }
+
+    const userId = req.session.userId;
     db.query(
-        'SELECT produktet.*, cart.produkt_id, cart.quantity FROM produktet INNER JOIN cart ON produktet.id = cart.produkt_id',
+        'SELECT produktet.*, cart.produkt_id, cart.quantity FROM produktet INNER JOIN cart ON produktet.id = cart.produkt_id WHERE cart.user_id = ?',
+        [userId],
         (err, results) => {
             if (err) {
                 console.error(err);
@@ -92,15 +113,23 @@ app.get('/cart', (req, res) => {
 });
 
 
+
 app.delete('/cart/:itemId', (req, res) => {
+    if (!req.session.isLoggedIn) {
+        return res.redirect('/login');
+    }
+
+    const userId = req.session.userId;
     const itemId = req.params.itemId;
-    db.query('DELETE FROM cart WHERE produkt_id = ?', [itemId], (err, results) => {
+
+    db.query('DELETE FROM cart WHERE produkt_id = ? AND user_id = ?', [itemId, userId], (err, results) => {
         if (err) {
             console.error(err);
             return;
         }
         db.query(
-            'SELECT produktet.*, cart.produkt_id, cart.quantity FROM produktet INNER JOIN cart ON produktet.id = cart.produkt_id',
+            'SELECT produktet.*, cart.produkt_id, cart.quantity FROM produktet INNER JOIN cart ON produktet.id = cart.produkt_id WHERE cart.user_id = ?',
+            [userId],
             (err, results) => {
                 if (err) {
                     console.error(err);
@@ -112,16 +141,28 @@ app.delete('/cart/:itemId', (req, res) => {
     });
 });
 
+
 app.get('/cart/count', (req, res) => {
-    db.query('SELECT COUNT(*) as count FROM cart', (err, results) => {
-        if (err) {
-            console.error(err);
-            res.sendStatus(500);
-            return;
+    if (!req.session.isLoggedIn) {
+        return res.redirect('/login');
+    }
+    const userId = req.session.userId;
+    db.query(
+        'SELECT COUNT(*) as count FROM cart WHERE user_id = ?',
+        [userId],
+        (err, results) => {
+            if (err) {
+                console.error(err);
+                res.sendStatus(500);
+                return;
+            }
+            res.send({ count: results[0].count });
         }
-        res.json({ count: results[0].count });
-    });
+    );
 });
+
+
+
 
 app.get('/register',(req,res)=>{
     res.render('register',{message:''})
@@ -207,6 +248,7 @@ app.post('/login',(req,res)=>{
             return res.render('login',{message:'passwordin ose emailin e ki keq'})
         }
         req.session.isLoggedIn = true;
+        req.session.userId = results[0].id;
         res.redirect(`/profile?data=${encodeURIComponent(JSON.stringify(results))}`);
     })
 })

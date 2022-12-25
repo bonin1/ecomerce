@@ -7,15 +7,19 @@
     <title>Document</title>
 </head>
 <body>
-    <% items.forEach(item => { %>
-        <div class="item">
-            <h2><%= item.emri_produktit %></h2>
-            <h4><%= item.pershkrimi_produktit %></h4>
-            <h2><%= item.cmimi_produktit %></h2>
-            <p>Quantity: <%= item.quantity %></p>
-            <button class="remove-from-cart" data-id="<%= item.produkt_id %>">Remove</button>
-        </div>
-    <% }); %>
+    <% if (items.length === 0) { %>
+        <p>No products in your cart</p>
+    <% } else { %>
+        <% items.forEach(item => { %>
+            <div class="item">
+                <h2><%= item.emri_produktit %></h2>
+                <h4><%= item.pershkrimi_produktit %></h4>
+                <h2><%= item.cmimi_produktit %></h2>
+                <p>Quantity: <%= item.quantity %></p>
+                <button class="remove-from-cart" data-id="<%= item.produkt_id %>">Remove</button>
+            </div>
+        <% }); %>
+    <% } %>
 <script>
     const removeFromCartButtons = document.querySelectorAll('.remove-from-cart');
 
