@@ -18,6 +18,8 @@
         </form>
         
         <div id="recommendations"></div>
+
+        <div class="cart-count"></div>
     </nav>
 
 
@@ -26,8 +28,12 @@
         <h2>Emri: <%= row.emri_produktit %></h2>
         <h3>Pershkrimi :<%= row.pershkrimi_produktit %></h3>
         <h3>Cmimi: <%= row.cmimi_produktit %></h3>
-        <h4>Sasia: <%= row.sasia_produktit %></h4>
-        <button class="add-to-cart" data-id="<%= row.id %>">Add to cart</button>
+        <% if (row.sasia_produktit > 0) { %>
+            <h2>Sasia: <%= row.sasia_produktit %></h2>
+            <button class="add-to-cart" data-id="<%= row.id %>">Add to cart</button>
+        <% } else { %>
+            <p>Out of stock</p>
+        <% } %>
     <% }) %>
 
     <script>
@@ -68,25 +74,38 @@
             e.preventDefault();
         });
 
+
+
         const addToCartButtons = document.querySelectorAll('.add-to-cart');
-addToCartButtons.forEach(button => {
-  button.addEventListener('click', e => {
-    const itemId = e.target.getAttribute('data-id');
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/cart', true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(JSON.stringify({ id: itemId, quantity: 1 }));
-    xhr.onload = function() {
-      if (this.status === 200) {
-        console.log('Item added to cart');
-      } else {
-        console.error('Error adding item to cart');
-      }
-    }
-  });
-});
-
-
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', e => {
+                const itemId = e.target.getAttribute('data-id');
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/cart', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify({ id: itemId, quantity: 1 }));
+                xhr.onload = function() {
+                    if (this.status === 200) {
+                        console.log('Item added to cart');
+                    } else {
+                        console.error('Error adding item to cart');
+                    }
+                }
+            });
+        });
+        
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/cart/count', true);
+        xhr.send();
+        xhr.onload = function() {
+            if (this.status === 200) {
+                const cartCount = JSON.parse(this.responseText).count;
+                const cartCountElement = document.querySelector('.cart-count');
+                cartCountElement.innerHTML = cartCount;
+            } else {
+                console.error('Error fetching cart count');
+            }
+        }
     </script>
 </body>
 </html>

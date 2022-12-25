@@ -4,7 +4,10 @@ const session = require('express-session')
 const db = require('./databaze')
 const bcrypt = require('bcryptjs');
 const { render } = require('ejs');
+const cookieParser = require('cookie-parser');
 
+
+app.use(cookieParser());
 app.use('/static',express.static('static'))
 app.set('view engine','ejs')
 app.use(express.urlencoded({extended:false}))
@@ -70,13 +73,13 @@ app.post('/cart', (req, res) => {
             res.sendStatus(500);
             return;
         }
-        res.sendStatus(200);
+        res.render('cart')
     });
 });
 
 app.get('/cart', (req, res) => {
     db.query(
-        'SELECT produktet.*, cart.produkt_id FROM produktet INNER JOIN cart ON produktet.id = cart.produkt_id',
+        'SELECT produktet.*, cart.produkt_id, cart.quantity FROM produktet INNER JOIN cart ON produktet.id = cart.produkt_id',
         (err, results) => {
             if (err) {
                 console.error(err);
@@ -86,21 +89,39 @@ app.get('/cart', (req, res) => {
             res.render('cart', { items: results });
         }
     );
-    
 });
+
 
 app.delete('/cart/:itemId', (req, res) => {
     const itemId = req.params.itemId;
     db.query('DELETE FROM cart WHERE produkt_id = ?', [itemId], (err, results) => {
-      if (err) {
-        console.error(err);
-        res.sendStatus(500);
-        return;
-      }
-      res.sendStatus(200);
+        if (err) {
+            console.error(err);
+            return;
+        }
+        db.query(
+            'SELECT produktet.*, cart.produkt_id, cart.quantity FROM produktet INNER JOIN cart ON produktet.id = cart.produkt_id',
+            (err, results) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                res.render('cart', { items: results });
+            }
+        );
     });
-  });
-  
+});
+
+app.get('/cart/count', (req, res) => {
+    db.query('SELECT COUNT(*) as count FROM cart', (err, results) => {
+        if (err) {
+            console.error(err);
+            res.sendStatus(500);
+            return;
+        }
+        res.json({ count: results[0].count });
+    });
+});
 
 app.get('/register',(req,res)=>{
     res.render('register',{message:''})
@@ -178,8 +199,6 @@ app.post('/create',(req,res)=>{
 app.post('/login',(req,res)=>{
     const {email,password} = req.body
     const query =`SELECT * FROM login_information WHERE email = ?`
-    
-    
     db.query(query,email, async(err,results,fields)=>{
         if(err){
             console.log(err)
@@ -187,7 +206,7 @@ app.post('/login',(req,res)=>{
         if(results.length == 0 || !(await bcrypt.compare(password,results[0].password))) {
             return res.render('login',{message:'passwordin ose emailin e ki keq'})
         }
-        req.session.isLogged = email
+        req.session.isLoggedIn = true;
         res.redirect(`/profile?data=${encodeURIComponent(JSON.stringify(results))}`);
     })
 })

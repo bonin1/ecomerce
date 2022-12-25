@@ -13,30 +13,29 @@
             <h4><%= item.pershkrimi_produktit %></h4>
             <h2><%= item.cmimi_produktit %></h2>
             <p>Quantity: <%= item.quantity %></p>
-            <button class="remove-item" data-id="<%= item.produkt_id %>">Remove</button>
+            <button class="remove-from-cart" data-id="<%= item.produkt_id %>">Remove</button>
         </div>
     <% }); %>
+<script>
+    const removeFromCartButtons = document.querySelectorAll('.remove-from-cart');
 
-    <script>
-        const removeButtons = document.querySelectorAll('.remove-item');
-
-        removeButtons.forEach(button => {
-            button.addEventListener('click', e => {
-                const itemId = e.target.getAttribute('data-id');
-                const xhr = new XMLHttpRequest();
-                xhr.open('DELETE', `/cart/${itemId}`, true);
-                xhr.setRequestHeader('Content-Type', 'application/json');
-                xhr.send();
-                xhr.onload = function() {
-                    if (this.status === 200) {
-                        console.log('Item removed from cart');
-                        e.target.parentNode.remove();
-                    } else {
-                        console.error('Error removing item from cart');
-                    }
+    removeFromCartButtons.forEach(button => {
+        button.addEventListener('click', e => {
+            const itemId = e.target.getAttribute('data-id');
+            const xhr = new XMLHttpRequest();
+            xhr.open('DELETE', `/cart/${itemId}`, true);
+            xhr.send();
+            xhr.onload = function() {
+                if (this.status === 200) {
+                    console.log('Item removed from cart');
+                    const deletedItem = e.target.parentNode;
+                    deletedItem.parentNode.removeChild(deletedItem);
+                } else {
+                    console.error('Error removing item from cart');
                 }
-            });
+            }
         });
-    </script>
+    });
+</script>
 </body>
 </html>
