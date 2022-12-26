@@ -7,7 +7,7 @@ nav{
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 12vh;
+    height: 13vh;
 }
 .zbritje{
     width: 100%;
@@ -36,7 +36,7 @@ nav{
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 9vh;
+    height: 10vh;
 }
 .logo{
     width: 70%;
@@ -47,13 +47,33 @@ nav{
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
-    height: 9vh;
+    height: 10vh;
     align-items: center;
 }
 .a1{
     text-decoration: none;
     color: black;
+    font-size: 1.5rem;
+}
+.a1:hover{
+    color: rgba(39, 199, 199, 0.74);
 }
 .pjesa2{
-    width: 50%;
+    width: 40%;
+    height: 10vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
 }
+#search-form{
+    box-sizing: content-box;
+    padding: 20px;
+}
+#search-input{
+    border-radius:50px;
+    
+}
+/* i{
+    text-size-adjust: 30px;
+} */
