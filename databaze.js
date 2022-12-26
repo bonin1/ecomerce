@@ -22,9 +22,6 @@ db.query('CREATE DATABASE IF NOT EXISTS ecomercedb;', (error, results) => {
 });
 
 
-
-
-
 db.query(
     `CREATE TABLE IF NOT EXISTS admin_information (
         admin_email VARCHAR(255) NOT NULL,

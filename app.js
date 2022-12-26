@@ -35,10 +35,8 @@ app.get('/protected', (req, res) => {
 
 app.get('/',(req,res)=>{
     const isLoggedIn = req.session.isLoggedIn;
-    // Get the category from the query string
     const category = req.query.category;
     let query = `SELECT * FROM produktet`;
-    // If a category was provided, add a WHERE clause to the query to filter by category
     if (category) {
         query += ` WHERE kategoria = '${category}'`;
     }
