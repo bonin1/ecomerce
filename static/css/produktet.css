@@ -1,0 +1,68 @@
+*{
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    width: 100%;
+    height: 100vh;
+    background-color: lightgray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-1{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+.form-product{
+    display: flex;
+    flex-direction: column;
+}
+.form-product > textarea{
+    margin: 5px 0px;
+}
+.form-product > textarea:focus{
+    outline: none;
+    border: 2px solid gray;
+}
+.form-product > input{
+    margin: 5px 0px;
+}
+.form-product > input:focus{
+    outline: none;
+    border: 2px solid gray;
+}
+.form-product > select{
+    margin: 5px 0px;
+}
+.form-product > select:focus{
+    outline: none;
+    border: 2px solid gray;
+}
+.form-product> input[type=submit]{
+    border: 1px solid gray;
+    background-color: rgb(193, 255, 255);
+    padding: 5px 5px;
+}
+.form-product > input[type=submit]:focus{
+    outline: none;
+    border: 1px solid gray;
+}
+.form-product > input[type=submit]:hover{
+    color: white;
+    background-color: rgb(102, 143, 157);
+}
+.fshimja{
+    width: 100%;
+    background-color: red;
+    color: white;
+    font-weight: 500;
+    border: none;
+    border-radius: 2px;
+}
+.fshimja:hover{
+    background-color: rgb(146, 0, 0);
+}

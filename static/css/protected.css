@@ -22,6 +22,40 @@ body{
     display: flex;
     flex-direction: column;
 }
+.form-product > textarea{
+    margin: 5px 0px;
+}
+.form-product > textarea:focus{
+    outline: none;
+    border: 2px solid gray;
+}
+.form-product > input{
+    margin: 5px 0px;
+}
+.form-product > input:focus{
+    outline: none;
+    border: 2px solid gray;
+}
+.form-product > select{
+    margin: 5px 0px;
+}
+.form-product > select:focus{
+    outline: none;
+    border: 2px solid gray;
+}
+.form-product> input[type=submit]{
+    border: 1px solid gray;
+    background-color: rgb(193, 255, 255);
+    padding: 5px 5px;
+}
+.form-product > input[type=submit]:focus{
+    outline: none;
+    border: 1px solid gray;
+}
+.form-product > input[type=submit]:hover{
+    color: white;
+    background-color: rgb(102, 143, 157);
+}
 .card-2{
     display: flex;
     justify-content: center !important;
@@ -31,4 +65,54 @@ body{
 #search-form{
     display: flex;
     justify-content: center;
+}
+.searchi{
+    border: 1px solid gray;
+    background-color: rgb(193, 255, 255);
+    padding: 5px 5px;
+}
+.searchi:focus{
+    outline: none;
+    border: 1px solid gray;
+}
+.searchi:hover{
+    color: white;
+    background-color: rgb(102, 143, 157);
+}
+.form-search{
+    display: flex;
+    justify-content: flex-start !important;
+    flex-direction: column;
+}
+#search-query:focus{
+    outline:none;
+    border: 2px solid gray;
+}
+.produktet-search{
+    cursor: pointer;
+    background-color: aqua;
+    border: 0.1px solid black;
+    margin: 1px 0px;
+    font-weight: 500;
+    text-indent: 5px;
+}
+.produktet-search:hover{
+    background-color: rgb(44, 140, 140);
+    color: white;
+}
+
+@media screen and (max-width:576px) {
+    body{
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    .card-1, .card-2{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
 }

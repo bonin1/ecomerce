@@ -17,7 +17,7 @@
         <div class="card-1">
             <form action="/produkt/register" class="form-product" method="POST">
                 <input type="text" name="emri_produktit" placeholder="Emri produktit">
-                <textarea name="pershkrimi_produktit" id="" cols="30" rows="10"></textarea>
+                <textarea name="pershkrimi_produktit" placeholder="Pershkrimi produktit" id="" cols="30" rows="10"></textarea>
                 <input type="text" name="cmimi_produktit" placeholder="cmimi i produktit">
                 <input type="text" name="origjina_produktit" placeholder="origjina produktit">
                 <input type="number" name="sasia_produktit" placeholder="sasia" id="">
@@ -31,11 +31,13 @@
             </form>
         </div>
         <div class="card-2">
-            <form id="search-form">
-                <input type="text" id="search-query" placeholder="Search...">
-                <button type="submit">Search</button>
-            </form>
-            <div id="search-results"></div>
+            <div class="form-search">
+                <form id="search-form">
+                    <input type="text" id="search-query" placeholder="Search...">
+                    <button class="searchi" type="submit">Search</button>
+                </form>
+                <div id="search-results"></div>
+            </div>
         </div>
 
     <% if (typeof alert !== 'undefined') { %>
@@ -86,6 +88,7 @@
             (function(i) {
                 var resultItem = document.createElement('div');
                 resultItem.innerHTML = results[i].emri_produktit;
+                resultItem.className = 'produktet-search';
                 resultItem.addEventListener('click', function() {
                     window.location = '/item/' + results[i].id;
                 });

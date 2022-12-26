@@ -21,23 +21,6 @@ db.query('CREATE DATABASE IF NOT EXISTS ecomercedb;', (error, results) => {
     }
 });
 
-db.query(
-    `CREATE TABLE IF NOT EXISTS cart (
-        id INT NOT NULL AUTO_INCREMENT,
-        product_id BIGINT NOT NULL,
-        FOREIGN KEY (product_id) REFERENCES produktet(id),
-        quantity INT NOT NULL DEFAULT 1,
-        user_id INT DEFAULT NULL,
-        PRIMARY KEY (id)
-    );`,
-    (error, results) => {
-        if (error) {
-            console.error(error);
-        } else {
-            console.log('Table created successfully');
-        }
-    }
-);
 
 
 
@@ -94,6 +77,23 @@ db.query(
     }
 );
 
+db.query(
+    `CREATE TABLE IF NOT EXISTS cart (
+        id INT NOT NULL AUTO_INCREMENT,
+        product_id BIGINT NOT NULL,
+        FOREIGN KEY (product_id) REFERENCES produktet(id),
+        quantity INT NOT NULL DEFAULT 1,
+        user_id INT DEFAULT NULL,
+        PRIMARY KEY (id)
+    );`,
+    (error, results) => {
+        if (error) {
+            console.error(error);
+        } else {
+            console.log('Table created successfully');
+        }
+    }
+);
 
 db.query('USE ecomercedb;', (error, results) => {
     if (error) {
