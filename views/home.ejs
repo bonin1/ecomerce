@@ -22,13 +22,25 @@
 
         <a href="/cart" class="cart-count"></a>
     </nav>
-
+    <form action="/">
+        <label for="category">Filter by category:</label>
+        <select name="category" id="category">
+            <option value="">All categories</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Fashion">Fashion</option>
+            <option value="Home">Home</option>
+            <option value="Other">Other</option>
+        </select>
+        <button type="submit">Filter</button>
+    </form>
+    
 
 
     <% data.forEach(row=>{ %>
         <h2>Emri: <%= row.emri_produktit %></h2>
         <h3>Pershkrimi :<%= row.pershkrimi_produktit %></h3>
         <h3>Cmimi: <%= row.cmimi_produktit %></h3>
+        <h2>kategoria: <%= row.kategoria %> </h2>
         <% if (row.sasia_produktit > 0) { %>
             <h2>Sasia: <%= row.sasia_produktit %></h2>
             <button class="add-to-cart" data-id="<%= row.id %>" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>

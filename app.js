@@ -35,13 +35,22 @@ app.get('/protected', (req, res) => {
 
 app.get('/',(req,res)=>{
     const isLoggedIn = req.session.isLoggedIn;
-    db.query(`SELECT * FROM produktet ORDER BY RAND() LIMIT 8`,(err,results)=>{
+    // Get the category from the query string
+    const category = req.query.category;
+    let query = `SELECT * FROM produktet`;
+    // If a category was provided, add a WHERE clause to the query to filter by category
+    if (category) {
+        query += ` WHERE kategoria = '${category}'`;
+    }
+    query += ` ORDER BY RAND() LIMIT 8`;
+    db.query(query, (err, results) => {
         if(err){
             console.log(err)
         }
         res.render('home',{data:results, isLoggedIn})
     })
 })
+
 app.get('/search', (req, res) => {
     const searchQuery = req.query.q;
     db.query(`SELECT * FROM produktet WHERE emri_produktit LIKE '%${searchQuery}%'`, (err, results) => {
@@ -310,7 +319,7 @@ app.post('/admin',(req,res)=>{
 
 
 app.post('/produkt/register',(req,res)=>{
-    const {emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit} = req.body
+    const {emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria} = req.body
     const query = `SELECT * FROM produktet WHERE emri_produktit = ?`
     const data = [emri_produktit]
     db.query(query,data,(err,results,fields)=>{
@@ -321,8 +330,8 @@ app.post('/produkt/register',(req,res)=>{
             res.render('protected', { alert: 'Ky produkt ekziston' });
         }
         else{
-            const query = `INSERT INTO produktet (emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit) VALUES (?,?,?,?,?)`
-            const data = [emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit]
+            const query = `INSERT INTO produktet (emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria) VALUES (?,?,?,?,?,?)`
+            const data = [emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria]
             db.query(query,data,(err,results,fields)=>{
                 if(err){
                     console.log(err)
