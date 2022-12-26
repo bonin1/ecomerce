@@ -1,0 +1,59 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+nav{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 12vh;
+}
+.zbritje{
+    width: 100%;
+    height: 3vh;
+    background-color: #222222;
+    color: white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+.header{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    background-color: #F8F8F8;
+    box-shadow: 0 1px 4px 0 gray;
+}
+.pjesa1{
+    width: 50%;
+    display: flex;
+    flex-direction: row;
+}
+.logoja{
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 9vh;
+}
+.logo{
+    width: 70%;
+    height: 7vh;
+}
+.linket{
+    width: 50%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    height: 9vh;
+    align-items: center;
+}
+.a1{
+    text-decoration: none;
+    color: black;
+}
+.pjesa2{
+    width: 50%;
+}

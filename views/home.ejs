@@ -5,22 +5,36 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    
+    <link rel="stylesheet" href="/static/css/home.css">
 </head>
 <body>
     <nav>
         <!-- whatever -->
-        <a href="/">Home</a>
-        <a href="/register">Regjistrohu</a>
-        <a href="/login">Kyqu</a>
-        <form id="search-form">
-            <input type="text" id="search-input" autocomplete="off">
-            <button type="submit">Search</button>
-        </form>
+        <div class="zbritje">
+            <p>You can get 30% off for some products</p>
+        </div>
+        <div class="header">
+            <div class="pjesa1">
+                <div class="logoja">
+                    <img class="logo" src="" alt="">
+                </div>
+                <div class="linket">
+                    <a class="a1 , home" href="/">Home</a>
+                    <a class="a1 , reg" href="/register">Regjistrohu</a>
+                    <a class="a1 , kyqu" href="/login">Kyqu</a>
+                </div>
+            </div>
+            <div class="pjesa2">
+                <form id="search-form">
+                    <input type="text" id="search-input" autocomplete="off">
+                    <button type="submit">Search</button>
+                </form>
+                
+                    <div id="recommendations"></div>
+                    <a href="/cart" class="cart-count"></a>
+            </div>
+        </div>
         
-        <div id="recommendations"></div>
-
-        <a href="/cart" class="cart-count"></a>
     </nav>
     <form action="/">
         <label for="category">Filter by category:</label>
