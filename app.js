@@ -186,10 +186,7 @@ app.get('/login',(req,res)=>{
     res.render('login',{message:''})
 })
 
-app.get('/profile',(req,res)=>{
-    const data = JSON.parse(decodeURIComponent(req.query.data));
-    res.render('profile', { data });
-})
+
 app.get('/produktet',(req,res)=>{
     if (!req.session.isLogged) {
         return res.redirect('/admin');
@@ -225,10 +222,10 @@ app.post('/create',(req,res)=>{
             console.log(err)
         }
         if(results.length > 0){
-            return res.render('register',{message:'This email exists'})
+            return res.render('register',{message:'Ky email eksziston!'})
         }
         if(password != oldpassword){
-            return res.render('register',{message:'password do not match'})
+            return res.render('register',{message:'Fjalkalimi nuk perputhet!'})
         }
         let hashpassword = await bcrypt.hash(password,8)
         const iquery = `INSERT INTO login_information (emri,mbiemri,email,password) VALUES (?,?,?,?)`;
@@ -256,7 +253,7 @@ app.post('/login',(req,res)=>{
         }
         req.session.isLoggedIn = true;
         req.session.userId = results[0].id;
-        res.redirect(`/profile?data=${encodeURIComponent(JSON.stringify(results))}`);
+        res.redirect('/cart');
     })
 })
 
