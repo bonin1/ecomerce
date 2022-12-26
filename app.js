@@ -279,7 +279,7 @@ app.post('/changepassword',(req,res)=>{
         bcrypt.compare(oldpassword,dbPass,(err,results)=>{
             if(!results){
                 console.log('Your old password doesnt match')
-                res.redirect('/')
+                res.redirect('/login')
             }
             else{
                 bcrypt.hash(newpassword,8,(err,hash)=>{
@@ -290,7 +290,7 @@ app.post('/changepassword',(req,res)=>{
                         console.log(error);
                             } else {
                     console.log('Your password is changed');
-                        res.redirect('/');
+                        res.redirect('/login');
                             }
                     });
                 })

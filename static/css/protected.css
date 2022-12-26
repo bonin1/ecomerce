@@ -8,6 +8,27 @@ body{
     height: 100vh;
     background-color: lightgray;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
     align-items: flex-start;
+}
+
+.card-1, .card-2{
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    margin-top: 100px;
+}
+.form-product{
+    display: flex;
+    flex-direction: column;
+}
+.card-2{
+    display: flex;
+    justify-content: center !important;
+    align-items: center;
+    flex-direction: column;
+}
+#search-form{
+    display: flex;
+    justify-content: center;
 }
