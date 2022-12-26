@@ -5,22 +5,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="/static/css/login.css">
 </head>
 <body>
+    <div class="card">
+        <h2>Kyqu per te shtuar ne karroce!</h2>
+        <form action="/login" class="form-login" method="POST" >
+            <input type="email" placeholder="Emaili:" name="email" required id="">
+            <input type="password" placeholder="Fjalkalimi:" name="password" required>
+            <input type="submit" value="Login">
+            <div class="linqet">
+                <a href="/changepassword">Ndroje fjalkalimin</a>
+                <a href="/register">Regjistrohu</a>
+            </div>
+        </form>
+        <% if(message){ %>
+            <h4 id="message"><%= message %></h4>
+        <% } %>
+    </div>
 
-
-                <form action="/login" method="POST" >
-                    <div class="form-group">
-                        <label for="email">Email:</label>
-                        <input type="email" name="email" required id="">
-                        <label for="password">Password:</label>
-                        <input type="password" name="password" required>
-                        <input type="submit" value="Login">
-                    <a href="/changepassword">Change your password</a>
-                    </div>
-                </form>
-
-    <% if(message){ %>
-        <h4><%= message %></h4>
-    <% } %>
 </html>

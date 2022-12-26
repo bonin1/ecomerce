@@ -5,21 +5,26 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="/static/css/cart.css">
 </head>
 <body>
     <% if (items.length === 0) { %>
         <p>No products in your cart</p>
     <% } else { %>
+        <% let totalPrice = 0; %>
         <% items.forEach(item => { %>
             <div class="item">
                 <h2><%= item.emri_produktit %></h2>
-                <h4><%= item.pershkrimi_produktit %></h4>
                 <h2><%= item.cmimi_produktit %></h2>
-                <p>Quantity: <%= item.quantity %></p>
+                <p>Sasia: <%= item.quantity %></p>
                 <button class="remove-from-cart" data-id="<%= item.produkt_id %>">Remove</button>
             </div>
+            <% totalPrice += parseFloat(item.cmimi_produktit); %>
         <% }); %>
+        <p class="total">Total price: <%= totalPrice %></p>
     <% } %>
+
+
 <script>
     const removeFromCartButtons = document.querySelectorAll('.remove-from-cart');
 

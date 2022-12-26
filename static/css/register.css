@@ -1,0 +1,51 @@
+*{
+    margin:0;
+    border: 0;
+    box-sizing: border-box;
+}
+body{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #C6D6EE;
+}
+.form-register{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+.form-register > input{
+    margin: 5px 0;
+    border-bottom: 2px solid black;
+    padding: 10px;
+}
+.form-register > input:focus{
+    outline: none;
+    border-bottom: 2px solid gray;
+}
+.form-register > input[type=submit]{
+    cursor: pointer;
+    background-color: #64BBE4;
+    font-weight: 500;
+    color: black;
+    border: none;
+}
+.form-register > input[type=submit]:hover{
+    background-color: #2A5592;
+    color: white;
+}
+.card{
+    width: 18%;
+    text-align: center;
+    padding: 30px;
+    background-color: white;
+    box-sizing: content-box;
+    border-radius: 10px;
+}
+#message{
+    text-transform: capitalize;
+    font-family: 'Josefin Sans Thin';
+    color: #8B1001;
+}
