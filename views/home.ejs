@@ -19,39 +19,39 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
-    <nav>
-        
-        
-        <div class="zbritje">
-            <p class="zbritje-p">You can get 30% off for some products</p>
-        </div>
-        <div class="header">
-            <div class="pjesa1">
-                <div class="logoja">
-                    <img class="logo" src="" alt="">
-                </div>
-            </div>
-            <div class="pjesa2">
-                <div class="rcmn">
-                    <form id="search-form">
-                        <input type="text" id="search-input" autocomplete="off">
-                        <button class="search-submit" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
-                    </form>
-                    <div id="recommendations"></div>
-                </div>
-            </div>
-            <div class="pjesa3">
-                <div class="linket">
-                    <a class="a1 , home"  href="/">Home</a>
-                    <a class="a1 , reg" href="/register">Regjistrohu</a>
-                    <a class="a1 , kyqu" href="/login">Kyqu</a>
-                </div>
-                <div class="carda">
-                    <i class="fa-sharp fa-solid fa-cart-shopping"></i><sup><a href="/cart" class="cart-count"></a></sup>
-                </div>
+    <nav class="imagesa navbar navbar-expand-lg navbar-light">
+        <div class="pjesa1">
+            <div class="logoja">
+                <img class="logo" src="https://media1.thehungryjpeg.com/thumbs2/ori_3808943_y6vlzrhky6xhrj1t8mam7iun075y6vqd9d7sxuri_monogram-st-logo-design.jpg" alt="">
             </div>
         </div>
-        
+        <div class="pjesa2">
+            <div class="rcmn">
+                <form id="search-form">
+                    <input type="text" id="search-input" autocomplete="off">
+                    <button class="search-submit" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                </form>
+                <div id="recommendations"></div>
+            </div>
+        </div>
+<div class="button1">
+    <button 
+    style="background-color: white; position: relative; right: 10px; "
+    class="navbar-toggler" 
+    type="button" 
+    data-toggle="collapse"
+    data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent" 
+    aria-expanded="false"
+    aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+        <div class="collapse navbar-collapse navbar-nav w-33 " id="navbarSupportedContent">
+            <a  id="a1" class="nav-link" href="/">Home</a>
+            <a  id="a1" class="nav-link" href="/register">Register</a>
+            <a  id="a1" class="nav-link" href="/login">Login</a>
+        </div>
     </nav>
 
 
@@ -141,39 +141,58 @@
             <p>Out of stock</p>
         <% } %>
     <% }) %>
-    <footer>
-        <div class="account">
-            <h2>My Account</h2>
-            <a href="">My orders</a>
-            <a href="">My address</a>
-            <a href="">My User</a>
-        </div>
-        <div class="information">
-            <h2>Information</h2>
-            <a href="">Specials</a>
-            <a href="">New Products</a>
-            <a href="">About us</a>
-            <a href="">Terms and conditions of use</a>
-            <a href="">Contact Us</a>
-        </div>
-        <div class="categories">
-            <h2>Categories</h2>
-            <a href="">Studio Devices </a>
-            <a href="">Gaming stuff</a>
-            <a href="">Phones & Headphones</a>
-            <a href=""> Whatches & Cameras</a>
-        </div>
-        <div class="find">
-            <div class="find-us">
-                <h2>Find us</h2>
-                <a href=""><i class="fa-brands fa-facebook"></i></a>
-                <a href=""><i class="fa-brands fa-instagram"></i</a>
-                <a href=""><i class="fa-brands fa-twitter"></i></a>
-            </div>
-            <div class="location">
-                <h2>Location</h2>
-
-            </div>
+    <footer class="text-center text-lg-start text-white" style="background-color: #64BBE4;  top: 50px;">
+        <div class="container p-4 pb-0">
+            <section>
+                <div class="row">
+                    <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
+                        <h6 class="text-uppercase mb-4 font-weight-bold">StrikeTech</h6>
+                            <p>
+                                Our companie is the best at selling every brand of technology thinks.
+                                Come and get everythink you need to us.
+                            </p>
+                    </div>
+                    <hr class="w-100 clearfix d-md-none" />
+                    <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
+                        <h6 class=" mb-4 font-weight-bold">PRODUCTS</h6>
+                        <p><a id="f1"> Studio Devices</a></p>
+                        <p><a id="f1">Gaming stuff</a></p>
+                        <p><a id="f1">Phones & Headphones</a></p>
+                        <p><a id="f1">Whatches & Cameras</a></p>
+                    </div>
+                <hr class="w-100 clearfix d-md-none" />
+                    <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mt-3">
+                        <h6 class="mb-4 font-weight-bold">ACCOUNT</h6>
+                        <p><a id="f1">My orders</a></p>
+                        <p><a id="f1">My address</a></p>
+                        <p><a id="f1">My User</a></p>
+                        <!-- <p><a id="f1">test</a></p> -->
+                    </div>
+                <hr class="w-100 clearfix d-md-none" />
+                    <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mt-3">
+                        <h6 class="mb-4 font-weight-bold">CONTACT</h6>
+                        <p><i class="fas fa-envelope mr-3"></i>Striketech.KS@gmail.com</p>
+                        <p><i class="fas fa-home mr-3"></i> Kosovë, Pejë, Filan Fisteku 7</p>
+                        <p><i class="fas fa-phone mr-3"></i>+383 49 115 898</p>
+                        <p><i class="fas fa-print mr-3"></i>+383 49 116 898</p>
+                    </div>
+                </div>
+            </section>
+        <hr class="my-3">
+            <section class="p-3 pt-0">
+                <div class="row d-flex align-items-center">
+                    <div class="col-md-7 col-lg-8 text-center text-md-start">
+                        <div class="p-3">
+                            © 2021 Copyright:<p class="copy" style="color:  rgb(13, 0, 255)" href="/"> StrikeTech</p>
+                        </div>
+                    </div>
+                    <div class="col-md-5 col-lg-4 ml-lg-0 text-center text-md-end">
+                        <a class="btn btn-outline-primary btn-floating m-1" class="text-white" role="button"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-outline-primary btn-floating m-1" class="text-white" role="button"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-outline-danger btn-floating m-1" class="text-white" role="button"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </section>
         </div>
     </footer>
     <script>
