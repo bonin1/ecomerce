@@ -62,16 +62,26 @@ app.get('/search', (req, res) => {
     });
 });
 app.get('/produkt/:id',(req,res)=>{
-    const id = req.params.id
-    const query = (`SELECT * FROM produktet WHERE id = ?`)
-    db.query(query,id,(err,results,fields)=>{
+    const isLoggedIn = req.session.isLoggedIn;
+    const id = req.params.id;
+    const query = `SELECT * FROM produktet WHERE id = ?`;
+    db.query(query, id, (err, result) => {
         if(err){
             console.log(err)
-        }else{
-            res.render('produkt',{data:results})
+        }
+        else {
+            let randomQuery = `SELECT * FROM produktet`;
+            randomQuery += ` ORDER BY RAND() LIMIT 4`;
+            db.query(randomQuery, (err, randomResults) => {
+                if(err){
+                    console.log(err)
+                }
+                res.render('produkt', {item:result, items:randomResults, isLoggedIn});
+            })
         }
     })
 })
+
 
 
 
