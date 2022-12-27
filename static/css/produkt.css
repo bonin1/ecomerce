@@ -3,6 +3,8 @@
     padding:0 ;
     box-sizing: border-box;
 }
+
+
 /* navbari */
 nav{
     width: 100%;
@@ -113,7 +115,7 @@ nav{
 
 .wrapper{
     width: 100%;
-    height: 100vh;
+    height: 100vh !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -153,6 +155,7 @@ form{
     height: 500px;
     position: relative;
     border: 1px solid black;
+    background-color: white;
 }
 .sasia{
     color: black;
@@ -177,6 +180,7 @@ form{
     border: 1px solid black;
     color: #eae3d2;
     flex-direction: column;
+    background-color: white;
 }
 .description{
     font-size: 18px;
