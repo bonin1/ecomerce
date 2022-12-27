@@ -20,23 +20,25 @@
                 <div class="logoja">
                     <img class="logo" src="" alt="">
                 </div>
+            </div>
+            <div class="pjesa2">
+                <div class="rcmn">
+                    <form id="search-form">
+                        <input type="text" id="search-input" autocomplete="off">
+                        <button class="search-submit" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </form>
+                    <div id="recommendations"></div>
+                </div>
+            </div>
+            <div class="pjesa3">
                 <div class="linket">
                     <a class="a1 , home" href="/">Home</a>
                     <a class="a1 , reg" href="/register">Regjistrohu</a>
                     <a class="a1 , kyqu" href="/login">Kyqu</a>
                 </div>
-            </div>
-            <div class="pjesa2">
-                <form id="search-form">
-                    <input type="text" id="search-input" autocomplete="off">
-                    <button type="submit">Search</button>
-                </form>
-                
-                    <div id="recommendations"></div>
-                    <div class="carda">
-                        <i class="fa-sharp fa-solid fa-cart-shopping"></i><sup><a href="/cart" class="cart-count"></a></sup>
-                    </div>
-                    
+                <div class="carda">
+                    <i class="fa-sharp fa-solid fa-cart-shopping"></i><sup><a href="/cart" class="cart-count"></a></sup>
+                </div>
             </div>
         </div>
         
@@ -99,6 +101,33 @@
         
     </div> -->
 
+    <!-- <form action="/">
+        <label for="category">Filter by category:</label>
+        <select name="category" id="category">
+            <option value="">All categories</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Fashion">Fashion</option>
+            <option value="Home">Home</option>
+            <option value="Other">Other</option>
+        </select>
+        <button type="submit">Filter</button>
+    </form> -->
+    
+
+
+    <% data.forEach(row=>{ %>
+        <h2>Emri: <%= row.emri_produktit %></h2>
+        <h3>Pershkrimi :<%= row.pershkrimi_produktit %></h3>
+        <h3>Cmimi: <%= row.cmimi_produktit %></h3>
+        <h2>kategoria: <%= row.kategoria %> </h2>
+        <h2>vendi origjines: <%= row.origjina_produktit %></h2>
+        <% if (row.sasia_produktit > 0) { %>
+            <h2>Sasia: <%= row.sasia_produktit %></h2>
+            <button class="add-to-cart" data-id="<%= row.id %>" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
+        <% } else { %>
+            <p>Out of stock</p>
+        <% } %>
+    <% }) %>
     <footer>
         <div class="account">
             <h2>My Account</h2>
@@ -134,34 +163,6 @@
             </div>
         </div>
     </footer>
-    <!-- <form action="/">
-        <label for="category">Filter by category:</label>
-        <select name="category" id="category">
-            <option value="">All categories</option>
-            <option value="Electronics">Electronics</option>
-            <option value="Fashion">Fashion</option>
-            <option value="Home">Home</option>
-            <option value="Other">Other</option>
-        </select>
-        <button type="submit">Filter</button>
-    </form> -->
-    
-
-
-    <% data.forEach(row=>{ %>
-        <h2>Emri: <%= row.emri_produktit %></h2>
-        <h3>Pershkrimi :<%= row.pershkrimi_produktit %></h3>
-        <h3>Cmimi: <%= row.cmimi_produktit %></h3>
-        <h2>kategoria: <%= row.kategoria %> </h2>
-        <h2>vendi origjines: <%= row.origjina_produktit %></h2>
-        <% if (row.sasia_produktit > 0) { %>
-            <h2>Sasia: <%= row.sasia_produktit %></h2>
-            <button class="add-to-cart" data-id="<%= row.id %>" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
-        <% } else { %>
-            <p>Out of stock</p>
-        <% } %>
-    <% }) %>
-
     <script>
         const searchForm = document.getElementById('search-form')
         const searchInput = document.getElementById('search-input')
@@ -182,6 +183,7 @@
                             const result = results[i];
                             if (!result) break; 
                             const li = document.createElement('li')
+                            li.className = 'rcmn-li'
                             li.textContent = result.emri_produktit
                             li.setAttribute('data-id', result.id)
                             recommendations.appendChild(li)
