@@ -64,6 +64,7 @@ db.query(
         sasia_produktit INT(255) NOT NULL,
         id BIGINT NOT NULL AUTO_INCREMENT,
         kategoria TEXT DEFAULT NULL,
+        foto_produktit LONGTEXT NOT NULL,
         PRIMARY KEY (id)
     );`,
     (error, results) => {

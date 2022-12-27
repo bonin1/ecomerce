@@ -7,7 +7,10 @@ nav{
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 13vh;
+}
+.collapse{
+    display: flex;
+    justify-content: flex-end;
 }
 .zbritje{
     width: 100%;
@@ -15,10 +18,10 @@ nav{
     background-color: #222222;
     color: white;
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: center;
 }
+
 .header{
     width: 100%;
     display: flex;
@@ -98,7 +101,7 @@ nav{
     font-size: 20px;
     cursor: pointer;
     background-color: #64BBE4;
-    padding: 2px ;
+    padding: 3px 10px ;
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
     border-top-right-radius: 5px;
@@ -111,7 +114,7 @@ nav{
 }
 #recommendations{
     position: absolute;
-    top: 89px;
+    top: 95px;
     list-style-type: none;
     z-index: 100;
     background-color: #64BBE4;
@@ -129,6 +132,7 @@ nav{
     background-color: #2A5592;
     color: white;
 }
+
 /* i{
     text-size-adjust: 30px;
 } */

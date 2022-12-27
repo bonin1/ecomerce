@@ -19,6 +19,14 @@
                 <input type="text" name="cmimi_produktit" placeholder="cmimi produktit" value="<%= row.cmimi_produktit %>">
                 <input type="text" name="origjina_produktit" placeholder="origjina produktit" value="<%= row.origjina_produktit %>">
                 <input type="number" name="sasia_produktit" placeholder="sasia" value="<%= row.sasia_produktit %>" id="">
+                <input type="text" name="<%= foto_produktit %>" id="">
+                <select name="kategoria" id="">
+                    <option value="accessories">accessories</option>
+                    <option value="pc">pc</option>
+                    <option value="whatever">whatever</option>
+                    <option value="something">something</option>
+                </select>
+                <input type="image" src="" alt="">
                 <input type="submit" value="Submit">
             </form>
             <form action="/delete/<%=row.id %>" method="POST">

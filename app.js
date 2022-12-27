@@ -5,6 +5,7 @@ const db = require('./databaze')
 const bcrypt = require('bcryptjs');
 const { render } = require('ejs');
 const cookieParser = require('cookie-parser');
+const multer = require('multer');
 
 
 app.use(cookieParser());
@@ -314,7 +315,7 @@ app.post('/admin',(req,res)=>{
 
 
 app.post('/produkt/register',(req,res)=>{
-    const {emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria} = req.body
+    const {emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria,foto_produktit} = req.body
     const query = `SELECT * FROM produktet WHERE emri_produktit = ?`
     const data = [emri_produktit]
     db.query(query,data,(err,results,fields)=>{
@@ -325,8 +326,8 @@ app.post('/produkt/register',(req,res)=>{
             res.render('protected', { alert: 'Ky produkt ekziston' });
         }
         else{
-            const query = `INSERT INTO produktet (emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria) VALUES (?,?,?,?,?,?)`
-            const data = [emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria]
+            const query = `INSERT INTO produktet (emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria,foto_produktit) VALUES (?,?,?,?,?,?,?)`
+            const data = [emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria,foto_produktit]
             db.query(query,data,(err,results,fields)=>{
                 if(err){
                     console.log(err)
@@ -336,6 +337,9 @@ app.post('/produkt/register',(req,res)=>{
         }
     })
 })
+
+
+
 app.post('/search', (req, res) => {
     var query = req.body.query;
     if (query === '') {
@@ -381,9 +385,9 @@ app.post('/edit/:id',(req,res)=>{
         return res.redirect('/admin')
     }
     const {id} = req.params
-    const{emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit} = req.body
-    const query = `UPDATE produktet SET emri_produktit = ?, pershkrimi_produktit = ?, cmimi_produktit = ?, origjina_produktit = ?, sasia_produktit = ? WHERE id = ?`
-    const data = [emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,id]
+    const{emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria,foto_produktit} = req.body
+    const query = `UPDATE produktet SET emri_produktit = ?, pershkrimi_produktit = ?, cmimi_produktit = ?, origjina_produktit = ?, sasia_produktit = ?,kategoria = ?, foto_produktit = ?  WHERE id = ?`
+    const data = [emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,id,kategoria,foto_produktit]
     db.query(query,data,(err,results,fields)=>{
         res.redirect(`/produktet?alert=Produkti%20u%20perditsua`)
     })
