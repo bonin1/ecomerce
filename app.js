@@ -41,7 +41,7 @@ app.get('/',(req,res)=>{
     if (category) {
         query += ` WHERE kategoria = '${category}'`;
     }
-    query += ` ORDER BY RAND() LIMIT 8`;
+    query += ` ORDER BY RAND() LIMIT 12`;
     db.query(query, (err, results) => {
         if(err){
             console.log(err)
@@ -387,11 +387,12 @@ app.post('/edit/:id',(req,res)=>{
     const {id} = req.params
     const{emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria,foto_produktit} = req.body
     const query = `UPDATE produktet SET emri_produktit = ?, pershkrimi_produktit = ?, cmimi_produktit = ?, origjina_produktit = ?, sasia_produktit = ?,kategoria = ?, foto_produktit = ?  WHERE id = ?`
-    const data = [emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,id,kategoria,foto_produktit]
+    const data = [emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria,foto_produktit,id]
     db.query(query,data,(err,results,fields)=>{
         res.redirect(`/produktet?alert=Produkti%20u%20perditsua`)
     })
 })
+
 app.post('/delete/:id',(req,res)=>{
     const {id} = req.params
     const query = `DELETE from produktet WHERE id = ?`

@@ -1,0 +1,230 @@
+*{
+    margin: 0px;
+    padding:0 ;
+    box-sizing: border-box;
+}
+/* navbari */
+nav{
+    width: 100%;
+}
+
+.nav-item{
+    display: flex;
+    flex-direction: row;
+}
+.collapse{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.pjesa1{
+    width: 33%;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+}
+.pjesa2{
+    width: 33%;
+    height: 10vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.collapse{
+    width: 33% !important;
+}
+.logo{
+    width: 20%;
+}
+#search-form{
+    box-sizing: content-box;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 42px;
+}
+#search-input{
+    padding: 5px 0px;
+    border: 1px solid gray;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    text-indent: 5px;
+}
+#search-input:focus{
+    outline: none;
+}
+.search-submit{
+    border: none;
+    background-color: transparent;
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #64BBE4;
+    padding: 3px 10px ;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.rcmn{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.imagesa{
+    background-color: #2A5592;
+}
+#recommendations{
+    position: absolute;
+    top: 90px;
+    list-style-type: none;
+    z-index: 100;
+    background-color: #64BBE4;
+    width: 10.28%;
+    border-radius: 2px;
+}
+.rcmn-li{
+    width: 83%;
+    margin: 10px 0;
+    padding: 5px 0;
+    cursor: pointer;
+}
+.rcmn-li:hover{
+    width: 100%;
+    background-color: #2A5592;
+    color: white;
+}
+
+/* navbari */
+
+.wrapper{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.maincontainer{
+    height: 40rem;
+    width: 100%;
+    display: flex;
+    justify-content: center !important;
+    align-items: center;
+}
+.title{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: wheat;
+    font-size: 65px;
+    text-transform: capitalize;
+    color: black;
+}
+
+form{
+    display: flex;
+    max-width: 1000px;
+}
+.card{
+    width: 1000px;
+    height: auto;
+    min-width: 350px;
+    min-height: 500px;
+    display: flex !important;
+    justify-content: center !important;
+    position: relative;
+    align-items: center;
+}
+.image{
+    width: 40%;
+    height: 500px;
+    position: relative;
+    border: 1px solid black;
+}
+.sasia{
+    color: black;
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: capitalize;
+}
+.image img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    user-select: none;
+}
+.titull{
+    width: 60%;
+    min-height: 500px;
+    height: auto;
+    padding: 40px;
+    display: flex;
+    justify-content: flex-start;
+    border: 1px solid black;
+    color: #eae3d2;
+    flex-direction: column;
+}
+.description{
+    font-size: 18px;
+    width: 100%;
+    line-height: 30px;
+    margin: 50px 0;
+    color: black;
+}
+.price{
+    color: #015D20;
+}
+.content{
+    display: flex;
+    flex-direction: column;
+}
+.cmimi{
+    height: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+.add-to-cart{
+    background-color: #64BBE4;
+    text-decoration: none;
+    padding: 5px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 18px;
+    color: #222222;
+}
+.add-to-cart:hover{
+    color: #64BBE4;
+    transition: .1s;
+    background-color: #2A5592;
+}
+@media screen and (max-width:1100px) {
+    form{
+        display: flex;
+        flex-direction: column;
+    }
+    .card{
+        flex-direction: column;
+        width: 90%;
+        margin: 5vh 0;
+    }
+    .image{
+        width: 100%;
+        height: 300px;
+    }
+    .titull{
+        width: 100%;
+        min-height: auto;
+    }
+    .title{
+        font-size: 50px;
+    }
+    .description{
+        font-size: 15px;
+    }
+}
+
