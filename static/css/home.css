@@ -44,12 +44,13 @@ nav{
     width: 33% !important;
 }
 .logo{
-    width: 20%;
+    width: 7rem;
 }
 #search-form{
     box-sizing: content-box;
     padding: 20px;
     display: flex;
+    flex-direction: row !important;
     align-items: center;
     position: sticky;
     top: 42px;
@@ -71,8 +72,8 @@ nav{
     background-color: transparent;
     font-size: 20px;
     cursor: pointer;
-    background-color: #64BBE4;
-    padding: 3px 10px ;
+    background-color: #2A5592;
+    padding: 2.5px 10px ;
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
     border-top-right-radius: 5px;
@@ -84,15 +85,15 @@ nav{
     align-items: center;
 }
 .imagesa{
-    background-color: #2A5592;
+    background-color: #64BBE4;
 }
 #recommendations{
     position: absolute;
     top: 90px;
     list-style-type: none;
     z-index: 100;
-    background-color: #64BBE4;
-    width: 10.28%;
+    background-color: #8bb6f8;
+    width: 15.28%;
     border-radius: 2px;
 }
 .rcmn-li{
@@ -106,7 +107,6 @@ nav{
     background-color: #2A5592;
     color: white;
 }
-
 /* navbari */
 .copy{
     text-decoration: none;
@@ -116,63 +116,7 @@ nav{
     display: flex;
     flex-direction: row;
 }
-#search-form{
-    box-sizing: content-box;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    position: sticky;
-    top: 42px;
-}
-#search-input{
-    padding: 5px 0px;
-    border: 1px solid gray;
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-    text-indent: 5px;
-}
-#search-input:focus{
-    outline: none;
-}
-.search-submit{
-    border: none;
-    background-color: transparent;
-    font-size: 20px;
-    cursor: pointer;
-    background-color: #64BBE4;
-    padding: 3px 10px ;
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 0px;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-}
-.rcmn{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-#recommendations{
-    position: absolute;
-    top: 95px;
-    list-style-type: none;
-    z-index: 100;
-    background-color: #64BBE4;
-    width: 10.28%;
-    border-radius: 2px;
-}
-.rcmn-li{
-    width: 83%;
-    margin: 10px 0;
-    padding: 5px 0;
-    cursor: pointer;
-}
-.rcmn-li:hover{
-    width: 100%;
-    background-color: #2A5592;
-    color: white;
-}
+
 
 /* i{
     text-size-adjust: 30px;

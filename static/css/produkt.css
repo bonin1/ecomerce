@@ -74,8 +74,8 @@ nav{
     background-color: transparent;
     font-size: 20px;
     cursor: pointer;
-    background-color: #64BBE4;
-    padding: 3px 10px ;
+    background-color: #2A5592;
+    padding: 2.5px 10px ;
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
     border-top-right-radius: 5px;
@@ -87,15 +87,15 @@ nav{
     align-items: center;
 }
 .imagesa{
-    background-color: #2A5592;
+    background-color: #64BBE4;
 }
 #recommendations{
     position: absolute;
     top: 90px;
     list-style-type: none;
     z-index: 100;
-    background-color: #64BBE4;
-    width: 10.28%;
+    background-color: #8bb6f8;
+    width: 15.28%;
     border-radius: 2px;
 }
 .rcmn-li{
