@@ -41,7 +41,7 @@ app.get('/',(req,res)=>{
     if (category) {
         query += ` WHERE kategoria = '${category}'`;
     }
-    query += ` ORDER BY RAND() LIMIT 12`;
+    query += ` ORDER BY RAND() LIMIT 9`;
     db.query(query, (err, results) => {
         if(err){
             console.log(err)

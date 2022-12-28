@@ -53,63 +53,55 @@
             <a  id="a1" class="nav-link" href="/login">Login</a>
         </div>
     </nav>
-
+    <div class="slide-reklama">
+        <div class="reklama">
+            <img class="produkti-reklam" src="" alt="">
+            <button class="shop">Shop now</button>
+        </div>
+    </div>
 
 
 
 
     <div class="main">
-        <div class="slide-reklama">
-            <div class="reklama">
-                <img class="produkti-reklam" src="" alt="">
-                <button class="shop">Shop now</button>
+        <div class="first-part">
+            <div class="categories">
+                <h1>categories</h1>
+                <form action="/">
+                    <select name="category"  id="">
+                        <option value="">All categories</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="whatever">whatever</option>
+                        <option value="pc">pc</option>
+                        <option value="laptop">pc</option>
+                    </select>
+                    <input type="submit" class="filter-submit" value="Filter">
+                </form>
+            </div>
+            <div class="special">
+                <h1>Special</h1>
             </div>
         </div>
-        <div class="produktet">
-            <div class="Tabela">
-                <div class="Categori-tab">
-                    <div class="categorit">
-                        <h1 class="head-categori">Categories</h1> 
-                        <a class="filter" href="">lol</a>
-                        <a class="filter" href="">lol</a>
-                        <a class="filter" href="">lolo</a>
+        <div class="second-part">
+            <div class="card-container">
+                <% data.forEach(row=>{ %>
+                    <div class="card-body">
+                        <img class="img-card" src="<%= row.foto_produktit %>" alt="">
+                        <h2 class="title-card"><%= row.emri_produktit %></h2>
+                        <h2 class="cmimi-card"><%= row.cmimi_produktit%>€</h2>
+                        <% if (row.sasia_produktit > 0) { %>
+                            <h2 class="sasia-card">Sasia: <%= row.sasia_produktit %></h2>
+                            <div class="add-to-card12">
+                                <button class="add-to-cart" data-id="<%= row.id %>" class="add-to-card" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
+                            </div>
+                        <% } else { %>
+                            <p>Out of stock</p>
+                        <% } %>
                     </div>
-                    <div class="specials">
-                        <a class="special" href="">Specials</a>
-                    </div>
-                </div>
+                <% }) %>
             </div>
         </div>
-        
     </div>
-
-    <!-- <form action="/">
-        <label for="category">Filter by category:</label>
-        <select name="category" id="category">
-            <option value="">All categories</option>
-            <option value="Electronics">Electronics</option>
-            <option value="Fashion">Fashion</option>
-            <option value="Home">Home</option>
-            <option value="Other">Other</option>
-        </select>
-        <button type="submit">Filter</button>
-    </form> -->
-    
-
-
-    <% data.forEach(row=>{ %>
-        <h2>Emri: <%= row.emri_produktit %></h2>
-        <h3>Cmimi: <%= row.cmimi_produktit %></h3>
-        <h2>kategoria: <%= row.kategoria %> </h2>
-        <h2>vendi origjines: <%= row.origjina_produktit %></h2>
-        <img src="<%= row.foto_produktit %>" alt="">
-        <% if (row.sasia_produktit > 0) { %>
-            <h2>Sasia: <%= row.sasia_produktit %></h2>
-            <button class="add-to-cart" data-id="<%= row.id %>" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
-        <% } else { %>
-            <p>Out of stock</p>
-        <% } %>
-    <% }) %>
     <footer class="text-center text-lg-start text-white" style="background-color: #64BBE4;  top: 50px;">
         <div class="container p-4 pb-0">
             <section>
