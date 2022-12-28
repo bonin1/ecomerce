@@ -7,15 +7,7 @@
     width: 100%;
     height: 100vh;
 } */
-.item{
-    border: 1px solid black;
-    width: 10rem;
-    height: 10rem;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    flex-direction: column;
-}
+
 
 /* navbari */
 
@@ -130,7 +122,136 @@ nav{
     display: flex;
     flex-direction: row;
 }
-
+.main{
+    width: 100%;
+    min-height: 600px;
+    display: flex;
+    justify-content: center;
+}
+.container1{
+    width: 1200px;
+    display: flex;
+    flex-direction: row !important;
+}
+.first-part{
+    width: 70%;
+    background-color: #C6D6EE;
+}
+.second-part{
+    background-color: #4682B4;
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.cart-card{
+    width: 100%;
+    height: 100px;
+}
+.item{
+    width: 100%;
+    height: 100px;
+    display: flex;
+    border-bottom: 1px solid #2A5592;
+    align-items: center;
+}
+.img{
+    width: 100px;
+    height: 100px;
+}
+.img-cart{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+.title-cart{
+    font-size: 30px;
+    text-transform: capitalize;
+    color: #222222;
+}
+.title{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+}
+.title-inside{
+    border-bottom: 1px solid black;
+}
+.container2{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0px 10px;
+}
+.contenti{
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.remove-from-cart{
+    background-color: #64BBE4;
+    text-decoration: none;
+    padding: 0px 5px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 18px;
+    color: #222222;
+}
+.remove-from-cart:hover{
+    color: #64BBE4;
+    transition: .1s;
+    background-color: #2A5592;
+}
+.cmimi-cart{
+    font-size: 20px;
+}
+.skaprod{
+    width: 100%;
+    min-height: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+.total-card{
+    width: 70%;
+    height: 80%;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+.total-text{
+    font-size: 30px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+.inside-card{
+    height: 80%;
+}
+.button-check{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+#checkout{
+    font-size: 20px;
+    padding: 5px;
+    border-radius: 10px;
+    text-transform: capitalize;
+    text-decoration: none;
+    color: black;
+    background-color: lightgreen;
+}
+#checkout:hover{
+    background-color: rgb(64, 174, 64);
+}
 @media screen and (max-width:600px) {
     .button1{
         width: 33%;

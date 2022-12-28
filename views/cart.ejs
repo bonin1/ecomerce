@@ -54,21 +54,53 @@
         </div>
     </nav>
 
-    <% if (items.length === 0) { %>
-        <p>No products in your cart</p>
-    <% } else { %>
-        <% let totalPrice = 0; %>
-        <% items.forEach(item => { %>
-            <div class="item">
-                <h2><%= item.emri_produktit %></h2>
-                <h2><%= item.cmimi_produktit %></h2>
-                <p>Sasia: <%= item.quantity %></p>
-                <button class="remove-from-cart" data-id="<%= item.produkt_id %>">Remove</button>
+    <div class="main">
+        <div class="container1">
+            <div class="first-part">
+                <div class="cart-card">
+                    <% if (items.length === 0) { %>
+                        <p class="skaprod">No products in your cart</p>
+                    <% } else { %>
+                        <% let totalPrice = 0; %>
+                        <% items.forEach(item => { %>
+                            <div class="item">
+                                <div class="img">
+                                    <img class="img-cart" src="<%= item.foto_produktit %>" alt="">
+                                </div>
+                                <div class="container2">
+                                    <div class="title">
+                                        <div class="title-inside">
+                                        <h2 class="title-cart"><%= item.emri_produktit %></h2>
+                                        </div>
+                                    </div>
+                                    <div class="contenti">
+                                        <p class="sasia-cart">Sasia: <%= item.quantity %></p>
+                                        <h2 class="cmimi-cart">Cmimi: <%= item.cmimi_produktit %>€</h2>
+                                        <button class="remove-from-cart" data-id="<%= item.produkt_id %>">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <% totalPrice += parseFloat(item.cmimi_produktit); %>
+                        <% }); %>
+                    <% } %>
+                </div>
             </div>
-            <% totalPrice += parseFloat(item.cmimi_produktit); %>
-        <% }); %>
-        <p class="total">Total price: <%= totalPrice %></p>
-    <% } %>
+            <div class="second-part">
+                <div class="total-card">
+                    <div class="inside-card">
+                        <% let totalPrice = 0; %>
+                    <% items.forEach(item => { %>
+                        <% totalPrice += parseFloat(item.cmimi_produktit); %>
+                    <% }); %>
+                    <h1 class="total-text">Your total price is: <span class="span-txt"><%= totalPrice %>€</span></h1>
+                    </div>
+                    <div class="button-check">
+                        <a id="checkout" href="">Check-out</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <footer class="text-center text-lg-start text-white" style="background-color: #64BBE4;  top: 50px;">
         <div class="container p-4 pb-0">

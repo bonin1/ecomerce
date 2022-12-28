@@ -12,7 +12,9 @@ body{
 nav{
     width: 100%;
 }
-
+.cart-color{
+    color: white;
+}
 .nav-item{
     display: flex;
     flex-direction: row;

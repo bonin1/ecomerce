@@ -98,6 +98,9 @@ nav{
     width: 15.28%;
     border-radius: 2px;
 }
+.cart-color{
+    color: white;
+}
 .rcmn-li{
     width: 83%;
     margin: 10px 0;

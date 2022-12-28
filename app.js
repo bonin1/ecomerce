@@ -90,7 +90,7 @@ app.post('/cart', (req, res) => {
         return res.redirect('/login');
     }
 
-
+    let totalPrice = 0;
     const userId = req.session.userId;
     const itemId = req.body.id;
     const quantity = req.body.quantity;
@@ -104,7 +104,7 @@ app.post('/cart', (req, res) => {
                 res.sendStatus(500);
                 return;
             }
-            res.render('cart');
+            res.render('cart',{totalPrice: totalPrice});
         }
     );
 });

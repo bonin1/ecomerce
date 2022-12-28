@@ -52,6 +52,9 @@
             <a  id="a1" class="nav-link" href="/">Home</a>
             <a  id="a1" class="nav-link" href="/register">Register</a>
             <a  id="a1" class="nav-link" href="/login">Login</a>
+            <div class="carda">
+                <a href="/cart"><a class="cart-color" href="/cart"><i   class="fa-sharp fa-solid fa-cart-shopping"></i></a></i><sup><a href="/cart" style="color: white; text-decoration: none;" class="cart-count"></a></sup></a>
+            </div>
         </div>
     </nav>
 <!-- navbari -->
@@ -76,7 +79,11 @@
                                 <h3 class="sasia">Origjina: <%= row.origjina_produktit %></h3>
                                 <div class="cmimi">
                                     <h2 class="price"><%= row.cmimi_produktit %>€</h2>
-                                    <a href="/cart" class="add-to-cart">Add to cart</a>
+                                    <% if (row.sasia_produktit > 0) { %>
+                                    <button class="add-to-cart" data-id="<%= row.id %>" class="add-to-card" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
+                                    <% } else { %>
+                                        <p>Out of stock</p>
+                                    <% } %>
                                 </div>
                         </div>
                     </form>
