@@ -78,8 +78,8 @@ db.query(
 db.query(
     `CREATE TABLE IF NOT EXISTS cart (
         id INT NOT NULL AUTO_INCREMENT,
-        product_id BIGINT NOT NULL,
-        FOREIGN KEY (product_id) REFERENCES produktet(id),
+        produkt_id BIGINT NOT NULL,
+        FOREIGN KEY (produkt_id) REFERENCES produktet(id),
         quantity INT NOT NULL DEFAULT 1,
         user_id INT DEFAULT NULL,
         PRIMARY KEY (id)

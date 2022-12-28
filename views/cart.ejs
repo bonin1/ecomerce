@@ -6,8 +6,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="/static/css/cart.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@500&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-webinar-optimizing-for-success-google-business-webinar-13.png">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
+    <nav class="imagesa navbar navbar-expand-lg navbar-light">
+        <div class="pjesa1">
+            <div class="logoja">
+                <img class="logo" src="/static/image/STRIKETECH-1.png" alt="">
+            </div>
+        </div>
+        <div class="pjesa2">
+            <div class="rcmn">
+                <form id="search-form">
+                    <input type="text" id="search-input" autocomplete="off">
+                    <button class="search-submit" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                </form>
+                <div id="recommendations"></div>
+            </div>
+        </div>
+        <div class="button1">
+            <button 
+            style="background-color: white; position: relative; right: 10px; "
+            class="navbar-toggler" 
+            type="button" 
+            data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" 
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse navbar-nav w-33 " id="navbarSupportedContent">
+            <a  id="a1" class="nav-link" href="/">Home</a>
+            <a  id="a1" class="nav-link" href="/register">Register</a>
+            <a  id="a1" class="nav-link" href="/login">Login</a>
+        </div>
+    </nav>
+
     <% if (items.length === 0) { %>
         <p>No products in your cart</p>
     <% } else { %>
@@ -24,6 +70,60 @@
         <p class="total">Total price: <%= totalPrice %></p>
     <% } %>
 
+    <footer class="text-center text-lg-start text-white" style="background-color: #64BBE4;  top: 50px;">
+        <div class="container p-4 pb-0">
+            <section>
+                <div class="row">
+                    <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
+                        <h6 class="text-uppercase mb-4 font-weight-bold">StrikeTech</h6>
+                            <p>
+                                Our companie is the best at selling every brand of technology thinks.
+                                Come and get everythink you need to us.
+                            </p>
+                    </div>
+                    <hr class="w-100 clearfix d-md-none" />
+                    <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
+                        <h6 class=" mb-4 font-weight-bold">PRODUCTS</h6>
+                        <p><a id="f1"> Studio Devices</a></p>
+                        <p><a id="f1">Gaming stuff</a></p>
+                        <p><a id="f1">Phones & Headphones</a></p>
+                        <p><a id="f1">Whatches & Cameras</a></p>
+                    </div>
+                <hr class="w-100 clearfix d-md-none" />
+                    <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mt-3">
+                        <h6 class="mb-4 font-weight-bold">ACCOUNT</h6>
+                        <p><a id="f1">My orders</a></p>
+                        <p><a id="f1">My address</a></p>
+                        <p><a id="f1">My User</a></p>
+                        <!-- <p><a id="f1">test</a></p> -->
+                    </div>
+                <hr class="w-100 clearfix d-md-none" />
+                    <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mt-3">
+                        <h6 class="mb-4 font-weight-bold">CONTACT</h6>
+                        <p><i class="fas fa-envelope mr-3"></i>Striketech.KS@gmail.com</p>
+                        <p><i class="fas fa-home mr-3"></i> Kosovë, Pejë, Filan Fisteku 7</p>
+                        <p><i class="fas fa-phone mr-3"></i>+383 49 115 898</p>
+                        <p><i class="fas fa-print mr-3"></i>+383 49 116 898</p>
+                    </div>
+                </div>
+            </section>
+        <hr class="my-3">
+            <section class="p-3 pt-0">
+                <div class="row d-flex align-items-center">
+                    <div class="col-md-7 col-lg-8 text-center text-md-start">
+                        <div class="p-3">
+                            © 2021 Copyright:<p class="copy" style="color:  rgb(13, 0, 255)" href="/"> StrikeTech</p>
+                        </div>
+                    </div>
+                    <div class="col-md-5 col-lg-4 ml-lg-0 text-center text-md-end">
+                        <a class="btn btn-outline-primary btn-floating m-1" class="text-white" role="button"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-outline-primary btn-floating m-1" class="text-white" role="button"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-outline-danger btn-floating m-1" class="text-white" role="button"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </footer>
 
 <script>
     const removeFromCartButtons = document.querySelectorAll('.remove-from-cart');
@@ -45,6 +145,83 @@
             }
         });
     });
+
+    const searchForm = document.getElementById('search-form')
+        const searchInput = document.getElementById('search-input')
+        const recommendations = document.getElementById('recommendations')
+
+        searchInput.addEventListener('input', function() {
+            if (this.value === '') {
+                recommendations.innerHTML = ''
+            } else {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '/search?q=' + this.value, true)
+                xhr.send()
+                xhr.onload = function() {
+                    if (this.status === 200) {
+                        const results = JSON.parse(this.responseText);
+                        recommendations.innerHTML = ''
+                        for (let i = 0; i < 4; i++) {  
+                            const result = results[i];
+                            if (!result) break; 
+                            const li = document.createElement('li')
+                            li.className = 'rcmn-li'
+                            li.textContent = result.emri_produktit
+                            li.setAttribute('data-id', result.id)
+                            recommendations.appendChild(li)
+                        }
+                    }
+                }
+            }
+            recommendations.addEventListener('click', function(e) {
+                if (e.target.tagName === 'LI') {
+                    const itemId = e.target.getAttribute('data-id')
+                    window.location.href = '/produkt/' + itemId
+                }
+            })
+        })
+        searchForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+        });
+
+
+
+        const addToCartButtons = document.querySelectorAll('.add-to-cart');
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', e => {
+                const isLoggedIn = e.target.getAttribute('data-is-logged-in') === 'true';
+                if (!isLoggedIn) {
+                    return window.location.href = '/login';
+                }
+                const itemId = e.target.getAttribute('data-id');
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/cart', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify({ id: itemId, quantity: 1 }));
+                xhr.onload = function() {
+                    if (this.status === 200) {
+                        console.log('Item added to cart');
+                    } else {
+                        console.error('Error adding item to cart');
+                    }
+                }
+            });
+        });
+        
+
+        
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/cart/count', true);
+        xhr.send();
+        xhr.onload = function() {
+            if (this.status === 200) {
+                const cartCount = JSON.parse(this.responseText).count;
+                const cartCountElement = document.querySelector('.cart-count');
+                cartCountElement.innerHTML = cartCount;
+            } else {
+                console.error('Error fetching cart count');
+            }
+        }
 </script>
 </body>
 </html>
