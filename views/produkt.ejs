@@ -84,12 +84,26 @@
             </div>
         <% }) %>
     </div>
-
-    <%items.forEach(row=>{ %>
-        <h2><%= row.emri_produktit %></h2>
-    <%})%>
-
-
+    <div class="cards">
+        <div class="random-card-container">
+            <div class="random-card">
+                <%items.forEach(row=>{ %>
+                    <div class="cards-body">
+                        <img src="<%= row.foto_produktit %>" alt="">
+                        <div class="title-random">
+                            <%= row.emri_produktit %>
+                        </div>
+                        <div class="price-random">
+                            <%= row.cmimi_produktit %>€
+                        </div>
+                        <div class="a">
+                            <a href="/cart">Add to cart</a>
+                        </div>
+                    </div>
+                <%})%>
+            </div>
+        </div>
+    </div>
     <footer class="text-center text-lg-start text-white" style="background-color: #64BBE4;  top: 50px;">
         <div class="container p-4 pb-0">
             <section>
