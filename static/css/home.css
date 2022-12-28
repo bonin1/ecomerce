@@ -7,8 +7,8 @@
 
 body{
     width: 100%;
-    height: 100%;
-    background-color: #C6D6EE;
+    height: 100vh;
+    background-color: #C6D6EE !important;
 }
 nav{
     width: 100%;
@@ -116,97 +116,121 @@ nav{
     display: flex;
     flex-direction: row;
 }
-
-.main{
-    width: 100%;
-    height: 150vh;
-    display:flex ;
-    flex-direction: row;
-    background-color: #C6D6EE;
-    display: flex;
-    flex-direction: column;
-}
 .slide-reklama{
     width: 100%;
     height: 30vh;
     background-color: #2A5592;
 }
-
-.Tabela{
-    width: 25%;
-    height: 120vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.Categori-tab{
-    width: 70%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-}
-.categorit{
+.main{
     width: 100%;
-    height:80vh ;
-    border:1px solid gray ;
-    border-radius: 10px 10px 0 0 ;
+    height: auto;
     display: flex;
-    flex-direction: column;
-    background-color: white;
 }
-
-.specials{
-    width:100% ;
-    height: 7vh;
-    border:1px solid gray ;
-    border-radius: 10px;
+.first-part{
+    width: 30%;
+    background-color: white;
     display: flex;
-    align-self: center;
     justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-bottom: 10px;
+}
+.second-part{
+    width: 70%;
+    display: flex;
+}
+.card-body{
+    max-width: 30%;
+    min-width: 30%;
     box-sizing: border-box;
-    background-color: #FF0000;
-    color: yellow;
+    border: 1px solid black;
+    height: 17rem;
+    margin: 20px 10px;
+    padding: 0 !important;
+    background-color: #f8f8f8;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+.card-container{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+.title-card{
+    font-size: 18px;
+    padding-left: 10px;
+}
+.sasia-card{
+    font-size: 13px;
+    padding-left: 10px;
+}
+.cmimi-card{
+    font-size: 13px;
+    padding-left: 10px;
+}
+.add-to-card12{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    padding-right:10px;
+}
+.add-to-cart{
+    background-color: #64BBE4;
+    text-decoration: none;
+    padding: 0px 5px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 18px;
+    color: #222222;
+}
+.add-to-cart:hover{
+    color: #64BBE4;
+    transition: .1s;
+    background-color: #2A5592;
+}
+.categories{
+    width: 70%;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    height: 600px;
+    align-items:flex-start;
+    border: 1px solid gray;
+    margin: 10px 0;
+    border-radius: 10px;
 }
 .special{
+    background-color: yellow;
+    color: red;
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+.special h1{
+    font-size: 30px;
+}
+.img-card{
     width: 100%;
-    height:7vh ;
-    display:flex ;
-    justify-content: center;
-    align-items: center;
-    font-size: 30px ;
+    height: 10rem;
+    object-fit: cover;
+    object-position: center;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    box-shadow: 0 0px 10px rgba(0, 0, 0, 0.1);
+}
+.filter-submit{
+    background-color: #64BBE4;
     text-decoration: none;
-    color: yellow;
+    padding: 0px 5px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 18px;
+    color: #222222;
 }
-.special:hover{
-    color: yellow;
+.filter-submit:hover{
+    color: #64BBE4;
+    transition: .1s;
+    background-color: #2A5592;
 }
-
-.filter{
-    background-color: #f9f9f9;
-    width: 100% !important ; 
-    height: 5vh !important ;
-    border-top: 1px solid gray;
-    border-bottom: 1px solid gray;
-    display: flex;
-    align-items: center;
-    box-sizing: border-box;
-    padding: 10px;   
-    font-size: 24px;
-
-}
-.head-categori{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 5vh;
-    margin: 0;
-}
-
-
 /* i{
     text-size-adjust: 30px;
 } */
@@ -218,4 +242,23 @@ nav{
         justify-content: flex-end;
         align-items: center;
     }
+}
+@media screen and (max-width:990px) {
+    .main{
+        display: flex;
+        flex-direction: column;
+    }
+    .first-part{
+        width: 100%;
+    }
+    .categories{
+        height: auto;
+        padding: 20px 0;
+    }
+    .second-part{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    
 }
