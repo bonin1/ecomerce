@@ -66,7 +66,7 @@
         <% item.forEach(row => { %>
             <div class="maincontainer">
                 <div class="card1">
-                    <form action="/produkt/<%= row.id %>">
+                    <form action="/produkt/<%= row.id %>" class="form-produkt">
                         <div class="image">
                             <img src="<%= row.foto_produktit %>" alt="">
                         </div>
@@ -104,7 +104,11 @@
                             <%= row.cmimi_produktit %>€
                         </div>
                         <div class="a">
-                            <a href="/cart">Add to cart</a>
+                            <% if (row.sasia_produktit > 0) { %>
+                                <button class="add-to-cart" data-id="<%= row.id %>"  data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
+                                <% } else { %>
+                                    <p>Out of stock</p>
+                                <% } %>
                         </div>
                     </div>
                 <%})%>

@@ -154,10 +154,17 @@ form{
 }
 .image{
     width: 40%;
-    height: 500px;
+    min-height: 500px;
     position: relative;
     border: 1px solid black;
     background-color: white;
+}
+.form-produkt{
+    width: 1000px;
+    width: 1000px;
+    height: auto;
+    min-width: 350px;
+    min-height: 500px;
 }
 .sasia{
     color: black;
@@ -239,7 +246,7 @@ form{
 }
 .cards-body{
     width: 220px;
-    height: 250px;
+    height: 300px;
     border: 1px solid black;
     padding: 0;
     margin: 0;
@@ -261,7 +268,7 @@ form{
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    height: 35px;
+    height: 55px;
     font-weight: 500;
     text-transform: capitalize;
     padding-left: 10px;
@@ -270,7 +277,7 @@ form{
     width: 100%;
     display: flex;
     justify-content: flex-start;
-    height: 20px;
+    height: 30px;
     padding-left: 10px;
 }
 .a{
@@ -320,10 +327,11 @@ form{
         display: flex;
         flex-direction: column;
     }
-    .card{
+    .form-produkt{
         flex-direction: column;
         width: 90%;
-        margin: 5vh 0;
+        margin-top: 15rem ;
+
     }
     .image{
         width: 100%;

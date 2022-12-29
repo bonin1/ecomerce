@@ -73,10 +73,10 @@
                 <form action="/">
                     <select name="category"  id="">
                         <option value="">All categories</option>
-                        <option value="Electronics">Electronics</option>
-                        <option value="whatever">whatever</option>
-                        <option value="pc">pc</option>
-                        <option value="laptop">pc</option>
+                        <option value="studiodevices">Studio Devices</option>
+                        <option value="Gaming">Gaming</option>
+                        <option value="phone&headphones">Phones & Headphones</option>
+                        <option value="Watches&cameras">Watches & Cameras</option>
                     </select>
                     <input type="submit" class="filter-submit" value="Filter">
                 </form>
@@ -88,7 +88,7 @@
         <div class="second-part">
             <div class="card-container">
                 <% data.forEach(row=>{ %>
-                    <div class="card-body">
+                    <div  class="card-body">
                         <img class="img-card" src="<%= row.foto_produktit %>" alt="">
                         <h2 class="title-card"><%= row.emri_produktit %></h2>
                         <h2 class="cmimi-card"><%= row.cmimi_produktit%>€</h2>
