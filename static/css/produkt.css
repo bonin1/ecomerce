@@ -301,6 +301,9 @@ form{
     background-color: #2A5592;
 }
 @media screen and (max-width:990px) {
+    nav{
+        z-index: 1000;
+    }
     .random-card-container{
         width: 100%;
         display: flex;
