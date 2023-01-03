@@ -1,13 +1,16 @@
-<% data.forEach(row=>{ %>
-        <h2>Emri: <%= row.emri_produktit %></h2>
-        <h3>Cmimi: <%= row.cmimi_produktit %></h3>
-        <h2>kategoria: <%= row.kategoria %> </h2>
-        <h2>vendi origjines: <%= row.origjina_produktit %></h2>
-        <img src="<%= row.foto_produktit %>" alt="">
-        <% if (row.sasia_produktit > 0) { %>
-            <h2>Sasia: <%= row.sasia_produktit %></h2>
-            <button class="add-to-cart" data-id="<%= row.id %>" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
-        <% } else { %>
-            <p>Out of stock</p>
-        <% } %>
-    <% }) %>
+<div  class="card-body">
+    <img class="img-card" src="<%= row.foto_produktit %>" alt="">
+    <h2 class="title-card"><%= row.emri_produktit %></h2>
+    <h2 class="cmimi-card"><%= row.cmimi_produktit%>€</h2>
+    <% if (row.sasia_produktit > 0) { %>
+        <h2 class="sasia-card">Sasia: <%= row.sasia_produktit %></h2>
+        <div class="add-to-card12">
+            <button class="add-to-cart" data-id="<%= row.id %>" class="add-to-card" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
+        </div>
+    <% } else { %>
+        <p>Out of stock</p>
+    <% } %>
+</div>
+
+
+

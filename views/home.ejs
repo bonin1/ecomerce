@@ -15,8 +15,9 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script> 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Roboto:wght@300&display=swap" rel="stylesheet">
 </head>
 <body>
     <nav class="imagesa navbar navbar-expand-lg navbar-light">
@@ -85,18 +86,20 @@
         <div class="second-part">
             <div class="card-container">
                 <% data.forEach(row=>{ %>
-                    <div  class="card-body">
-                        <img class="img-card" src="<%= row.foto_produktit %>" alt="">
-                        <h2 class="title-card"><%= row.emri_produktit %></h2>
-                        <h2 class="cmimi-card"><%= row.cmimi_produktit%>€</h2>
-                        <% if (row.sasia_produktit > 0) { %>
-                            <h2 class="sasia-card">Sasia: <%= row.sasia_produktit %></h2>
-                            <div class="add-to-card12">
-                                <button class="add-to-cart" data-id="<%= row.id %>" class="add-to-card" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
-                            </div>
-                        <% } else { %>
-                            <p>Out of stock</p>
-                        <% } %>
+                    <div class="card1">
+                        <figure class="card1__thumb">
+                            <img src="<%= row.foto_produktit %>" class="card1__image">
+                            <figcaption class="card1__caption">
+                                <h2 class="card1__title"><%= row.emri_produktit %></h2>
+                                <% if (row.sasia_produktit > 0) { %>
+                                    <h2 class="card1__snippet">Sasia: <%= row.sasia_produktit %></h2>
+                                    <button class="card1__button" data-id="<%= row.id %>" class="add-to-card" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
+                                    <h2>Cmimi: <%=row.cmimi_produktit %>€</h2>
+                                <% } else { %>
+                                    <p class="card1__button">Out of stock</p>
+                                <% } %>
+                            </figcaption>
+                        </figure>
                     </div>
                 <% }) %>
             </div>
