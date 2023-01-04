@@ -3,6 +3,28 @@
     padding:0 ;
     box-sizing: border-box;
 }
+html {
+    scroll-behavior: smooth;
+}
+html::-webkit-scrollbar-track
+{
+	background-color: #FFFFFF;
+}
+
+html::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: #F5F5F5;
+}
+
+html::-webkit-scrollbar-thumb
+{
+	background-color: #ADB5BD;
+}
+html::-webkit-scrollbar-thumb:hover
+{
+	background-color: #b3b2b2;
+}
 /* navbari */
 
 body{
@@ -85,7 +107,7 @@ nav{
     align-items: center;
 }
 .imagesa{
-    background-color: #64BBE4;
+    background: linear-gradient(90deg, rgba(178,181,255,1) 0%, rgba(0,0,110,1) 100%, rgba(0,212,255,1) 100%);
 }
 #recommendations{
     position: absolute;
@@ -110,6 +132,9 @@ nav{
     color: white;
 }
 /* navbari */
+
+
+
 .copy{
     text-decoration: none;
     text-transform: none;
@@ -118,46 +143,71 @@ nav{
     display: flex;
     flex-direction: row;
 }
-.slide-reklama{
+
+/* SLIDERI */
+.slideri{
     width: 100%;
-    height: 30vh;
-    background-color: #2A5592;
+    height: 24rem;
+    
     display: flex;
     justify-content: center;
     align-items: center;
 }
+.carousel-inner {
+    width: 900px !important;
+    margin: 0 auto;
+}
+
+.carousel-item img {
+    display: block;
+    margin: 0 auto !important;
+    height: 22rem;
+}
+/* SLIDERI */
 
 .main{
     width: 100%;
     height: auto;
     display: flex;
 }
+
+#progress {
+    z-index: 10000;
+    position: fixed;
+    bottom: 20px;
+    right: 10px;
+    height: 70px;
+    width: 70px;
+    display: none;
+    place-items: center;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+#progress-value {
+    display: block;
+    height: calc(100% - 15px);
+    width: calc(100% - 15px);
+    background-color: #ffffff;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 35px;
+    color: #001a2e;
+}
+
+
+/* CATEGORY */
 .first-part{
     width: 30%;
-    background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     padding-bottom: 10px;
 }
-.second-part{
-    width: 70%;
-    display: flex;
-}
-.card-container{
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-}
-.add-to-card12{
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    padding-right:10px;
-}
-
 .categories{
+    background-color: white;
     width: 70%;
     display: flex;
     justify-content: flex-start;
@@ -178,23 +228,24 @@ nav{
     font-size: 30px;
 }
 
-.filter-submit{
-    background-color: #64BBE4;
-    text-decoration: none;
-    padding: 0px 5px;
-    border-radius: 5px;
-    font-weight: 600;
-    font-size: 18px;
-    color: #222222;
+.rangat{
+    width: 100%;
 }
-.filter-submit:hover{
-    color: #64BBE4;
-    transition: .1s;
-    background-color: #2A5592;
+input[type=range]{
+    width: 85%;
 }
-/* i{
-    text-size-adjust: 30px;
-} */
+/* CATEGORY */
+
+/* PJESA PRODUKTEVE */
+.second-part{
+    width: 70%;
+    display: flex;
+}
+.card-container{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
 .card1 {
     width: 300px;
     margin: 10px;
@@ -317,6 +368,7 @@ nav{
         color: black;
         background-color: white;
     }
+/* PJESA PRODUKTEVE */
 @media screen and (max-width:600px) {
     .button1{
         width: 33%;
@@ -329,8 +381,31 @@ nav{
         display: flex;
         justify-content: center;
     }
+    .pjesa1{
+        width: 33%;
+    }
+    .pjesa2{
+        width: 33%;
+    }
+    #search-input{
+        width: 100%;
+    }
+    #search-form{
+        width: 100%;
+    }
+    .logo{
+        width: 7rem !important;
+    }
 }
 @media screen and (max-width:990px) {
+    .carousel-inner {
+        width: 100% !important;
+        margin: 0 auto;
+        padding: 0;
+    }
+    .carousel{
+        width: 100% !important;
+    }
     .main{
         display: flex;
         flex-direction: column;
@@ -375,5 +450,10 @@ nav{
         flex-direction: row;
         justify-content: center;
         align-items: center;
+    }
+    .card-container{
+        width: 100%;
+        display: flex;
+        justify-content: center;
     }
 }

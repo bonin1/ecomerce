@@ -37,18 +37,59 @@ app.get('/protected', (req, res) => {
 app.get('/',(req,res)=>{
     const isLoggedIn = req.session.isLoggedIn;
     const category = req.query.category;
+    const minPrice = req.query.minPrice;
+    const maxPrice = req.query.maxPrice;
+
     let query = `SELECT * FROM produktet`;
+    if (category || (minPrice && maxPrice)) {
+        query += ` WHERE `;
+    }
     if (category) {
-        query += ` WHERE kategoria = '${category}'`;
+        query += `kategoria = '${category}'`;
+    }
+    if (minPrice && maxPrice) {
+        if (category) {
+            query += ` AND `;
+        }
+        query += `cmimi_produktit BETWEEN ${minPrice} AND ${maxPrice}`;
     }
     query += ` ORDER BY RAND() LIMIT 9`;
+
     db.query(query, (err, results) => {
         if(err){
             console.log(err)
         }
-        res.render('home',{data:results, isLoggedIn})
+        res.render('home', { data: results, isLoggedIn, minPrice, maxPrice });
     })
 })
+app.post('/filter', (req, res) => {
+    const category = req.body.category;
+    const minPrice = req.body.minPrice;
+    const maxPrice = req.body.maxPrice;
+
+    let query = `SELECT * FROM produktet WHERE sasia_produktit > 0`;
+    if (category || (minPrice && maxPrice)) {
+        query += ` AND `;
+    }
+    if (category) {
+        query += `kategoria = '${category}'`;
+    }
+    if (minPrice && maxPrice) {
+        if (category) {
+            query += ` AND `;
+        }
+        query += `cmimi_produktit BETWEEN ${minPrice} AND ${maxPrice}`;
+    }
+    query += ` ORDER BY RAND() LIMIT 9`;
+
+    db.query(query, (err, results) => {
+        if (err) {
+        console.log(err);
+        }
+        res.render('home', { data: results, isLoggedIn: req.session.isLoggedIn, minPrice, maxPrice });
+    });
+});
+
 
 app.get('/search', (req, res) => {
     const searchQuery = req.query.q;

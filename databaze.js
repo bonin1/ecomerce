@@ -122,7 +122,10 @@ db.query('USE ecomercedb;', (error, results) => {
 });
 
 
+const userInput = 'dikush';
+const escapedInput = db.escape(userInput);
 
+console.log(`Escaped input: ${escapedInput}`);
 
 
 module.exports = db
