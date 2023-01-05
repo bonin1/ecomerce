@@ -445,7 +445,7 @@ window.onload = calcScrollValue;
 
 window.onload = function () {
 
-//// SLIDER
+// SLIDERI
 var slider = document.getElementsByClassName("sliderBlock_items");
 var slides = document.getElementsByClassName("sliderBlock_items__itemPhoto");
 var next = document.getElementsByClassName("sliderBlock_controls__arrowForward")[0];
@@ -454,7 +454,7 @@ var items = document.getElementsByClassName("sliderBlock_positionControls")[0];
 var currentSlideItem = document.getElementsByClassName("sliderBlock_positionControls__paginatorItem");
 
 var currentSlide = 0;
-var slideInterval = setInterval(nextSlide, 5000);  /// Delay time of slides
+var slideInterval = setInterval(nextSlide, 5000);  // 5 SEC
 
 function nextSlide() {
     goToSlide(currentSlide + 1);
@@ -494,9 +494,8 @@ function goToSlideAfterPushTheMiniBlock() {
 goToSlideAfterPushTheMiniBlock();
 
 
-/////////////////////////////////////////////////////////
 
-///// Specification Field
+///// FUSHA E SPECIFIKIMIT
 
 
 var buttonFullSpecification = document.getElementsByClassName("block_specification")[0];
@@ -522,7 +521,7 @@ buttonFullSpecification.onclick = function () {
 };
 
 
-/////  QUANTITY ITEMS
+// SASIA
 
 var up = document.getElementsByClassName('block_quantity__up')[0],
     down = document.getElementsByClassName('block_quantity__down')[0],
