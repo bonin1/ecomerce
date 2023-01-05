@@ -15,8 +15,9 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script> 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Roboto:wght@300&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- navbari -->
@@ -95,21 +96,20 @@
         <div class="random-card-container">
             <div class="random-card">
                 <%items.forEach(row=>{ %>
-                    <div class="cards-body">
-                        <img src="<%= row.foto_produktit %>" alt="">
-                        <div class="title-random">
-                            <%= row.emri_produktit %>
-                        </div>
-                        <div class="price-random">
-                            <%= row.cmimi_produktit %>€
-                        </div>
-                        <div class="a">
+                    <div class="card2" data-category="<%= row.kategoria %>">
+                        <figure class="card2__thumb">
+                            <img src="<%= row.foto_produktit %>" class="card2__image">
+                            <figcaption class="card2__caption">
+                            <h2 class="card2__title"><%= row.emri_produktit %></h2>
                             <% if (row.sasia_produktit > 0) { %>
-                                <button class="add-to-cart" data-id="<%= row.id %>"  data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
-                                <% } else { %>
-                                    <p>Out of stock</p>
-                                <% } %>
-                        </div>
+                                <h2 class="card2__snippet">Sasia: <%= row.sasia_produktit %></h2>
+                                <button class="card2__button" data-id="<%= row.id %>" class="add-to-cart" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
+                                <h2>Cmimi: <%=row.cmimi_produktit %>€</h2>
+                            <% } else { %>
+                                <p class="card2__button">Out of stock</p>
+                            <% } %>
+                            </figcaption>
+                        </figure>
                     </div>
                 <%})%>
             </div>
@@ -210,6 +210,8 @@
         searchForm.addEventListener('submit', function(e) {
             e.preventDefault();
         });
+
+
         const addToCartButtons = document.querySelectorAll('.add-to-cart');
         addToCartButtons.forEach(button => {
             button.addEventListener('click', e => {
@@ -267,6 +269,10 @@
 
 window.onscroll = calcScrollValue;
 window.onload = calcScrollValue;
+
+
+
+
     </script>
 </body>
 </html>

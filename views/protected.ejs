@@ -16,13 +16,13 @@
 <body>
         <div class="card-1">
             <form action="/produkt/register" class="form-product" method="POST">
-                <input type="text" name="emri_produktit" placeholder="Emri produktit">
-                <textarea name="pershkrimi_produktit" placeholder="Pershkrimi produktit" id="" cols="30" rows="10"></textarea>
-                <input type="text" name="cmimi_produktit" placeholder="cmimi i produktit">
-                <input type="text" name="origjina_produktit" placeholder="origjina produktit">
+                <input required type="text" name="emri_produktit" placeholder="Emri produktit">
+                <textarea required name="pershkrimi_produktit" placeholder="Pershkrimi produktit" id="" cols="30" rows="10"></textarea>
+                <input required type="text" name="cmimi_produktit" placeholder="cmimi i produktit">
+                <input required type="text" name="origjina_produktit" placeholder="origjina produktit">
                 <input type="number" name="sasia_produktit" placeholder="sasia" id="">
-                <input type="text" name="foto_produktit" placeholder="URL produktit">
-                <select name="kategoria" id="">
+                <input required type="text" name="foto_produktit" placeholder="URL produktit">
+                <select required name="kategoria" id="">
                     <option value="studiodevices">Studio Devices</option>
                     <option value="gaming">Gaming</option>
                     <option value="phone&headphones">phone&headphones</option>

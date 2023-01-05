@@ -120,7 +120,7 @@ nav{
 }
 .wrapper{
     width: 100%;
-    height: 100vh !important;
+    height: 40rem !important;
     background-color: #C6D6EE;
 }
 .maincontainer{
@@ -230,7 +230,7 @@ form{
 }
 .cards{
     width: 100%;
-    height: 20rem;
+    height: 25rem;
     background-color: #C6D6EE;
     display: flex;
     justify-content: center;
@@ -244,42 +244,129 @@ form{
     display: flex;
     justify-content: space-between;
 }
-.cards-body{
-    width: 220px;
-    height: 300px;
-    border: 1px solid black;
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    background-color: #eae3d2;
-}
-.cards-body img{
-    height: 10rem;
-    width: 100%;
-    object-fit: cover;
-    object-position: center;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-}
-.title-random{
-    width: 100%;
+
+.card2 {
+    width: 300px;
+    margin: 10px;
+    background-color: white;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
+    height: 20rem;
     display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    height: 55px;
-    font-weight: 500;
-    text-transform: capitalize;
-    padding-left: 10px;
-}
-.price-random{
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    height: 30px;
-    padding-left: 10px;
-}
+    border: none;
+    }
+    .card2:hover .card2__caption {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .card2:hover .card2__image {
+        transform: translateY(-10px);
+    }
+    .card2:hover .card2__thumb::after {
+        top: 0;
+    }
+    .card2:hover .card2__snippet {
+        margin: 20px 0;
+    }
+    .card2__thumb {
+        position: relative;
+        max-height: 400px;
+        overflow: hidden;
+        height: 20rem;
+    }
+    @media (min-width: 1024px) {
+        .card2__thumb {
+        max-height: 500px;
+        }
+    }
+    .card2__thumb::after {
+        position: absolute;
+        top: 0;
+        display: block;
+        content: "";
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.5) 40%, rgba(255, 255, 255, 0) 100%);
+        transition: 0.3s;
+    }
+    @media (min-width: 1024px) {
+        .card2__thumb::after {
+        top: calc(100% - 140px);
+        }
+    }
+    .card2__image {
+        transition: 0.5s ease-in-out;
+        width: 100%;
+        height: 110%;
+        object-fit: cover;
+        object-position: center;
+    }
+    .card2__caption {
+        width: 100%;
+        position: absolute;
+        top: 50%;
+        z-index: 1;
+        padding: 0 20px;
+        color: white;
+        transform: translateY(-50%);
+        text-align: center;
+        transition: 0.3s;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
+    @media (min-width: 1024px) {
+        .card2__caption {
+        top: calc(100% - 110px);
+        transform: unset;
+        }
+    }
+    .card2__title {
+        display: -webkit-box;
+        min-height: 50px;
+        max-height: 85px;
+        overflow: hidden;
+        font-family: "Playfair Display", serif;
+        font-size: 23px;
+        line-height: 28px;
+        text-shadow: 0px 1px 5px black;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+    .card2__snippet {
+        display: -webkit-box;
+        max-height: 150px;
+        margin: 20px 0;
+        overflow: hidden;
+        font-family: "Roboto", sans-serif;
+        font-size: 16px;
+        line-height: 20px;
+        text-overflow: ellipsis;
+        transition: 0.5s ease-in-out;
+        -webkit-line-clamp: 5;
+        -webkit-box-orient: vertical;
+    }
+    @media (min-width: 1024px) {
+        .card2__snippet {
+        margin: 60px 0;
+        }
+    }
+    .card2__button {
+        display: inline-block;
+        padding: 10px 20px;
+        color: white;
+        border: 1px solid white;
+        font-family: "Roboto", sans-serif;
+        font-size: 12px;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: 0.3s;
+        background-color: #222222;
+    }
+    .card2__button:hover {
+        color: black;
+        background-color: white;
+    }
 #progress {
     z-index: 10000;
     position: fixed;
