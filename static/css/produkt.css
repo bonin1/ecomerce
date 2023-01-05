@@ -1015,8 +1015,19 @@ form{
         object-position: center;
         padding-right: 40px;
     }
+    .sliderBlock_positionControls{
+        width: 100%;
+        position: relative;
+        left: 10%;
+    }
 }
 @media screen and (max-width:990px) {
+    .sliderBlock_positionControls{
+        width: 100%;
+        position: relative;
+        left: 10%;
+    }
+
     .addtoCart{
         width: 100%;
         display: flex;
@@ -1101,6 +1112,12 @@ form{
     }
 }
 @media screen and (max-width:600px) {
+    .sliderBlock_positionControls {
+        display: block;
+        width: 100%;
+        height: 3px;
+        margin: 30px auto 0;
+    }
     .sliderBlock {
         position: relative;
         height: 100%;
