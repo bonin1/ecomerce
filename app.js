@@ -188,8 +188,6 @@ app.delete('/cart/:itemId', (req, res) => {
             console.error(err);
             return;
         }
-        res.json({ success: true });
-        console.log(`Item with id ${itemId} deleted from cart for user with id ${userId}`);
         db.query(
             'SELECT produktet.*, cart.produkt_id, cart.quantity FROM produktet INNER JOIN cart ON produktet.id = cart.produkt_id WHERE cart.user_id = ?',
             [userId],
@@ -198,11 +196,13 @@ app.delete('/cart/:itemId', (req, res) => {
                     console.error(err);
                     return;
                 }
-                res.render('cart', { items: results });
+                res.send({ items: results });
             }
         );
     });
 });
+
+
 
 
 

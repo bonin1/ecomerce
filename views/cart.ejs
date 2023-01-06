@@ -89,16 +89,17 @@
                 <div class="total-card">
                     <div class="inside-card">
                         <% let totalPrice = 0; %>
-                    <% items.forEach(item => { %>
-                        <% totalPrice += parseFloat(item.cmimi_produktit); %>
-                    <% }); %>
-                    <h1 class="total-text">Your total price is: <span class="span-txt"><%= totalPrice %>€</span></h1>
+                        <% items.forEach(item => { %>
+                            <% totalPrice += parseFloat(item.cmimi_produktit); %>
+                        <% }); %>
+                        <h1 class="total-text">Your total price is: <span class="total-price"><%= totalPrice %>€</span></h1>
                     </div>
                     <div class="button-check">
                         <a id="checkout" href="">Check-out</a>
                     </div>
                 </div>
             </div>
+            
         </div>
     </div>
 
@@ -159,6 +160,7 @@
 
 <script>
     const removeFromCartButtons = document.querySelectorAll('.remove-from-cart');
+let totalPrice = 0;
 
 removeFromCartButtons.forEach(button => {
     button.addEventListener('click', e => {
@@ -168,19 +170,27 @@ removeFromCartButtons.forEach(button => {
         xhr.send();
         xhr.onload = function() {
             if (this.status === 200) {
-                console.log('Item removed from cart');
-                // update the client-side cart
+                const cartCard = document.querySelector('.cart-card');
                 const deletedItem = e.target.parentNode.parentNode.parentNode;
+                const deletedItemPrice = deletedItem.querySelector('.cmimi-cart').textContent.replace('Cmimi: ', '');
+                totalPrice -= parseFloat(deletedItemPrice);
+                console.log(deletedItemPrice, deletedItem)
                 deletedItem.parentNode.removeChild(deletedItem);
-                // update the total price
-                totalPrice -= deletedItem.querySelector('.cmimi-cart').textContent.slice(8);
-                document.querySelector('.total-price').textContent = `Total: ${totalPrice}€`;
-            } else {
-                console.error('Error removing item from cart');
+                if (cartCard.querySelectorAll('.item').length === 1) {
+                    cartCard.innerHTML = '<p class="skaprod">No products in your cart</p>';
+                } else {
+                    document.querySelector('.total-price').textContent = `Total: ${totalPrice}€`;   
+                }
             }
         }
     });
 });
+
+
+
+
+
+
 
 
 
