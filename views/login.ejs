@@ -127,9 +127,13 @@
         </div>
     </footer>
     <script>
+        //NAVBAR
+
+        // search bar
         const searchForm = document.getElementById('search-form')
         const searchInput = document.getElementById('search-input')
         const recommendations = document.getElementById('recommendations')
+        const searchSubmit = document.querySelector('.search-submit');
 
         searchInput.addEventListener('input', function() {
             if (this.value === '') {
@@ -154,6 +158,19 @@
                     }
                 }
             }
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && recommendations.firstElementChild) {
+                    const itemId = recommendations.firstElementChild.getAttribute('data-id');
+                    window.location.href = '/produkt/' + itemId;
+                }
+            });
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (recommendations.firstElementChild) {
+                    const itemId = recommendations.firstElementChild.getAttribute('data-id');
+                    window.location.href = '/produkt/' + itemId;
+                }
+            });
             recommendations.addEventListener('click', function(e) {
                 if (e.target.tagName === 'LI') {
                     const itemId = e.target.getAttribute('data-id')
@@ -164,31 +181,42 @@
         searchForm.addEventListener('submit', function(e) {
             e.preventDefault();
         });
+        //search bar
 
+        //shopping icona
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/cart/count', true);
+        xhr.send();
+        xhr.onload = function() {
+            if (this.status === 200) {
+                const cartCount = JSON.parse(this.responseText).count;
+                const cartCountElement = document.querySelector('.cart-count');
+                cartCountElement.innerHTML = cartCount;
+            } else {
+                console.error('Error fetching cart count');
+            }
+        }
 
-
-        const addToCartButtons = document.querySelectorAll('.add-to-cart');
-        addToCartButtons.forEach(button => {
-            button.addEventListener('click', e => {
-                const isLoggedIn = e.target.getAttribute('data-is-logged-in') === 'true';
-                if (!isLoggedIn) {
-                    return window.location.href = '/login';
-                }
-                const itemId = e.target.getAttribute('data-id');
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', '/cart', true);
-                xhr.setRequestHeader('Content-Type', 'application/json');
-                xhr.send(JSON.stringify({ id: itemId, quantity: 1 }));
-                xhr.onload = function() {
-                    if (this.status === 200) {
-                        console.log('Item added to cart');
-                    } else {
-                        console.error('Error adding item to cart');
-                    }
-                }
+        const filterButtons = document.querySelectorAll('.filter-button');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', event => {
+                event.preventDefault(); 
+                const selectedCategory = button.getAttribute('data-value');
+                window.history.pushState(
+                {},
+                '',
+                `${window.location.origin}${window.location.pathname}?category=${selectedCategory}`
+                );
+                
+                filterProducts(selectedCategory);
             });
         });
-        
+        //shopping icona
+
+        //NAVBAR
+
+
+
 
         
         const xhr = new XMLHttpRequest();
