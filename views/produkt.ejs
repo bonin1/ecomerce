@@ -142,7 +142,7 @@
                                                 </p>
             
                                                 <div class="block_product">
-                                                    <h2 class="block_name block_name__mainName">MOMENTUM<sup>&reg; </sup></h2>
+                                                    <h2 class="block_name block_name__mainName">EMRI KOMPANISE <sup>&reg; </sup></h2>
                                                     <p class="block_product__advantagesProduct">
                                                         <%= row.emri_produktit %>
                                                     </p>
@@ -243,7 +243,7 @@
                                                                 <div class="block_goodColor"></div>
                                                                     <% if (row.sasia_produktit > 0) { %>
                                                                         <div class="addtoCart">
-                                                                            <button class="button button_addToCard" data-id="<%= row.id %>" class="add-to-card" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
+                                                                            <button class="button button_addToCard add-to-cart data-id="<%= row.id %>" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
                                                                         </div>
                                                                     <% } else { %>
                                                                         <p class="out-of-stock">Out of stock</p>
@@ -445,7 +445,7 @@ window.onload = calcScrollValue;
 
 window.onload = function () {
 
-//// SLIDER
+// SLIDERI
 var slider = document.getElementsByClassName("sliderBlock_items");
 var slides = document.getElementsByClassName("sliderBlock_items__itemPhoto");
 var next = document.getElementsByClassName("sliderBlock_controls__arrowForward")[0];
@@ -454,7 +454,7 @@ var items = document.getElementsByClassName("sliderBlock_positionControls")[0];
 var currentSlideItem = document.getElementsByClassName("sliderBlock_positionControls__paginatorItem");
 
 var currentSlide = 0;
-var slideInterval = setInterval(nextSlide, 5000);  /// Delay time of slides
+var slideInterval = setInterval(nextSlide, 5000);  // 5 SEC
 
 function nextSlide() {
     goToSlide(currentSlide + 1);
@@ -494,9 +494,8 @@ function goToSlideAfterPushTheMiniBlock() {
 goToSlideAfterPushTheMiniBlock();
 
 
-/////////////////////////////////////////////////////////
 
-///// Specification Field
+///// FUSHA E SPECIFIKIMIT
 
 
 var buttonFullSpecification = document.getElementsByClassName("block_specification")[0];
@@ -522,7 +521,7 @@ buttonFullSpecification.onclick = function () {
 };
 
 
-/////  QUANTITY ITEMS
+// SASIA
 
 var up = document.getElementsByClassName('block_quantity__up')[0],
     down = document.getElementsByClassName('block_quantity__down')[0],

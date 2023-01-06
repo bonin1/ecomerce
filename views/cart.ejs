@@ -57,12 +57,12 @@
     <div class="main">
         <div class="container1">
             <div class="first-part">
-                <div class="cart-card">
                     <% if (items.length === 0) { %>
                         <p class="skaprod">No products in your cart</p>
                     <% } else { %>
                         <% let totalPrice = 0; %>
                         <% items.forEach(item => { %>
+                            <div class="cart-card">
                             <div class="item">
                                 <div class="img">
                                     <img class="img-cart" src="<%= item.foto_produktit %>" alt="">
@@ -80,10 +80,10 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
                             <% totalPrice += parseFloat(item.cmimi_produktit); %>
                         <% }); %>
                     <% } %>
-                </div>
             </div>
             <div class="second-part">
                 <div class="total-card">
@@ -160,23 +160,55 @@
 <script>
     const removeFromCartButtons = document.querySelectorAll('.remove-from-cart');
 
-    removeFromCartButtons.forEach(button => {
-        button.addEventListener('click', e => {
-            const itemId = e.target.getAttribute('data-id');
-            const xhr = new XMLHttpRequest();
-            xhr.open('DELETE', `/cart/${itemId}`, true);
-            xhr.send();
-            xhr.onload = function() {
-                if (this.status === 200) {
-                    console.log('Item removed from cart');
-                    const deletedItem = e.target.parentNode;
-                    deletedItem.parentNode.removeChild(deletedItem);
-                } else {
-                    console.error('Error removing item from cart');
-                }
+removeFromCartButtons.forEach(button => {
+    button.addEventListener('click', e => {
+        const itemId = e.target.getAttribute('data-id');
+        const xhr = new XMLHttpRequest();
+        xhr.open('DELETE', `/cart/${itemId}`, true);
+        xhr.send();
+        xhr.onload = function() {
+            if (this.status === 200) {
+                console.log('Item removed from cart');
+                // update the client-side cart
+                const deletedItem = e.target.parentNode.parentNode.parentNode;
+                deletedItem.parentNode.removeChild(deletedItem);
+                // update the total price
+                totalPrice -= deletedItem.querySelector('.cmimi-cart').textContent.slice(8);
+                document.querySelector('.total-price').textContent = `Total: ${totalPrice}€`;
+            } else {
+                console.error('Error removing item from cart');
             }
-        });
+        }
     });
+});
+
+
+
+
+
+//ADD TO CART
+const addToCartButtons = document.querySelectorAll('.add-to-cart');
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', e => {
+                const isLoggedIn = e.target.getAttribute('data-is-logged-in') === 'true';
+                if (!isLoggedIn) {
+                    return window.location.href = '/login';
+                }
+                const itemId = e.target.getAttribute('data-id');
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/cart', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify({ id: itemId, quantity: 1 }));
+                xhr.onload = function() {
+                    if (this.status === 200) {
+                        console.log('Item added to cart');
+                    } else {
+                        console.error('Error adding item to cart');
+                    }
+                }
+            });
+        });
+//ADD TO CART
 
     const searchForm = document.getElementById('search-form')
         const searchInput = document.getElementById('search-input')
@@ -215,45 +247,6 @@
         searchForm.addEventListener('submit', function(e) {
             e.preventDefault();
         });
-
-
-
-        const addToCartButtons = document.querySelectorAll('.add-to-cart');
-        addToCartButtons.forEach(button => {
-            button.addEventListener('click', e => {
-                const isLoggedIn = e.target.getAttribute('data-is-logged-in') === 'true';
-                if (!isLoggedIn) {
-                    return window.location.href = '/login';
-                }
-                const itemId = e.target.getAttribute('data-id');
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', '/cart', true);
-                xhr.setRequestHeader('Content-Type', 'application/json');
-                xhr.send(JSON.stringify({ id: itemId, quantity: 1 }));
-                xhr.onload = function() {
-                    if (this.status === 200) {
-                        console.log('Item added to cart');
-                    } else {
-                        console.error('Error adding item to cart');
-                    }
-                }
-            });
-        });
-        
-
-        
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', '/cart/count', true);
-        xhr.send();
-        xhr.onload = function() {
-            if (this.status === 200) {
-                const cartCount = JSON.parse(this.responseText).count;
-                const cartCountElement = document.querySelector('.cart-count');
-                cartCountElement.innerHTML = cartCount;
-            } else {
-                console.error('Error fetching cart count');
-            }
-        }
 </script>
 </body>
 </html>

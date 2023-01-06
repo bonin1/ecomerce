@@ -462,20 +462,30 @@ input[type=range]{
         text-decoration: none;
         transition: 0.3s;
         background-color: #222222;
+        z-index: 10000;
     }
     .card1__button:hover {
         color: black;
         background-color: white;
     }
+    .add-to-cart{
+        display: inline-block;
+        padding: 10px 20px;
+        color: white;
+        border: 1px solid white;
+        font-family: "Roboto", sans-serif;
+        font-size: 12px;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: 0.3s;
+        background-color: #222222;
+        z-index: 10000;
+    }
+    .add-to-cart:hover{
+        color: black;
+        background-color: white;
+    }
 /* PJESA PRODUKTEVE */
-
-
-
-
-
-
-
-
 
 
 @media screen and (max-width:600px) {
