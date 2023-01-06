@@ -14,3 +14,28 @@
 
 
 
+
+app.post('/cart', (req, res) => {
+    if (!req.session.isLoggedIn) {
+        return res.redirect('/login');
+    }
+
+
+    const userId = req.session.userId;
+    const itemId = req.body.id;
+    const quantity = req.body.quantity;
+
+
+    db.query(
+        'INSERT INTO cart (user_id, produkt_id, quantity) VALUES (?, ?, ?)',
+        [userId, itemId, quantity],
+        (err, results) => {
+            if (err) {
+                console.error(err);
+                res.sendStatus(500);
+                return;
+            }
+            res.render('cart');
+        }
+    );
+});

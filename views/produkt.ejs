@@ -243,7 +243,7 @@
                                                                 <div class="block_goodColor"></div>
                                                                     <% if (row.sasia_produktit > 0) { %>
                                                                         <div class="addtoCart">
-                                                                            <button class="button button_addToCard" data-id="<%= row.id %>" class="add-to-card" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
+                                                                            <button class="button button_addToCard add-to-cart data-id="<%= row.id %>" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
                                                                         </div>
                                                                     <% } else { %>
                                                                         <p class="out-of-stock">Out of stock</p>
