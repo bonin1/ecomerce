@@ -89,8 +89,8 @@
     <div class="main">
         <div class="first-part">
             <div class="categories">
-                <h1>Categories</h1>
-                <form action="/">
+                <h1 class="categori-head">Categories</h1>
+                <form class="form1" action="/">
                     <button type="button" class="filter-button" data-value="">All categories</button>
                     <button type="button" class="filter-button" data-value="studiodevices">Studio Devices</button>
                     <button type="button" class="filter-button" data-value="gaming">Gaming</button>
@@ -99,21 +99,21 @@
                     <input type="hidden" name="category" id="selected-category" value="">
                 </form>
                 <form action="/filter" class="rangat" data-url="/filter" method="POST">
-                    <label for="minPrice">Minimum price:</label><br>
-                    <input type="range" id="minPrice" name="minPrice" min="0" max="1000" value="<%= minPrice %>" oninput="minPriceOutput.value = '$' + minPrice.value">
+                    <label class="min-output" for="minPrice">Minimum price:</label><br>
+                    <input class="min-max" type="range" id="minPrice" name="minPrice" min="0" max="1000" value="<%= minPrice %>" oninput="minPriceOutput.value = '$' + minPrice.value">
                     <output for="minPrice" id="minPriceOutput">$<%= minPrice %></output><br>
                     
-                    <label for="maxPrice">Maximum price:</label><br>
-                    <input type="range" id="maxPrice" name="maxPrice" min="0" max="1000" value="<%= maxPrice %>" oninput="maxPriceOutput.value = '$' + maxPrice.value">
+                    <label class="max-output" for="maxPrice">Maximum price:</label><br>
+                    <input class="min-max" type="range" id="maxPrice" name="maxPrice" min="0" max="1000" value="<%= maxPrice %>" oninput="maxPriceOutput.value = '$' + maxPrice.value">
                     <output for="maxPrice" id="maxPriceOutput">$<%= maxPrice %></output><br>
                     
-                    <button type="submit">Filter</button>
+                    <button class="filteri" type="submit">Search</button>
                 </form>
             </div>
             
-            <div class="special">
+            <!-- <div class="special">
                 <h1>Special</h1>
-            </div>
+            </div> -->
         </div>
         <div class="second-part">
             <div class="card-container">
@@ -139,7 +139,7 @@
             </div>
         </div>
     </div>
-    <footer class="text-center text-lg-start text-white" style="background: linear-gradient(90deg, rgba(178,181,255,1) 0%, rgba(0,0,110,1) 100%, rgba(0,212,255,1) 100%);">
+    <footer class="text-center text-lg-start text-white" style=" background: linear-gradient(90deg, rgb(67, 195, 221) 0%, rgb(51, 117, 241) 100%, rgb(51, 117, 241) 100%);">
         <div class="container p-4 pb-0">
             <section>
                 <div class="row">
@@ -153,10 +153,10 @@
                     <hr class="w-100 clearfix d-md-none" />
                     <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
                         <h6 class=" mb-4 font-weight-bold">PRODUCTS</h6>
-                        <p><button type="button" class="filter-button" data-value="studiodevices">Studio Devices</button></p>
-                        <p><button type="button" class="filter-button" data-value="gaming">Gaming</button></p>
-                        <p><button type="button" class="filter-button" data-value="phone&headphones">Phones & Headphones</button></p>
-                        <p><button type="button" class="filter-button" data-value="watches&cameras">Watches & Cameras</button></p>
+                        <p class="plast"><button type="button" class="filter-button fund" data-value="studiodevices">Studio Devices</button></p>
+                        <p class="plast"><button type="button" class="filter-button fund" data-value="gaming">Gaming stuff</button></p>
+                        <p class="plast p1"><button type="button" class="filter-button fund " data-value="phone&headphones">Phones & Headphones</button></p>
+                        <p class="plast p1"><button type="button" class="filter-button fund " data-value="watches&cameras">Watches & Cameras</button></p>
                     </div>
                 <hr class="w-100 clearfix d-md-none" />
                     <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mt-3">
