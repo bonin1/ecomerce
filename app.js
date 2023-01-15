@@ -13,7 +13,7 @@ require('dotenv').config()
 
 
 
-
+    const Home = require('./Models/HomeModel')
     const Product = require('./Models/ProtectedModel');
 
 app.use(cookieParser());
@@ -43,34 +43,36 @@ app.get('/protected', (req, res) => {
 
 
 
-app.get('/',(req,res)=>{
+app.get('/', (req, res) => {
     const isLoggedIn = req.session.isLoggedIn;
     const category = req.query.category;
     const minPrice = req.query.minPrice;
     const maxPrice = req.query.maxPrice;
 
-    let query = `SELECT * FROM produktet`;
+    let query = { order: [[Sequelize.fn('RAND')]], limit: 9 };
     if (category || (minPrice && maxPrice)) {
-        query += ` WHERE `;
+        query.where = {};
     }
     if (category) {
-        query += `kategoria = '${category}'`;
+        query.where.kategoria = category;
     }
     if (minPrice && maxPrice) {
-        if (category) {
-            query += ` AND `;
-        }
-        query += `cmimi_produktit BETWEEN ${minPrice} AND ${maxPrice}`;
+        query.where.cmimi_produktit = {
+            [Sequelize.Op.between]: [minPrice, maxPrice]
+        };
     }
-    query += ` ORDER BY RAND() LIMIT 9`;
 
-    db.query(query, (err, results) => {
-        if(err){
-            console.log(err)
-        }
-        res.render('home', { data: results, isLoggedIn, minPrice, maxPrice });
-    })
-})
+    Home.findAll(query)
+        .then(results => {
+            res.render('home', { data: results, isLoggedIn, minPrice, maxPrice });
+        })
+        .catch(err => {
+            console.log(err);
+        });
+});
+
+
+
 app.post('/filter', (req, res) => {
     const category = req.body.category;
     const minPrice = req.body.minPrice;
