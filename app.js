@@ -2,12 +2,20 @@ const express = require('express')
 const app = express()
 const session = require('express-session')
 const db = require('./databaze')
+const d2 = require('./db2')
 const bcrypt = require('bcryptjs');
 const { render } = require('ejs');
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
+const Sequelize = require('sequelize');
+require('dotenv').config()
 
 
+
+
+
+
+    const Product = require('./Models/ProtectedModel');
 
 app.use(cookieParser());
 app.use('/static',express.static('static'))
@@ -25,15 +33,16 @@ app.get('/protected', (req, res) => {
     if (!req.session.isLogged) {
         return res.redirect('/admin');
     }
-    db.query(`SELECT * FROM produktet`, (err, results) => {
-        if (err) {
+    Product.findAll()
+        .then(results => {
+            res.render('protected', { data: results });
+        })
+        .catch(err => {
             console.error(err);
-            return;
-        }
-        res.render('protected', { data: results });
-    });
-    
+        });
 });
+
+
 
 app.get('/',(req,res)=>{
     const isLoggedIn = req.session.isLoggedIn;

@@ -2,11 +2,14 @@ const mysql = require('mysql2')
 require('dotenv').config()
 const bcrypt = require('bcryptjs');
 
+const Sequelize = require('sequelize');
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
     database: process.env.DATABASE_NAME
 });
+
+
 
 
 
@@ -128,4 +131,4 @@ const escapedInput = db.escape(userInput);
 console.log(`Escaped input: ${escapedInput}`);
 
 
-module.exports = db
+module.exports = db 
