@@ -39,3 +39,13 @@ app.post('/cart', (req, res) => {
         }
     );
 });
+
+
+
+
+<% items.forEach(item => { %>
+    <% let total = 0; %>
+    <% items.forEach(item => { %>
+        <% total += item.cmimi_produktit * item.quantity; %>
+    <% }); %>
+    <p class="total-price">Total price: <%= total %>€</p>

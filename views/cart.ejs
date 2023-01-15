@@ -53,15 +53,15 @@
             <a  id="a1" class="nav-link" href="/login">Login</a>
         </div>
     </nav>
-
+    <h1 style="text-align: center; text-transform: uppercase;">Page under maintenance</h1>
     <div class="main">
         <div class="container1">
             <div class="first-part">
                     <% if (items.length === 0) { %>
                         <p class="skaprod">No products in your cart</p>
                     <% } else { %>
-                        <% let totalPrice = 0; %>
                         <% items.forEach(item => { %>
+                            
                             <div class="cart-card">
                             <div class="item">
                                 <div class="img">
@@ -81,18 +81,13 @@
                                 </div>
                             </div>
                         </div>
-                            <% totalPrice += parseFloat(item.cmimi_produktit); %>
                         <% }); %>
                     <% } %>
             </div>
             <div class="second-part">
                 <div class="total-card">
                     <div class="inside-card">
-                        <% let totalPrice = 0; %>
-                        <% items.forEach(item => { %>
-                            <% totalPrice += parseFloat(item.cmimi_produktit); %>
-                        <% }); %>
-                        <h1 class="total-text">Your total price is: <span class="total-price"><%= totalPrice %>€</span></h1>
+                        
                     </div>
                     <div class="button-check">
                         <a id="checkout" href="">Check-out</a>
@@ -159,37 +154,50 @@
     </footer>
 
 <script>
-    const removeFromCartButtons = document.querySelectorAll('.remove-from-cart');
-let totalPrice = 0;
-
-removeFromCartButtons.forEach(button => {
-    button.addEventListener('click', e => {
-        const itemId = e.target.getAttribute('data-id');
-        const xhr = new XMLHttpRequest();
-        xhr.open('DELETE', `/cart/${itemId}`, true);
-        xhr.send();
-        xhr.onload = function() {
-            if (this.status === 200) {
-                const cartCard = document.querySelector('.cart-card');
-                const deletedItem = e.target.parentNode.parentNode.parentNode;
-                const deletedItemPrice = deletedItem.querySelector('.cmimi-cart').textContent.replace('Cmimi: ', '');
-                totalPrice -= parseFloat(deletedItemPrice);
-                console.log(deletedItemPrice, deletedItem)
-                deletedItem.parentNode.removeChild(deletedItem);
-                if (cartCard.querySelectorAll('.item').length === 1) {
-                    cartCard.innerHTML = '<p class="skaprod">No products in your cart</p>';
-                } else {
-                    document.querySelector('.total-price').textContent = `Total: ${totalPrice}€`;   
-                }
-            }
+    
+    function calculateTotalPrice() {
+    let total = 0;
+        document.querySelectorAll('.cart-card').forEach( card => {
+            const price = parseFloat(card.querySelector('.cmimi-cart').textContent.split(' ')[1]);
+            const quantity = parseInt(card.querySelector('.sasia-cart').textContent.split(' ')[1]);
+            total += price * quantity;
+        });
+        const totalPriceEl = document.querySelector('.inside-card');
+        if (total === 0) {
+            totalPriceEl.textContent = 'No items in the cart';
+            totalPriceEl.classList.add('empty-cart');
+        } else {
+            totalPriceEl.textContent = `Total price: ${total}€`;
+            totalPriceEl.classList.add('empty-cart');
         }
+    }
+
+  
+    document.querySelectorAll('.remove-from-cart').forEach( button => {
+        button.addEventListener('click', event => {
+            const itemId = event.target.dataset.id;
+            fetch(`/cart/${itemId}`, { method: 'DELETE' })
+                .then(res => {
+                if (res.ok) {
+                    event.target.closest('.cart-card').remove();
+                    calculateTotalPrice();
+                } else {
+                    alert('Could not remove item from cart');
+                }
+                })
+            .catch(err => console.error(err));
+        });
     });
-});
+    
+    calculateTotalPrice();
 
 
 
 
 
+    document.addEventListener("DOMContentLoaded", function() {
+    calculateTotalPrice();
+  });
 
 
 

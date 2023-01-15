@@ -14,7 +14,6 @@ require('dotenv').config()
 
 
 
-
     const Product = require('./Models/ProtectedModel');
 
 app.use(cookieParser());
@@ -142,7 +141,6 @@ app.post('/cart', (req, res) => {
         return res.redirect('/login');
     }
 
-    let totalPrice = 0;
     const userId = req.session.userId;
     const itemId = req.body.id;
     const quantity = req.body.quantity;
@@ -155,8 +153,8 @@ app.post('/cart', (req, res) => {
                 console.error(err);
                 res.sendStatus(500);
                 return;
-            }
-            res.render('cart',{totalPrice: totalPrice});
+            }   
+            res.render('cart');
         }
     );
 });
@@ -166,7 +164,6 @@ app.get('/cart', (req, res) => {
     if (!req.session.isLoggedIn) {
         return res.redirect('/login');
     }
-
     const userId = req.session.userId;
     db.query(
         'SELECT produktet.*, cart.produkt_id, cart.quantity FROM produktet INNER JOIN cart ON produktet.id = cart.produkt_id WHERE cart.user_id = ?',
@@ -177,7 +174,7 @@ app.get('/cart', (req, res) => {
                 res.sendStatus(500);
                 return;
             }
-            res.render('cart', { items: results });
+            res.render('cart', { items: results  });
         }
     );
 });
@@ -188,7 +185,7 @@ app.delete('/cart/:itemId', (req, res) => {
     if (!req.session.isLoggedIn) {
         return res.redirect('/login');
     }
-
+    
     const userId = req.session.userId;
     const itemId = req.params.itemId;
 
@@ -205,7 +202,7 @@ app.delete('/cart/:itemId', (req, res) => {
                     console.error(err);
                     return;
                 }
-                res.send({ items: results });
+                res.send({ items: results});
             }
         );
     });
