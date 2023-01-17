@@ -13,12 +13,17 @@ const csrf = require('csurf');
 const validator = require('validator');
 const https = require('https');
 const fs = require('fs');
+const sqlInjection = require('sql-injection');
+const xssClean = require('xss-clean');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const helmet = require('helmet');
 
 require('dotenv').config()
 
 
 
-
+    const auth = require('./auth');
     const Home = require('./Models/HomeModel')
     const Product = require('./Models/ProtectedModel');
     const Search = require('./Models/SearchModel')
@@ -41,6 +46,37 @@ app.use(function(err, req, res, next) {
     console.error(err.stack);
     res.status(500).send('Something broke!');
 });
+
+
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: 'Too many login attempts, please try again later'
+});
+
+
+const csrfProtection = csrf();
+app.use(csrfProtection);
+
+
+
+app.use(helmet());
+// app.use(sqlInjection);
+app.use(xssClean());
+app.use(cors({
+    origin: 'https://example.com',
+    methods: ['GET', 'POST']
+}));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
+
+
+
+
+
+
+
 
 
 
@@ -168,7 +204,7 @@ app.get('/produkt/:id', async (req, res) => {
 
 
 
-app.post('/cart', (req, res) => {
+app.post('/cart', csrfProtection,(req, res) => {
     if (!req.session.isLoggedIn) {
         return res.redirect('/login');
     }
@@ -186,13 +222,13 @@ app.post('/cart', (req, res) => {
                 res.sendStatus(500);
                 return;
             }   
-            res.render('cart');
+            res.render('cart',{csrfToken: req.csrfToken()});
         }
     );
 });
 
 
-app.get('/cart', (req, res) => {
+app.get('/cart',csrfProtection, (req, res) => {
     if (!req.session.isLoggedIn) {
         return res.redirect('/login');
     }
@@ -206,14 +242,14 @@ app.get('/cart', (req, res) => {
                 res.sendStatus(500);
                 return;
             }
-            res.render('cart', { items: results  });
+            res.render('cart', { items: results,csrfToken: req.csrfToken()  });
         }
     );
 });
 
 
 
-app.delete('/cart/:itemId', (req, res) => {
+app.delete('/cart/:itemId',csrfProtection, (req, res) => {
     if (!req.session.isLoggedIn) {
         return res.redirect('/login');
     }
@@ -234,7 +270,7 @@ app.delete('/cart/:itemId', (req, res) => {
                     console.error(err);
                     return;
                 }
-                res.send({ items: results});
+                res.send({ items: results,csrfToken: req.csrfToken()});
             }
         );
     });
@@ -336,47 +372,44 @@ app.post('/create',(req,res)=>{
 
 
 
-const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 5,
-    message: 'Too many login attempts, please try again later'
-});
-
-const csrfProtection = csrf();
-
-app.use(csrfProtection);
 
 app.get('/login', csrfProtection, (req, res) => {
+    
     res.render('login', { csrfToken: req.csrfToken() , message:''});
 });
 
 
 
 app.post('/login', loginLimiter, csrfProtection, (req, res) => {
-    
+    if (!req.csrfToken()) {
+        return res.status(401).send('Invalid CSRF token');
+    }
     const email = req.body.email;
     const password = req.body.password;
+    
     if (!validator.isEmail(email)) {
         return res.render('login', { message: 'Invalid email address',csrfToken: req.csrfToken() });
     }
 
     if (!validator.isLength(password, { min: 8 })) {
-        return res.render('login', { message: 'Password must be at least 8 characters long',csrfToken: req.csrfToken()  });
+        return res.render('login', { message: 'password must me 8 characters',csrfToken: req.csrfToken() });
     }
 
     const query = 'SELECT * FROM login_information WHERE email = ?';
-        db.query(query, email, async (err, results, fields) => {
-            if (err) {
-                console.log(err);
-            }
-            if (results.length === 0 || !(await bcrypt.compare(password, results[0].password))) {
-                return res.render('login', { message: 'Incorrect email or password',csrfToken: req.csrfToken() });
-            }
-            req.session.isLoggedIn = true;
-            req.session.userId = results[0].id;
-            res.redirect('/cart');
-        });
+    db.query(query, [email], async (err, results, fields) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).send('An error occurred while processing your request');
+        }
+        if (results.length === 0 || !(await bcrypt.compare(password, results[0].password))) {
+            return res.render('login',{message:'incorrect email or password',csrfToken: req.csrfToken()})
+        }
+        req.session.isLoggedIn = true;
+        req.session.userId = results[0].id;
+        res.redirect('/cart');
+    });
 });
+
 
 
 
