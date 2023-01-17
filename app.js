@@ -60,22 +60,14 @@ app.use(csrfProtection);
 
 
 
-app.use(helmet());
-// app.use(sqlInjection);
-app.use(xssClean());
+// app.use(helmet());
+// app.use(xssClean());
 app.use(cors({
     origin: 'https://example.com',
     methods: ['GET', 'POST']
 }));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-
-
-
-
-
-
-
 
 
 
@@ -122,6 +114,11 @@ app.get('/', (req, res) => {
             console.log(err);
         });
 });
+
+
+
+
+
 
 
 
@@ -204,7 +201,7 @@ app.get('/produkt/:id', async (req, res) => {
 
 
 
-app.post('/cart', csrfProtection,(req, res) => {
+app.post('/cart',(req, res) => {
     if (!req.session.isLoggedIn) {
         return res.redirect('/login');
     }
@@ -222,7 +219,7 @@ app.post('/cart', csrfProtection,(req, res) => {
                 res.sendStatus(500);
                 return;
             }   
-            res.render('cart',{csrfToken: req.csrfToken()});
+            res.render('cart');
         }
     );
 });
@@ -249,7 +246,7 @@ app.get('/cart',csrfProtection, (req, res) => {
 
 
 
-app.delete('/cart/:itemId',csrfProtection, (req, res) => {
+app.delete('/cart/:itemId', (req, res) => {
     if (!req.session.isLoggedIn) {
         return res.redirect('/login');
     }
@@ -270,7 +267,7 @@ app.delete('/cart/:itemId',csrfProtection, (req, res) => {
                     console.error(err);
                     return;
                 }
-                res.send({ items: results,csrfToken: req.csrfToken()});
+                res.send({ items: results});
             }
         );
     });
