@@ -1,14 +1,13 @@
 const { Sequelize, literal } = require('sequelize');
 const db2 = require('../db2');
 
-
-const Home = db2.define('produktet', {
+const Search = db2.define('Product', {
     emri_produktit: {
         type: Sequelize.STRING,
         allowNull: false
     },
     pershkrimi_produktit: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING,
         allowNull: false
     },
     cmimi_produktit: {
@@ -24,26 +23,27 @@ const Home = db2.define('produktet', {
         allowNull: false
     },
     kategoria: {
-        type: Sequelize.STRING,
-        allowNull: true
+        type: Sequelize.STRING
     },
     foto_produktit: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING,
         allowNull: false
     },
+    id: {
+        type: Sequelize.BIGINT,
+        primaryKey: true,
+        autoIncrement: true
+    }
 }, {
     timestamps: false,
     freezeTableName: true,
     tableName: 'produktet',
-    underscored: true,
-    indexes: [
-        {
-            unique: true,
-            fields: ['id']
-        }
-    ]
-});
+    underscored: true
+}
+
+);
+
 
 db2.sync();
 
-module.exports = Home;
+module.exports = Search;

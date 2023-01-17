@@ -59,7 +59,10 @@
     <div class="main">
         <div class="card">
             <h2>Kyqu per te shtuar ne karroce!</h2>
+            
             <form action="/login" class="form-login" method="POST" >
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
                 <input type="email" placeholder="Emaili:" name="email" required id="">
                 <input type="password" placeholder="Fjalkalimi:" name="password" required>
                 <input type="submit" value="Login">

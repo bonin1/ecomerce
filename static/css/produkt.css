@@ -1154,6 +1154,11 @@ form{
         height: 3px;
         margin: 30px auto 0;
     }
+    .plast{
+        display: flex;
+        justify-content: center;
+        width: auto;
+    }
     .sliderBlock {
         position: relative;
         height: 100%;

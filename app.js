@@ -7,7 +7,13 @@ const bcrypt = require('bcryptjs');
 const { render } = require('ejs');
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
-const Sequelize = require('sequelize');
+const { Sequelize, literal } = require('sequelize');
+const rateLimit = require('express-rate-limit');
+const csrf = require('csurf');
+const validator = require('validator');
+const https = require('https');
+const fs = require('fs');
+
 require('dotenv').config()
 
 
@@ -15,6 +21,8 @@ require('dotenv').config()
 
     const Home = require('./Models/HomeModel')
     const Product = require('./Models/ProtectedModel');
+    const Search = require('./Models/SearchModel')
+    const Produkti = require('./Models/ProductIdModel')
 
 app.use(cookieParser());
 app.use('/static',express.static('static'))
@@ -28,6 +36,14 @@ app.use(session({
     saveUninitialized:false,
     cookie:{maxAge: 30 * 60 * 1000} 
 }))
+
+app.use(function(err, req, res, next) {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
+
+
+
 app.get('/protected', (req, res) => {
     if (!req.session.isLogged) {
         return res.redirect('/admin');
@@ -104,35 +120,49 @@ app.post('/filter', (req, res) => {
 
 app.get('/search', (req, res) => {
     const searchQuery = req.query.q;
-    db.query(`SELECT * FROM produktet WHERE emri_produktit LIKE '%${searchQuery}%'`, (err, results) => {
-        if (err) {
-            console.log(err);
-            res.sendStatus(500);
-        } else {
-            res.json(results);
+    Search.findAll({
+        where: {
+            emri_produktit: {
+                [Sequelize.Op.like]: `%${searchQuery}%`
+            }
         }
+    }).then(results => {
+        res.json(results);
+    }).catch(err => {
+        console.log(err);
+        res.sendStatus(500);
     });
 });
-app.get('/produkt/:id',(req,res)=>{
+
+app.get('/produkt/:id', async (req, res) => {
     const isLoggedIn = req.session.isLoggedIn;
     const id = req.params.id;
-    const query = `SELECT * FROM produktet WHERE id = ?`;
-    db.query(query, id, (err, result) => {
-        if(err){
-            console.log(err)
+
+    try {
+        const item = await Produkti.findOne({
+            where: { id }
+        });
+        
+        const randomItems = await Produkti.findAll({
+            order: Sequelize.literal('RAND()'),
+            limit: 4
+        });
+        
+
+        res.render('produkt', { item:item.dataValues, items: randomItems, isLoggedIn });
+        if(typeof item === 'object'){
+            res.render('produkt', { item: item.dataValues, items: randomItems, isLoggedIn });
         }
-        else {
-            let randomQuery = `SELECT * FROM produktet`;
-            randomQuery += ` ORDER BY RAND() LIMIT 4`;
-            db.query(randomQuery, (err, randomResults) => {
-                if(err){
-                    console.log(err)
-                }
-                res.render('produkt', {item:result, items:randomResults, isLoggedIn});
-            })
-        }
-    })
-})
+        
+    } catch(err) {
+        console.log(err);
+        res.status(500).render('error', { error: 'An error occurred' });
+    }
+    
+});
+
+
+
 
 
 
@@ -249,9 +279,6 @@ app.get('/admin',(req,res)=>{
     res.render('admin')
 })
 
-app.get('/login',(req,res)=>{
-    res.render('login',{message:''})
-})
 
 
 app.get('/produktet',(req,res)=>{
@@ -308,21 +335,50 @@ app.post('/create',(req,res)=>{
 
 
 
-app.post('/login',(req,res)=>{
-    const {email,password} = req.body
-    const query =`SELECT * FROM login_information WHERE email = ?`
-    db.query(query,email, async(err,results,fields)=>{
-        if(err){
-            console.log(err)
-        }
-        if(results.length == 0 || !(await bcrypt.compare(password,results[0].password))) {
-            return res.render('login',{message:'passwordin ose emailin e ki keq'})
-        }
-        req.session.isLoggedIn = true;
-        req.session.userId = results[0].id;
-        res.redirect('/cart');
-    })
-})
+
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5,
+    message: 'Too many login attempts, please try again later'
+});
+
+const csrfProtection = csrf();
+
+app.use(csrfProtection);
+
+app.get('/login', csrfProtection, (req, res) => {
+    res.render('login', { csrfToken: req.csrfToken() , message:''});
+});
+
+
+
+app.post('/login', loginLimiter, csrfProtection, (req, res) => {
+    
+    const email = req.body.email;
+    const password = req.body.password;
+    if (!validator.isEmail(email)) {
+        return res.render('login', { message: 'Invalid email address',csrfToken: req.csrfToken() });
+    }
+
+    if (!validator.isLength(password, { min: 8 })) {
+        return res.render('login', { message: 'Password must be at least 8 characters long',csrfToken: req.csrfToken()  });
+    }
+
+    const query = 'SELECT * FROM login_information WHERE email = ?';
+        db.query(query, email, async (err, results, fields) => {
+            if (err) {
+                console.log(err);
+            }
+            if (results.length === 0 || !(await bcrypt.compare(password, results[0].password))) {
+                return res.render('login', { message: 'Incorrect email or password',csrfToken: req.csrfToken() });
+            }
+            req.session.isLoggedIn = true;
+            req.session.userId = results[0].id;
+            res.redirect('/cart');
+        });
+});
+
+
 
 
 

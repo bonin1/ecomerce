@@ -2,7 +2,7 @@ const { Sequelize, literal } = require('sequelize');
 const db2 = require('../db2');
 
 
-const Home = db2.define('produktet', {
+const Produkti = db2.define('produktet', {
     emri_produktit: {
         type: Sequelize.STRING,
         allowNull: false
@@ -31,6 +31,11 @@ const Home = db2.define('produktet', {
         type: Sequelize.TEXT,
         allowNull: false
     },
+    id: {
+        type: Sequelize.BIGINT,
+        primaryKey: true,
+        autoIncrement: true
+    },
 }, {
     timestamps: false,
     freezeTableName: true,
@@ -46,4 +51,4 @@ const Home = db2.define('produktet', {
 
 db2.sync();
 
-module.exports = Home;
+module.exports = Produkti;
