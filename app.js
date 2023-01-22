@@ -14,13 +14,11 @@ const csrf = require('csurf');
 require('dotenv').config()
 
 
-
-    const auth = require('./auth');
     const Home = require('./Models/HomeModel')
     const Product = require('./Models/ProtectedModel');
     const Search = require('./Models/SearchModel')
     const Produkti = require('./Models/ProductIdModel')
-
+    const Review = require('./Models/ReviewsModel')
 
 
 
@@ -162,9 +160,6 @@ app.get('/produkt/:id', async (req, res) => {
         
 
         res.render('produkt', { item:item.dataValues, items: randomItems, isLoggedIn });
-        if(typeof item === 'object'){
-            res.render('produkt', { item: item.dataValues, items: randomItems, isLoggedIn });
-        }
         
     } catch(err) {
         console.log(err);
@@ -203,10 +198,10 @@ app.post('/cart',(req, res) => {
     );
 });
 
-const csrfProtection = csrf();
-app.use(csrfProtection);
+// const csrfProtection = csrf();
+// app.use(csrfProtection);
 
-app.get('/cart',csrfProtection, (req, res) => {
+app.get('/cart', (req, res) => {
     if (!req.session.isLoggedIn) {
         return res.redirect('/login');
     }
@@ -220,7 +215,7 @@ app.get('/cart',csrfProtection, (req, res) => {
                 res.sendStatus(500);
                 return;
             }
-            res.render('cart', { items: results,csrfToken: req.csrfToken()  });
+            res.render('cart', { items: results  });
         }
     );
 });

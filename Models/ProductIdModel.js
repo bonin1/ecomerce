@@ -49,6 +49,5 @@ const Produkti = db2.define('produktet', {
     ]
 });
 
-db2.sync();
 
 module.exports = Produkti;

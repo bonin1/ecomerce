@@ -44,6 +44,4 @@ const Home = db2.define('produktet', {
     ]
 });
 
-db2.sync();
-
 module.exports = Home;

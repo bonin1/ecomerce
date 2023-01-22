@@ -1,7 +1,5 @@
 const Sequelize = require('sequelize');
-const mysql = require('mysql2')
 require('dotenv').config()
-const bcrypt = require('bcryptjs');
 
 
 const db2 = new Sequelize(process.env.DATABASE_NAME, process.env.DATABASE_USER, process.env.DATABASE_PASSWORD, {

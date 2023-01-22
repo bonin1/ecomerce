@@ -1,7 +1,7 @@
 const { Sequelize, literal } = require('sequelize');
 const db2 = require('../db2');
 
-const Search = db2.define('Product', {
+const Search = db2.define('produktet', {
     emri_produktit: {
         type: Sequelize.STRING,
         allowNull: false
@@ -44,6 +44,5 @@ const Search = db2.define('Product', {
 );
 
 
-db2.sync();
 
 module.exports = Search;

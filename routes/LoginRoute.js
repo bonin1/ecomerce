@@ -9,12 +9,14 @@ const validator = require('validator');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
-const cors = require('cors');
 const router = express.Router();
 const crypto = require('crypto');
 require('dotenv').config();
 
-// Use helmet for security headers
+
+const  LoginInformation  = require('../Models/LoginModel');
+
+
 router.use(helmet());
 
 
@@ -38,17 +40,7 @@ const loginLimiter = rateLimit({
 router.use(bodyParser.json({ limit: '50mb' }));
 router.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
-// router.use((req, res, next) => {
-//     const csrfToken = crypto.randomBytes(64).toString('hex');
-//     req.session.csrfToken = csrfToken;
-//     res.locals.csrfToken = csrfToken;
-//     next();
-// });
 
-// router.use((req, res, next) => {
-//     res.locals.csrfToken = req.session.csrfToken;
-//     next();
-// });
 
 
 router.get('/', (req, res) => {
@@ -57,13 +49,13 @@ router.get('/', (req, res) => {
     res.render('login', { message: '', csrfToken });
 });
 
-router.post('/', loginLimiter, (req, res) => {
+router.post('/', loginLimiter, async (req, res) => {
     if(req.body._csrf !== req.session.csrfToken) {
         return res.status(401).send('Invalid CSRF token');
     }
     const email = req.body.email;
     const password = req.body.password;
-    
+
     if (!validator.isEmail(email)) {
         return res.render('login', { message: 'Invalid email address',csrfToken: req.session.csrfToken });
     }
@@ -72,21 +64,24 @@ router.post('/', loginLimiter, (req, res) => {
         return res.render('login', { message: 'password must me 8 characters',csrfToken: req.session.csrfToken});
     }
 
-    const query = 'SELECT * FROM login_information WHERE email = ?';
-    db.query(query, [email], async (err, results, fields) => {
-    if (err) {
-    console.log(err);
-    return res.render('login', { message: 'An error occurred while processing your request', csrfToken: req.session.csrfToken });
-    }
-    if (results.length === 0 || !(await bcrypt.compare(password, results[0].password))) {
-    return res.render('login',{message:'incorrect email or password',csrfToken: req.session.csrfToken})
-    }
-    
+    try {
+        const user = await LoginInformation.findOne({ where: { email: email } });
+        if (!user) {
+            return res.render('login', { message: 'incorrect email or password',csrfToken: req.session.csrfToken });
+        }
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.render('login', { message: 'incorrect email or password',csrfToken: req.session.csrfToken });
+        }
+
         req.session.isLoggedIn = true;
-        req.session.userId = results[0].id;
+        req.session.userId = user.id;
         res.redirect('/cart');
-    });
-})
+    } catch (err) {
+        console.log(err);
+        return res.render('login', { message: 'An error occurred while processing your request', csrfToken: req.session.csrfToken });
+    }
+});
 
 
 module.exports = router;
