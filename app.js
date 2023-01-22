@@ -10,14 +10,6 @@ const multer = require('multer');
 const { Sequelize, literal } = require('sequelize');
 const rateLimit = require('express-rate-limit');
 const csrf = require('csurf');
-const validator = require('validator');
-const https = require('https');
-const fs = require('fs');
-const sqlInjection = require('sql-injection');
-const xssClean = require('xss-clean');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const helmet = require('helmet');
 
 require('dotenv').config()
 
@@ -52,11 +44,8 @@ app.use(session({
 }))
 
 
-
 app.use('/login',require('./routes/LoginRoute'))
 
-// app.use(helmet());
-// app.use(xssClean());
 
 
 
