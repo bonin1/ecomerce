@@ -60,6 +60,7 @@ nav{
     align-items: center;
 }
 #a1{
+    background-color: transparent;
     color: white;
 }
 .collapse{
@@ -133,6 +134,14 @@ nav{
 }
 .cart-color{
     color: white;
+}
+#logout-form{
+    border: none;
+    outline: none;
+}
+#logout-form > input{
+    border:none;
+    outline:none;
 }
 /* navbari */
 

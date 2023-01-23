@@ -65,6 +65,7 @@ nav{
     align-items: center;
 }
 #a1{
+    background-color: transparent;
     color: white;
 }
 .collapse{
@@ -139,6 +140,7 @@ nav{
 .cart-color{
     color: white;
 }
+
 /* navbari */
 .copy{
     text-decoration: none;

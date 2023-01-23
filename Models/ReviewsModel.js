@@ -37,6 +37,13 @@ const Review = db2.define('reviews', {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.NOW
+    },rating: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        validate: {
+          min: 1,
+          max: 5
+        }
     }
 }, {
     timestamps: false,
@@ -50,4 +57,5 @@ const Review = db2.define('reviews', {
         }
     ]
 });
+db2.sync()
 module.exports = Review;

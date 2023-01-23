@@ -10,6 +10,7 @@ const multer = require('multer');
 const { Sequelize, literal } = require('sequelize');
 const rateLimit = require('express-rate-limit');
 const csrf = require('csurf');
+const bodyParser = require('body-parser');
 
 require('dotenv').config()
 
@@ -21,8 +22,8 @@ require('dotenv').config()
     const Review = require('./Models/ReviewsModel')
 
 
-
-
+    app.use(bodyParser.json()); 
+    app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
@@ -43,7 +44,6 @@ app.use(session({
 
 
 app.use('/login',require('./routes/LoginRoute'))
-
 
 
 
@@ -175,6 +175,7 @@ app.get('/produkt/:id', async (req, res) => {
 
 
 
+
 app.post('/cart',(req, res) => {
     if (!req.session.isLoggedIn) {
         return res.redirect('/login');
@@ -278,11 +279,13 @@ app.get('/cart/count', (req, res) => {
 
 
 app.get('/register',(req,res)=>{
-    res.render('register',{message:''})
+    const isLoggedIn = req.session.isLoggedIn;
+    res.render('register',{message:'', isLoggedIn})
 })
 
 app.get('/changepassword',(req,res)=>{
-    res.render('changepassword')
+    const isLoggedIn = req.session.isLoggedIn;
+    res.render('changepassword',{isLoggedIn})
 })
 app.get('/admin',(req,res)=>{
     res.render('admin')

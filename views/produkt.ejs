@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Striketech</title>
+    <link rel="icon" href="/static/image/STRIKETECH-1.png">
     <link rel="stylesheet" href="/static/css/produkt.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -57,7 +58,13 @@
         <div class="collapse navbar-collapse navbar-nav w-33 " id="navbarSupportedContent">
             <a  id="a1" class="nav-link" href="/">Home</a>
             <a  id="a1" class="nav-link" href="/register">Register</a>
-            <a  id="a1" class="nav-link" href="/login">Login</a>
+            <% if (isLoggedIn) { %>
+                <form action="/logout" id="logout-form" method="POST">
+                    <input type="submit" id="a1" class="nav-link" value="Logout">
+                </form>
+            <% } else { %>
+                <a id="a1" class="nav-link" href="/login">Login</a>
+            <% } %>
             <div class="carda">
                 <a href="/cart"><a class="cart-color" href="/cart"><i   class="fa-sharp fa-solid fa-cart-shopping"></i></a></i><sup><a href="/cart" style="color: white; text-decoration: none;" class="cart-count"></a></sup></a>
             </div>
@@ -183,7 +190,7 @@
                                                         <%= item.pershkrimi_produktit %>
                                                     </span>
                                                 </div>
-    
+                                                <form action="/review" method="POST">
                                                 <div class="block_rating clearfix">
                                                     <fieldset class="block_rating__stars">
                                                         <input type="radio" id="star5" name="rating" value="5"/><label
@@ -217,8 +224,9 @@
     
                                                     <span class="block_rating__avarage">5</span>
                                                     <span class="block_rating__reviews">(0 reviews)</span>
-    
+                                                    <input type="submit" value="Submit review">
                                                 </div>
+                                                </form>
                                                 <div class="row ">
                                                     <div class="large-6 small-12 column left-align">
                                                         <div class="block_price">
@@ -543,6 +551,7 @@ down.onclick = function (event) {
 
 
 };
+
 
 
     </script>
