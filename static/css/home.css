@@ -363,13 +363,14 @@ input[type=range]{
     .fund{
         border: none;
         border-radius: 10px;
-        background: linear-gradient(90deg, #3DA6E4 0%, #3B9DE6  100%, #3090CE 100%);
+        background: transparent;
         color: white;
         font-weight: normal;
         padding: 0;
     }
     .fund:hover{
         transition: 0.5s ;
+        background-color: transparent;
         transform:scale(110%) ;
     }
     .plast{
@@ -525,7 +526,7 @@ input[type=range]{
         width: 7rem !important;
     }
     .fund{
-        background-color: #40B4E1;
+        background-color: transparent;
     }
     .plast{
         display: flex;
@@ -593,7 +594,7 @@ input[type=range]{
         justify-content: center;
     }
     .fund{
-        background-color: #40B4E1;
+        background-color: transparent;
     }
     .plast{
         display: flex;
