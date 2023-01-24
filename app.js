@@ -152,26 +152,35 @@ app.get('/produkt/:id', async (req, res) => {
         const item = await Produkti.findOne({
             where: { id }
         });
-        
+
         const randomItems = await Produkti.findAll({
             order: Sequelize.literal('RAND()'),
             limit: 4
         });
-        
 
-        res.render('produkt', { item:item.dataValues, items: randomItems, isLoggedIn });
-        
+        res.render('produkt', { item:item.dataValues, items: randomItems,  isLoggedIn });
+
     } catch(err) {
         console.log(err);
         res.status(500).render('error', { error: 'An error occurred' });
     }
-    
 });
 
 
+app.post('/produkt/:id', async (req, res) => {
+    
+    const userId = req.session.userId;
+    const { rating, product_id, comment } = req.body;
+    if (!userId) return('/login')
 
-
-
+    try {
+        await Review.create({ rating, product_id, userId, comment });
+        return ('/produkt')
+    } catch (err) {
+        console.error(err);
+        return ('/produkt')
+    }
+});
 
 
 

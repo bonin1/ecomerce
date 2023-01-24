@@ -16,7 +16,7 @@ const Review = db2.define('reviews', {
         },
         allowNull: false
     },
-    user_id: {
+    userId: {
         type: Sequelize.BIGINT,
         allowNull: false
     },
@@ -41,8 +41,8 @@ const Review = db2.define('reviews', {
         type: Sequelize.INTEGER,
         allowNull: false,
         validate: {
-          min: 1,
-          max: 5
+            min: 1,
+            max: 5
         }
     }
 }, {
@@ -57,5 +57,6 @@ const Review = db2.define('reviews', {
         }
     ]
 });
+
 db2.sync()
 module.exports = Review;

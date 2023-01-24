@@ -190,7 +190,9 @@
                                                         <%= item.pershkrimi_produktit %>
                                                     </span>
                                                 </div>
-                                                <form action="/review" method="POST">
+                                                <form action="/produkt/<%= item.id %>" method="POST">
+                                                    <input type="hidden" name="product_id" value="<%= item.id %>">
+                                                    <input type="hidden" name="comment" value="<%= item.comment %>">
                                                 <div class="block_rating clearfix">
                                                     <fieldset class="block_rating__stars">
                                                         <input type="radio" id="star5" name="rating" value="5"/><label
@@ -222,7 +224,8 @@
                                                             title="Sucks big time - 0.5 stars"></label>
                                                     </fieldset>
     
-                                                    <span class="block_rating__avarage">5</span>
+                                                    <div class="average_rating">
+                                                    </div>
                                                     <span class="block_rating__reviews">(0 reviews)</span>
                                                     <input type="submit" value="Submit review">
                                                 </div>
@@ -548,9 +551,26 @@ down.onclick = function (event) {
     }
 
 }
-
-
 };
+const form = document.querySelector('form');
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const id = formData.get('id');
+    const rating = formData.get('rating');
+    const product_id = formData.get('product_id');
+    const userId = formData.get('userId');
+    const comment = formData.get('comment');
+    
+    const response = await fetch(`/produkt/${id}`, {
+        method: 'POST',
+        body: JSON.stringify({ rating, product_id, userId, comment }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    const data = await response.json();
+});
 
 
 

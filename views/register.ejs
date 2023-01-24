@@ -51,13 +51,6 @@
         <div class="collapse navbar-collapse navbar-nav w-33 " id="navbarSupportedContent">
             <a  id="a1" class="nav-link" href="/">Home</a>
             <a  id="a1" class="nav-link" href="/register">Register</a>
-            <% if (isLoggedIn) { %>
-                <form action="/logout" id="logout-form" method="POST">
-                    <input type="submit" id="a1" class="nav-link" value="Logout">
-                </form>
-            <% } else { %>
-                <a id="a1" class="nav-link" href="/login">Login</a>
-            <% } %>
             <div class="carda">
                 <a href="/cart"><a class="cart-color" href="/cart"><i   class="fa-sharp fa-solid fa-cart-shopping"></i></a></i><sup><a href="/cart" style="color: white; text-decoration: none;" class="cart-count"></a></sup></a>
             </div>
