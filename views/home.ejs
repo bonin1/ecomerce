@@ -40,7 +40,7 @@
         </div>
         <div class="button1">
             <button 
-            style="background-color: white; position: relative; right: 10px; "
+            style="background-color: #087EA2; position: relative; right: 10px; "
             class="navbar-toggler" 
             type="button" 
             data-toggle="collapse"
@@ -133,7 +133,10 @@
                                 <% if (row.sasia_produktit > 0) { %>
                                     <h2 class="card1__snippet">Sasia: <%= row.sasia_produktit %></h2>
                                     <button class="add-to-cart" data-id="<%= row.id %>" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
-                                    <h2>Cmimi: <%=row.cmimi_produktit %>€</h2>
+                                    <h2 style="font-family: 'Lilita One';">Cmimi: <span style="color: #18C4B8;"><%=row.cmimi_produktit %>€</span></h2>
+                                    <form class="learnmore-form" action="/produkt/<%= row.id %>" method="get">
+                                        <input class="add-to-cart" type="submit" value="Learn more">
+                                    </form>
                                 <% } else { %>
                                     <p class="card1__button">Out of stock</p>
                                 <% } %>
