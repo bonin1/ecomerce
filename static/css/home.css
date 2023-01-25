@@ -84,7 +84,7 @@ nav{
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
     border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
+    border-bottom-left-radius: 0px;
     text-indent: 5px;
     background-color:#087EA2;
     border: none;
@@ -107,7 +107,7 @@ nav{
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
     border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
+    border-bottom-right-radius: 0px;
     color: #fff;
 }
 .rcmn{
@@ -127,19 +127,25 @@ nav{
     top: 90px;
     list-style-type: none;
     z-index: 100;
-    background-color: #8bb6f8;
-    width: 14rem;
-    border-radius: 2px;
+    background-color: white;
+    width: 32.3rem;
+    /* border-radius: 5px ; */
+    box-sizing: content-box;
+    box-shadow: 1px 1px 9px 1px gray;
+    margin-top: 6px;
 }
 .rcmn-li{
     width: 100%;
-    margin: 10px 0;
+    /* margin: 10px 0; */
     padding: 5px 0;
     cursor: pointer;
+    padding: 10px;
 }
 .rcmn-li:hover{
-    background-color: #2A5592;
+    background-color: #4AA1AC;
     color: white;
+    transition: 0.2s;
+    /* border-radius: 5px; */
 }
 .cart-color{
     color: white;
@@ -446,7 +452,14 @@ input[type=range]{
         top: calc(100% - 110px);
         transform: unset;
         }
+        
     }
+    @media only screen and (max-width:1024px){
+        #recommendations{
+            width: 13.6rem;
+        }
+    }
+    
     .card1__title {
         display: -webkit-box;
         min-height: 50px;
@@ -473,6 +486,7 @@ input[type=range]{
         -webkit-line-clamp: 5;
         -webkit-box-orient: vertical;
     }
+    
     @media (min-width: 1024px) {
         .card1__snippet {
         margin: 60px 0;
@@ -538,6 +552,7 @@ input[type=range]{
     }
     #search-form{
         width: 100%;
+        padding: 0;
     }
     .logo{
         width: 7rem !important;
@@ -550,8 +565,20 @@ input[type=range]{
         justify-content: center;
         width: auto;
     }
+    
+    .search-submit{
+        padding: 5px 8px;
+    }
+    #recommendations{
+        width: 33%;
+    }
+
 }
 @media screen and (max-width:990px) {
+    #recommendations{
+        margin-top: 7px;
+    }
+
     .carousel-inner {
         width: 100% !important;
         margin: 0 auto;
