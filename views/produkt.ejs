@@ -224,9 +224,8 @@
                                                             title="Sucks big time - 0.5 stars"></label>
                                                     </fieldset>
     
-                                                    <div class="average_rating">
-                                                    </div>
-                                                    <span class="block_rating__reviews">(0 reviews)</span>
+                                                    <div class="average_rating"><%=averageRating%></div>
+                                                    <span class="block_rating__reviews"> <%= reviewCount %> Reviews </span>
                                                     <input type="submit" value="Submit review">
                                                 </div>
                                                 </form>
@@ -353,6 +352,8 @@
         <span id="progress-value">&#x1F815;</span>
     </div>
     <script>
+
+
         const searchForm = document.getElementById('search-form')
         const searchInput = document.getElementById('search-input')
         const recommendations = document.getElementById('recommendations')
@@ -552,8 +553,9 @@ down.onclick = function (event) {
 
 }
 };
+
 const form = document.querySelector('form');
-form.addEventListener('submit', async (event) => {
+form.addEventListener('submit', (event) => {
     event.preventDefault();
     const formData = new FormData(form);
     const id = formData.get('id');
@@ -562,14 +564,18 @@ form.addEventListener('submit', async (event) => {
     const userId = formData.get('userId');
     const comment = formData.get('comment');
     
-    const response = await fetch(`/produkt/${id}`, {
-        method: 'POST',
-        body: JSON.stringify({ rating, product_id, userId, comment }),
-        headers: {
-            'Content-Type': 'application/json'
+    $.ajax({
+        type: 'POST',
+        url: `/produkt/${id}`,
+        data: JSON.stringify({ rating, product_id, userId, comment }),
+        contentType: 'application/json',
+        success: function(data) {
+            console.log("Successfully submitted form");
+        },
+        error: function(error) {
+            console.log(error);
         }
     });
-    const data = await response.json();
 });
 
 

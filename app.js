@@ -146,41 +146,54 @@ app.get('/search', (req, res) => {
 
 app.get('/produkt/:id', async (req, res) => {
     const isLoggedIn = req.session.isLoggedIn;
-    const id = req.params.id;
-
+    const productId = req.params.id;
     try {
-        const item = await Produkti.findOne({
-            where: { id }
+        const product = await Produkti.findOne({
+            where: { id: productId }
         });
-
+        const reviews = await Review.findAll({ where: { product_id: productId } });
+        const reviewCount = reviews.length;
+        let totalRating = 0;
+        reviews.forEach(review => {
+            totalRating += review.rating;
+        });
+        let averageRating = 0;
+        if(reviewCount>0){
+            averageRating = (totalRating/reviewCount).toFixed(1);
+        }
         const randomItems = await Produkti.findAll({
             order: Sequelize.literal('RAND()'),
             limit: 4
         });
 
-        res.render('produkt', { item:item.dataValues, items: randomItems,  isLoggedIn });
-
+        res.render('produkt', { item: product.dataValues, averageRating, reviewCount, items: randomItems,  isLoggedIn });
     } catch(err) {
         console.log(err);
-        res.status(500).render('error', { error: 'An error occurred' });
     }
 });
+
 
 
 app.post('/produkt/:id', async (req, res) => {
-    
     const userId = req.session.userId;
     const { rating, product_id, comment } = req.body;
-    if (!userId) return('/login')
+    if (!userId) return res.redirect('/login');
 
     try {
+        const existingReview = await Review.findOne({
+            where: { product_id, userId }
+        });
+        if (existingReview) {
+            return res.redirect(`/produkt/${product_id}`);
+        }
         await Review.create({ rating, product_id, userId, comment });
-        return ('/produkt')
+        res.redirect(`/produkt/${product_id}`);
     } catch (err) {
         console.error(err);
-        return ('/produkt')
+        res.redirect(`/produkt/${product_id}`);
     }
 });
+
 
 
 
