@@ -4,23 +4,17 @@ const session = require('express-session')
 const db = require('./databaze')
 const d2 = require('./db2')
 const bcrypt = require('bcryptjs');
-const { render } = require('ejs');
 const cookieParser = require('cookie-parser');
-const multer = require('multer');
 const { Sequelize, literal } = require('sequelize');
-const rateLimit = require('express-rate-limit');
-const csrf = require('csurf');
 const bodyParser = require('body-parser');
-
+const jwt = require('jsonwebtoken');
 require('dotenv').config()
 
 
     const Home = require('./Models/HomeModel')
-    const Product = require('./Models/ProtectedModel');
     const Search = require('./Models/SearchModel')
     const Produkti = require('./Models/ProductIdModel')
     const Review = require('./Models/ReviewsModel')
-
 
     app.use(bodyParser.json()); 
     app.use(bodyParser.urlencoded({ extended: true }));
@@ -44,23 +38,9 @@ app.use(session({
 
 
 app.use('/login',require('./routes/LoginRoute'))
+app.use('/admin',require('./routes/AdminRoute'))
+app.use('/protected',require('./routes/ProtectedRoute'))
 
-
-
-
-
-app.get('/protected', (req, res) => {
-    if (!req.session.isLogged) {
-        return res.redirect('/admin');
-    }
-    Product.findAll()
-        .then(results => {
-            res.render('protected', { data: results });
-        })
-        .catch(err => {
-            console.error(err);
-        });
-});
 
 
 
@@ -145,13 +125,20 @@ app.get('/search', (req, res) => {
 });
 
 app.get('/produkt/:id', async (req, res) => {
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 10;
+    const offset = (page - 1) * limit;
     const isLoggedIn = req.session.isLoggedIn;
     const productId = req.params.id;
     try {
         const product = await Produkti.findOne({
             where: { id: productId }
         });
-        const reviews = await Review.findAll({ where: { product_id: productId } });
+        const reviews = await Review.findAll({
+            where: { product_id: req.params.id },
+            limit: limit,
+            offset: offset
+        });
         const reviewCount = reviews.length;
         let totalRating = 0;
         reviews.forEach(review => {
@@ -193,8 +180,6 @@ app.post('/produkt/:id', async (req, res) => {
         res.redirect(`/produkt/${product_id}`);
     }
 });
-
-
 
 
 
@@ -309,9 +294,7 @@ app.get('/changepassword',(req,res)=>{
     const isLoggedIn = req.session.isLoggedIn;
     res.render('changepassword',{isLoggedIn})
 })
-app.get('/admin',(req,res)=>{
-    res.render('admin')
-})
+
 
 
 
@@ -414,20 +397,6 @@ app.post('/changepassword',(req,res)=>{
 
 
 
-app.post('/admin',(req,res)=>{
-    const {email,password} = req.body
-    const query =`SELECT * FROM admin_information WHERE admin_email = ?`
-    db.query(query,[email], async(err,results,fields)=>{
-        if(err){
-            console.log(err)
-        }
-        if(results.length == 0 || !(await bcrypt.compare(password,results[0].password))) {
-            return res.render('admin',{message:'passwordi ose emaili jon keq'})
-        }
-        req.session.isLogged = email
-        res.redirect('/protected')
-    })
-})
 
 
 
@@ -520,23 +489,6 @@ app.post('/delete/:id',(req,res)=>{
         res.redirect(`/produktet?alert=Produkti%20eshte%20fshire`);
     })
 })
-
-
-
-
-const middleware = (req,res,next)=>{
-    if(!req.session.isLogged){
-        res.redirect('/admin')
-    }
-    else{
-        next()
-    }
-}
-app.get('/protected',middleware,(req,res)=>{
-    res.render('protected')
-})
-
-
 
 
 app.listen(8080,()=>{
