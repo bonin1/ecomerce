@@ -28,273 +28,71 @@
 <body>
     <!-- navbari -->
     <nav class="imagesa navbar navbar-expand-lg navbar-light">
-        <div class="pjesa1">
-            <div class="logoja">
-                <img class="logo" src="/static/image/STRIKETECH-1.png" alt="">
+        <div class="navbarDiv-main">
+            <div class="pjesa1">
+                <div class="logoja">
+                    <img class="logo" src="/static/image/STRIKETECH-1.png" alt="">
+                </div>
             </div>
-        </div>
-        <div class="pjesa2">
-            <div class="rcmn">
-                <form id="search-form">
-                    <input type="text" id="search-input" autocomplete="off">
-                    <button class="search-submit" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
-                </form>
-                <div id="recommendations"></div>
+            <div class="pjesa2">
+                <div class="rcmn">
+                    <form id="search-form">
+                        <input type="text" id="search-input" autocomplete="off">
+                        <button class="search-submit" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </form>
+                    <div id="recommendations"></div>
+                </div>
             </div>
-        </div>
-        <div class="button1">
-            <button 
-            style="background-color: white; position: relative; right: 10px; "
-            class="navbar-toggler" 
-            type="button" 
-            data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" 
-            aria-expanded="false"
-            aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-        <div class="collapse navbar-collapse navbar-nav w-33 " id="navbarSupportedContent">
-            <a  id="a1" class="nav-link" href="/">Home</a>
-            <a  id="a1" class="nav-link" href="/register">Register</a>
-            <% if (isLoggedIn) { %>
-                <form action="/logout" id="logout-form" method="POST">
-                    <input type="submit" id="a1" class="nav-link" value="Logout">
-                </form>
-            <% } else { %>
-                <a id="a1" class="nav-link" href="/login">Login</a>
-            <% } %>
-            <div class="carda">
-                <a href="/cart"><a class="cart-color" href="/cart"><i   class="fa-sharp fa-solid fa-cart-shopping"></i></a></i><sup><a href="/cart" style="color: white; text-decoration: none;" class="cart-count"></a></sup></a>
+            <div class="button1">
+                <button 
+                style="background-color: white; position: relative; right: 10px; "
+                class="navbar-toggler" 
+                type="button" 
+                data-toggle="collapse"
+                data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" 
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse navbar-nav w-33 " id="navbarSupportedContent">
+                <a  id="a1" class="nav-link" href="/">Home</a>
+                <a  id="a1" class="nav-link" href="/register">Register</a>
+                <% if (isLoggedIn) { %>
+                    <form action="/logout" id="logout-form" method="POST">
+                        <input type="submit" id="a1" class="nav-link" value="Logout">
+                    </form>
+                <% } else { %>
+                    <a id="a1" class="nav-link" href="/login">Login</a>
+                <% } %>
+                <div class="carda">
+                    <a href="/cart"><a class="cart-color" href="/cart"><i   class="fa-sharp fa-solid fa-cart-shopping"></i></a></i><sup><a href="/cart" style="color: white; text-decoration: none;" class="cart-count"></a></sup></a>
+                </div>
             </div>
         </div>
     </nav>
 <!-- navbari -->
 
-
-    <main class="main">
-        <div class="mainWrapper">
-            <div class="mainBackground clearfix">
-                <div class="row">
-                    <div class="column small-centered">
-                        <div class="productCard_block">
-                            <div class="row">
-                                <div class="small-12 large-6 columns">
-                                    <div class="productCard_leftSide clearfix">
-                                        
-    
-                                        <div class="sliderBlock">
-                                            <ul class="sliderBlock_items">
-                                                <li class="sliderBlock_items__itemPhoto sliderBlock_items__showing">
-                                                    <img src="<%= item.foto_produktit %>" alt="headphones">
-                                                </li>
-                                                <li class="sliderBlock_items__itemPhoto">
-                                                    <img src="<%= item.foto_produktit %>"  alt="headphones">
-                                                </li>
-                                                <li class="sliderBlock_items__itemPhoto">
-                                                    <img src="<%= item.foto_produktit %>"  alt="headphones">
-                                                </li>
-                                                <li class="sliderBlock_items__itemPhoto">
-                                                    <img src="<%= item.foto_produktit %>"  alt="headphones">
-                                                </li>
-                                                <li class="sliderBlock_items__itemPhoto">
-                                                    <img src="<%= item.foto_produktit %>"  alt="headphones">
-                                                </li>
-                                            </ul>
-    
-                                            
-                                            <div class="sliderBlock_controls">
-                                                <div class="sliderBlock_controls__navigatin">
-                                                    <div class="sliderBlock_controls__wrapper">
-                                                        <div class="sliderBlock_controls__arrow sliderBlock_controls__arrowBackward">
-                                                            <i class="fa fa-angle-left" aria-hidden="true"></i>
-                                                        </div>
-                                                        <div class="sliderBlock_controls__arrow sliderBlock_controls__arrowForward">
-                                                            <i class="fa fa-angle-right" aria-hidden="true"></i>
-                                                        </div>
-                                                    </div>
-                                                </div>
-    
-                                                <ul class="sliderBlock_positionControls">
-                                                    <li class="sliderBlock_positionControls__paginatorItem sliderBlock_positionControls__active"></li>
-                                                    <li class="sliderBlock_positionControls__paginatorItem"></li>
-                                                    <li class="sliderBlock_positionControls__paginatorItem"></li>
-                                                    <li class="sliderBlock_positionControls__paginatorItem"></li>
-                                                    <li class="sliderBlock_positionControls__paginatorItem"></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="small-12 large-6 columns">
-                                    <div class="productCard_rightSide">
-                                        <div class="block_specification">
-                                            <div class="block_specification__specificationShow">
-                                                <i class="fa fa-cog block_specification__button block_specification__button__rotate"aria-hidden="true"></i>
-                                                <span class="block_specification__text">spec</span>
-                                            </div>
-                                            <div class="block_specification__informationShow hide">
-                                                <i class="fa fa-info-circle block_specification__button block_specification__button__jump"aria-hidden="true"></i>
-                                                <span class="block_specification__text">inform</span>
-                                            </div>
-                                        </div>
-    
-                                        <p class="block_model">
-                                            <span class="block_model__text">Model: </span>
-                                            <span class="block_model__number">?</span>
-                                        </p>
-    
-                                        <div class="block_product">
-                                            <h2 class="block_name block_name__mainName">EMRI KOMPANISE <sup>&reg; </sup></h2>
-                                            <p class="block_product__advantagesProduct">
-                                                <%= item.emri_produktit %>
-                                            </p>
-                                            <div class="block_informationAboutDevice">
-                                                <div class="block_descriptionCharacteristic block_descriptionCharacteristic__disActive">
-                                                    <table class="block_specificationInformation_table">
-                                                        <tr>
-                                                            <th>Characteristic</th>
-                                                            <th>Value</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Ear Coupling</td>
-                                                            <td>Around Ear</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Transducer Principle</td>
-                                                            <td>Dynamic, Closed-back</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Frequency Response</td>
-                                                            <td>16Hz – 22kHz</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Sound Pressure Level (SPL)</td>
-                                                            <td>113 dB (Passive: 1 kHz/1 Vrms)</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Total Harmonic Distortion (THD)</td>
-                                                            <td>&lt;0.5% (1 kHz, 100 dB SPL)</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Volume Control</td>
-                                                            <td>Earcup control when Bluetooth connected</td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-    
-    
-                                                <div class="block_descriptionInformation">
-                                                    <span>
-                                                        <%= item.pershkrimi_produktit %>
-                                                    </span>
-                                                </div>
-                                                <form action="/produkt/<%= item.id %>" method="POST">
-                                                    <input type="hidden" name="product_id" value="<%= item.id %>">
-                                                    <input type="hidden" name="comment" value="<%= item.comment %>">
-                                                <div class="block_rating clearfix">
-                                                    <fieldset class="block_rating__stars">
-                                                        <input type="radio" id="star5" name="rating" value="5"/><label
-                                                            class="full" for="star5" title="Awesome - 5 stars"></label>
-                                                        <input type="radio" id="star4half" name="rating"
-                                                                value="4 and a half"/><label class="half" for="star4half"
-                                                                title="Pretty good - 4.5 stars"></label>
-                                                        <input type="radio" id="star4" name="rating" value="4"/><label
-                                                            class="full" for="star4" title="Good - 4 stars"></label>
-                                                        <input type="radio" id="star3half" name="rating"
-                                                                value="3 and a half"/><label class="half" for="star3half"
-                                                                title="Above average - 3.5 stars"></label>
-                                                        <input type="radio" id="star3" name="rating" value="3"/><label
-                                                            class="full" for="star3" title="Average - 3 stars"></label>
-                                                        <input type="radio" id="star2half" name="rating"
-                                                                value="2 and a half"/><label class="half" for="star2half"
-                                                                title="Kinda bad - 2.5 stars"></label>
-                                                        <input type="radio" id="star2" name="rating" value="2"/><label
-                                                            class="full" for="star2"
-                                                            title="Kinda bad - 2 stars"></label>
-                                                        <input type="radio" id="star1half" name="rating"
-                                                                value="1 and a half"/><label class="half" for="star1half"
-                                                                title="Meh - 1.5 stars"></label>
-                                                        <input type="radio" id="star1" name="rating" value="1"/><label
-                                                            class="full" for="star1"
-                                                            title="Sucks big time - 1 star"></label>
-                                                        <input type="radio" id="starhalf" name="rating" value="half"/><label
-                                                            class="half" for="starhalf"
-                                                            title="Sucks big time - 0.5 stars"></label>
-                                                    </fieldset>
-    
-                                                    <div class="average_rating"><%=averageRating%></div>
-                                                    <span class="block_rating__reviews"> <%= reviewCount %> Reviews </span>
-                                                    <input type="submit" value="Submit review">
-                                                </div>
-                                                </form>
-                                                <div class="row ">
-                                                    <div class="large-6 small-12 column left-align">
-                                                        <div class="block_price">
-                                                            <p class="block_price__currency"><%= item.cmimi_produktit %>€</p>
-                                                            <p class="block_price__shipping">Shipping and taxes extra</p>
-                                                        </div>
-                                                        <div class="block_quantity clearfix">
-                                                            <span class="text_specification">Sasia:</span>
-                                                            <div class="block_quantity__chooseBlock" style="display: flex !important;">
-                                                                <input class="block_quantity__number" name="quantityNumber" type="text" min="1" value="1">
-                                                                <div class="random-div" style="display: flex; flex-direction: column;">
-                                                                    <button class="block_quantity__button block_quantity__up"></button>
-                                                                    <button class="block_quantity__button block_quantity__down"></button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="large-6 small-12 column end">
-                                                        <div class="block_goodColor"></div>
-                                                            <% if (item.sasia_produktit > 0) { %>
-                                                                <div class="addtoCart">
-                                                                    <button class="button button_addToCard add-to-cart data-id="<%= item.id %>" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
-                                                                </div>
-                                                            <% } else { %>
-                                                                <p class="out-of-stock">Out of stock</p>
-                                                            <% } %>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div id="wrapper">
+    <div class="productCard-mainDiv">
+        <div class="row">
+            <div class="imageContainer">
+                
             </div>
-        </div>
-    
-    </main>
-
-
-
-    <div class="cards">
-        <div class="random-card-container">
-            <div class="random-card">
-                <%items.forEach(row=>{ %>
-                    <div class="card2" data-category="<%= row.kategoria %>">
-                        <figure class="card2__thumb">
-                            <img src="<%= row.foto_produktit %>" class="card2__image">
-                            <figcaption class="card2__caption">
-                            <h2 class="card2__title"><%= row.emri_produktit %></h2>
-                            <% if (row.sasia_produktit > 0) { %>
-                                <h2 class="card2__snippet">Sasia: <%= row.sasia_produktit %></h2>
-                                <button class="card2__button" data-id="<%= row.id %>" class="add-to-cart" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
-                                <h2>Cmimi: <%=row.cmimi_produktit %>€</h2>
-                            <% } else { %>
-                                <p class="card2__button">Out of stock</p>
-                            <% } %>
-                            </figcaption>
-                        </figure>
-                    </div>
-                <%})%>
-            </div>
+            <div class="descriptonContainer"></div>
+            <div class="paymentContainer"></div>
         </div>
     </div>
+</div>
+
+
+
+
+
+
+
+    
     <footer class="text-center text-lg-start text-white" style=" background: linear-gradient(90deg, rgb(67, 195, 221) 0%, rgb(51, 117, 241) 100%, rgb(51, 117, 241) 100%);">
         <div class="container p-4 pb-0">
             <section>
@@ -353,7 +151,6 @@
     </div>
     <script>
 
-
         const searchForm = document.getElementById('search-form')
         const searchInput = document.getElementById('search-input')
         const recommendations = document.getElementById('recommendations')
@@ -391,7 +188,6 @@
         searchForm.addEventListener('submit', function(e) {
             e.preventDefault();
         });
-
 
         const addToCartButtons = document.querySelectorAll('.add-to-cart');
         addToCartButtons.forEach(button => {
@@ -453,106 +249,7 @@ window.onload = calcScrollValue;
 
 
 
-window.onload = function () {
 
-// SLIDERI
-var slider = document.getElementsByClassName("sliderBlock_items");
-var slides = document.getElementsByClassName("sliderBlock_items__itemPhoto");
-var next = document.getElementsByClassName("sliderBlock_controls__arrowForward")[0];
-var previous = document.getElementsByClassName("sliderBlock_controls__arrowBackward")[0];
-var items = document.getElementsByClassName("sliderBlock_positionControls")[0];
-var currentSlideItem = document.getElementsByClassName("sliderBlock_positionControls__paginatorItem");
-
-var currentSlide = 0;
-var slideInterval = setInterval(nextSlide, 5000);  // 5 SEC
-
-function nextSlide() {
-    goToSlide(currentSlide + 1);
-}
-
-function previousSlide() {
-    goToSlide(currentSlide - 1);
-}
-
-
-function goToSlide(n) {
-    slides[currentSlide].className = 'sliderBlock_items__itemPhoto';
-    items.children[currentSlide].className = 'sliderBlock_positionControls__paginatorItem';
-    currentSlide = (n + slides.length) % slides.length;
-    slides[currentSlide].className = 'sliderBlock_items__itemPhoto sliderBlock_items__showing';
-    items.children[currentSlide].className = 'sliderBlock_positionControls__paginatorItem sliderBlock_positionControls__active';
-}
-
-
-next.onclick = function () {
-    nextSlide();
-};
-previous.onclick = function () {
-    previousSlide();
-};
-
-
-function goToSlideAfterPushTheMiniBlock() {
-    for (var i = 0; i < currentSlideItem.length; i++) {
-        currentSlideItem[i].onclick = function (i) {
-            var index = Array.prototype.indexOf.call(currentSlideItem, this);
-            goToSlide(index);
-        }
-    }
-}
-
-goToSlideAfterPushTheMiniBlock();
-
-
-
-///// FUSHA E SPECIFIKIMIT
-
-
-var buttonFullSpecification = document.getElementsByClassName("block_specification")[0];
-var buttonSpecification = document.getElementsByClassName("block_specification__specificationShow")[0];
-var buttonInformation = document.getElementsByClassName("block_specification__informationShow")[0];
-
-var blockCharacteristiic = document.querySelector(".block_descriptionCharacteristic");
-var activeCharacteristic = document.querySelector(".block_descriptionCharacteristic__active");
-
-
-buttonFullSpecification.onclick = function () {
-
-    console.log("OK");
-
-
-    buttonSpecification.classList.toggle("hide");
-    buttonInformation.classList.toggle("hide");
-
-
-    blockCharacteristiic.classList.toggle("block_descriptionCharacteristic__active");
-
-
-};
-
-
-// SASIA
-
-var up = document.getElementsByClassName('block_quantity__up')[0],
-    down = document.getElementsByClassName('block_quantity__down')[0],
-    input = document.getElementsByClassName('block_quantity__number')[0];
-
-function getValue() {
-    return parseInt(input.value);
-}
-
-up.onclick = function (event) {
-    input.value = getValue() + 1;
-};
-down.onclick = function (event) {
-    if (input.value <= 1) {
-        return 1;
-    } else {
-        input.value = getValue() - 1;
-    }
-
-}
-};
 
 const form = document.querySelector('form');
 form.addEventListener('submit', (event) => {

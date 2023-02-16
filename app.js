@@ -49,7 +49,6 @@ app.get('/', (req, res) => {
     const category = req.query.category;
     const minPrice = req.query.minPrice;
     const maxPrice = req.query.maxPrice;
-
     let query = { order: [[Sequelize.fn('RAND')]], limit: 9 };
     if (category || (minPrice && maxPrice)) {
         query.where = {};
@@ -62,7 +61,7 @@ app.get('/', (req, res) => {
             [Sequelize.Op.between]: [minPrice, maxPrice]
         };
     }
-
+    
     Home.findAll(query)
         .then(results => {
             res.render('home', { data: results, isLoggedIn, minPrice, maxPrice });
@@ -71,6 +70,8 @@ app.get('/', (req, res) => {
             console.log(err);
         });
 });
+
+
 
 
 
@@ -153,12 +154,12 @@ app.get('/produkt/:id', async (req, res) => {
             limit: 4
         });
 
-        res.render('produkt', { item: product.dataValues, averageRating, reviewCount, items: randomItems,  isLoggedIn });
+        res.render('produkt', {  averageRating, reviewCount, items: randomItems,  isLoggedIn });
     } catch(err) {
         console.log(err);
     }
 });
-
+// item: product.dataValues,
 
 
 app.post('/produkt/:id', async (req, res) => {
