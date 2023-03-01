@@ -58,15 +58,21 @@
     </nav>
     <div class="main">
         <div class="card">
-            <h2>Regjistrohu per ti perdorur sherbimet tona</h2>
+            <h2 class="regist">Regjistrohu per ti perdorur sherbimet tona</h2>
             <form action="/create" class="form-register" method="POST">
-                <input type="text" placeholder="Emri:" name="emri" required >
-                <input type="text" placeholder="Mbiemri:" name="mbiemri" required>
-                <input type="email" placeholder="Emaili:" name="email" required>
-                <input type="password" placeholder="Fjalkalimi:" name="password" minlength="8" required id="">
-                <input type="password" placeholder="Konfirmimi fjalkalimit:" name="oldpassword" minlength="8" required id="">
-                <h5>Nese keni account: <a href="/login">Log in</a></h5>
-                <input type="submit" value="Regjistrohu">
+                <input class="inputt" type="text" placeholder="Emri:" name="emri" required >
+                <input class="inputt" type="text" placeholder="Mbiemri:" name="mbiemri" required>
+                <input class="inputt" type="email" placeholder="Emaili:" name="email" required>
+                <div class="container">
+                    <div class="input-box">
+                        <i class="fas fa-eye-slash show_hide"></i>
+                        <input spellcheck="false" name="password" minlength="8" id="input-check" type="password" placeholder="Enter password:">
+                    </div>
+                    <div class="indicator"></div>
+                </div>
+                <input class="inputt" type="password" placeholder="Konfirmimi fjalkalimit:" name="oldpassword" minlength="8" required id="">
+                <h5 class="regist">Nese keni account: <a href="/login">Log in</a></h5>
+                <input class="regjistrimi" type="submit" value="Regjistrohu">
             </form>
             <%if(message){ %>
                 <h4 id="message"><%= message %></h4>
@@ -129,6 +135,51 @@
     </footer>
 
     <script>
+        const input = document.getElementById("input-check"),
+        showHide = document.querySelector(".show_hide"),
+        indicator = document.querySelector(".indicator")
+
+        showHide.addEventListener("click", ()=>{
+            if(input.type === "password"){
+                input.type = "text";
+                showHide.classList.replace("fa-eye-slash","fa-eye");
+            }else {
+                input.type = "password";
+                showHide.classList.replace("fa-eye","fa-eye-slash");
+            }
+        });
+
+
+        let alphabet = /[a-zA-Z]/,
+        numbers = /[0-9]/, 
+        scharacters = /[!,@,#,$,%,^,&,*,?,_,(,),-,+,=,~]/;
+
+        input.addEventListener("keyup", ()=>{
+            indicator.classList.add("active");
+
+            let val = input.value;
+            if(val.match(alphabet) || val.match(numbers) || val.match(scharacters)){
+                input.style.borderColor = "#FF6333";
+                showHide.style.color = "#FF6333";
+            }
+            if(val.match(alphabet) && val.match(numbers) && val.length >= 6){
+                input.style.borderColor = "#cc8500";
+                showHide.style.color = "#cc8500";
+            }
+            if(val.match(alphabet) && val.match(numbers) && val.match(scharacters) && val.length >= 8){
+                input.style.borderColor = "#22C32A";
+                showHide.style.color = "#22C32A";
+            }
+
+            if(val == ""){
+                indicator.classList.remove("active");
+                input.style.borderColor = "#A6A6A6";
+                showHide.style.color = "#A6A6A6";
+            }
+        });
+        
+
+
         //NAVBAR
 
         // search bar
@@ -184,57 +235,6 @@
             e.preventDefault();
         });
         //search bar
-
-        //shopping icona
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', '/cart/count', true);
-        xhr.send();
-        xhr.onload = function() {
-            if (this.status === 200) {
-                const cartCount = JSON.parse(this.responseText).count;
-                const cartCountElement = document.querySelector('.cart-count');
-                cartCountElement.innerHTML = cartCount;
-            } else {
-                console.error('Error fetching cart count');
-            }
-        }
-
-        const filterButtons = document.querySelectorAll('.filter-button');
-        filterButtons.forEach(button => {
-            button.addEventListener('click', event => {
-                event.preventDefault(); 
-                const selectedCategory = button.getAttribute('data-value');
-                window.history.pushState(
-                {},
-                '',
-                `${window.location.origin}${window.location.pathname}?category=${selectedCategory}`
-                );
-                
-                filterProducts(selectedCategory);
-            });
-        });
-        //shopping icona
-
-        //NAVBAR
-
-
-        
-        
-
-        
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', '/cart/count', true);
-        xhr.send();
-        xhr.onload = function() {
-            if (this.status === 200) {
-                const cartCount = JSON.parse(this.responseText).count;
-                const cartCountElement = document.querySelector('.cart-count');
-                cartCountElement.innerHTML = cartCount;
-            } else {
-                console.error('Error fetching cart count');
-            }
-        }
-        
     </script>
 </body>
 </html>
