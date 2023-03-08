@@ -68,6 +68,14 @@ nav{
     color: #A6A6A6;
     cursor: pointer;
 }
+.input-box .Show_Hide{
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #A6A6A6;
+    cursor: pointer;
+}
 .input-box input{
     height: 60px;
     width: 100%;
@@ -237,7 +245,7 @@ nav{
 }
 
 .regist{
-    color:  lightskyblue  ";
+    color:  lightskyblue ;
 }
 
 .inputt{
@@ -245,7 +253,8 @@ nav{
     background-color: rgb(244, 240, 240);
     color: black;
     border-radius: 2px;
-    border-bottom: none;
+    border-bottom: 2px solid gray   ;
+    margin-top: 6px;
 }
 .inputt, ::placeholder{
     color: black;

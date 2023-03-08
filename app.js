@@ -9,6 +9,7 @@ const { Sequelize, literal } = require('sequelize');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
+const  {check,validationResult} = require('express-validator')
 
 
     const Home = require('./Models/HomeModel')
@@ -44,32 +45,51 @@ app.use('/protected',require('./routes/ProtectedRoute'))
 
 
 
-app.get('/', (req, res) => {
-    const isLoggedIn = req.session.isLoggedIn;
-    const category = req.query.category;
-    const minPrice = req.query.minPrice;
-    const maxPrice = req.query.maxPrice;
-    let query = { order: [[Sequelize.fn('RAND')]], limit: 9 };
-    if (category || (minPrice && maxPrice)) {
-        query.where = {};
-    }
-    if (category) {
-        query.where.kategoria = category;
-    }
-    if (minPrice && maxPrice) {
-        query.where.cmimi_produktit = {
-            [Sequelize.Op.between]: [minPrice, maxPrice]
+app.get('/', [
+    check('category').optional().isString(),
+    check('minPrice').optional().isFloat(),
+    check('maxPrice').optional().isFloat()
+    ], (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }
+        const category = req.query.category ? req.sanitize(req.query.category) : null;
+        const minPrice = req.query.minPrice ? req.sanitize(req.query.minPrice) : null;
+        const maxPrice = req.query.maxPrice ? req.sanitize(req.query.maxPrice) : null;
+
+        const query = {
+            order: [[Sequelize.fn('RAND')]],
+            limit: 9
         };
-    }
-    
-    Home.findAll(query)
+
+        if (category || (minPrice && maxPrice)) {
+            query.where = {};
+        }
+
+        if (category) {
+            query.where.kategoria = { [Sequelize.Op.eq]: category };
+        }
+
+        if (minPrice && maxPrice) {
+            query.where.cmimi_produktit = {
+                [Sequelize.Op.between]: [minPrice, maxPrice]
+            };
+        }
+
+        Home.findAll({
+            ...query,
+            replacements: query.where,
+            model: Home,
+            mapToModel: true
+        })
         .then(results => {
-            res.render('home', { data: results, isLoggedIn, minPrice, maxPrice });
+            res.render('home', { data: results, isLoggedIn:req.session.isLoggedIn, minPrice, maxPrice });
         })
         .catch(err => {
             console.log(err);
         });
-});
+    });
 
 
 

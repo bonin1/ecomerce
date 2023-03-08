@@ -70,7 +70,13 @@
                     </div>
                     <div class="indicator"></div>
                 </div>
-                <input class="inputt" type="password" placeholder="Konfirmimi fjalkalimit:" name="oldpassword" minlength="8" required id="">
+                <div class="container">
+                    <div class="input-box">
+                        <i class="fas fa-eye-slash Show_Hide"></i>
+                        <input spellcheck="false" class="inputt" id="mala-input" name="password" minlength="8" id="input-check" type="password" placeholder="Konfirmo passwordin:">
+                    </div>
+                </div>
+                <!-- <input class="inputt" spellcheck="false" type="password" placeholder="Konfirmimi fjalkalimit:" name="oldpassword" minlength="8" required > -->
                 <h5 class="regist">Nese keni account: <a href="/login">Log in</a></h5>
                 <input class="regjistrimi" type="submit" value="Regjistrohu">
             </form>
@@ -148,7 +154,20 @@
                 showHide.classList.replace("fa-eye","fa-eye-slash");
             }
         });
+        
+        const inputA = document.getElementById('mala-input')
+        const ShowHide = document.querySelector('.Show_Hide')
 
+        ShowHide.addEventListener('click',()=>{
+            if(inputA.type === 'password'){
+                inputA.type = 'text'
+                ShowHide.classList.replace('fa-eye-slash','fa-eye')
+            }
+            else{
+                inputA.type = ('password')
+                ShowHide.classList.replace('fa-eye','fa-eye-slash')
+            }
+        })
 
         let alphabet = /[a-zA-Z]/,
         numbers = /[0-9]/, 
