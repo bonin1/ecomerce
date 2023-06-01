@@ -40,7 +40,7 @@ app.use(session({
 
 app.use('/login',require('./routes/LoginRoute'))
 app.use('/admin',require('./routes/AdminRoute'))
-app.use('/protected',require('./routes/ProtectedRoute'))
+app.get('/protected',require('./routes/ProtectedRoute'))
 
 
 

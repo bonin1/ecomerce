@@ -5,7 +5,7 @@ const router = express.Router();
 const Product = require('../Models/ProtectedModel');
 
 
-router.get('/   ', (req, res) => {
+router.get('/protected', (req, res) => {
     if (!req.session.isLogged) {
         return res.redirect('/admin');
     }
