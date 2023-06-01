@@ -1,3 +1,3 @@
-.env
-node_modules
-palidhje
+.env/
+node_modules/
+palidhje/
