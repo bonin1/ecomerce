@@ -1,4 +1,4 @@
-# ecomerce
+# E-comerce
 Introduction
 
 Welcome to the documentation for our eCommerce project built with Node.js and MySQL. This comprehensive guide will walk you through the setup, configuration, and usage of our powerful eCommerce application.
