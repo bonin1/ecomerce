@@ -11,10 +11,17 @@ Key Features
 
 Product Management: Easily add, update, and categorize products in your online store. Showcase detailed product descriptions, images, pricing, and inventory status.
 
-Shopping Cart and Checkout: Enable customers to add products to their cart, review their selections, and proceed to a secure checkout process. Offer various payment options to ensure a smooth transaction flow.
+Shopping Cart and Checkout: Enable customers to add products to their cart, review their selections, and proceed to a secure checkout process.
 
-Order Processing: Efficiently manage incoming orders, update order statuses, and track fulfillment progress. Generate invoices and shipping labels for seamless order management.
+User Management: Allow users to create account, manage their profiles. Implement user authentication and authorization.
 
-User Management: Allow customers to create accounts, manage their profiles, and track order history. Implement user authentication and authorization for secure access.
+Installation and Setup
 
-Inventory Management: Keep track of product stock levels, receive notifications for low inventory, and automate inventory updates based on sales and restocking.
+#install dependencies 
+npm install 
+
+#run the project
+npm start
+
+#access the project
+http://localhost:8080
