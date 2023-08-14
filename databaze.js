@@ -16,7 +16,7 @@ const db = mysql.createConnection({
 
 db.connect();
 
-db.query('CREATE DATABASE IF NOT EXISTS ecomercedb;', (error, results) => {
+db.query('CREATE DATABASE IF NOT EXISTS ecomercedb', (error, results) => {
     if (error) {
         console.error(error);
     } else {

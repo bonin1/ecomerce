@@ -174,14 +174,15 @@ nav{
 /* SLIDERI */
 .slideri{
     width: 100%;
-    height: 24rem;
-    
     display: flex;
     justify-content: center;
     align-items: center;
 }
+#carouselExampleInterval{
+    width: 100% !important;
+}
 .carousel-inner {
-    width: 900px !important;
+    width: 100% !important;
     margin: 0 auto;
 }
 
