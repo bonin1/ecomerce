@@ -174,7 +174,7 @@ app.get('/produkt/:id', async (req, res) => {
             limit: 4
         });
 
-        res.render('produkt', {  averageRating, reviewCount, items: randomItems,  isLoggedIn });
+        res.render('produkt', { item: product.dataValues, averageRating, reviewCount, items: randomItems,  isLoggedIn });
     } catch(err) {
         console.log(err);
     }
