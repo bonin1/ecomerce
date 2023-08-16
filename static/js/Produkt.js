@@ -39,166 +39,58 @@ searchForm.addEventListener('submit', function(e) {
 });
 
 
-const addToCartButtons = document.querySelectorAll('.add-to-cart');
-addToCartButtons.forEach(button => {
-    button.addEventListener('click', e => {
-        const isLoggedIn = e.target.getAttribute('data-is-logged-in') === 'true';
-        if (!isLoggedIn) {
-            return window.location.href = '/login';
-        }
-        const itemId = e.target.getAttribute('data-id');
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/cart', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify({ id: itemId, quantity: 1 }));
-        xhr.onload = function() {
-            if (this.status === 200) {
-                console.log('Item added to cart');
-            } else {
-                console.error('Error adding item to cart');
+document.addEventListener('DOMContentLoaded', function() {
+    const cartCountElement = document.querySelector('.cart-count');
+
+    document.addEventListener('click', e => {
+        if (e.target.classList.contains('add-to-cart')) {
+            const isLoggedIn = e.target.getAttribute('data-is-logged-in') === 'true';
+            if (!isLoggedIn) {
+                return window.location.href = '/login';
             }
+            const itemId = e.target.getAttribute('data-id');
+            
+            fetch('/cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: itemId, quantity: 1 })
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    console.log('Item added to cart');
+                    updateCartCount();
+                } else {
+                    console.error('Error adding item to cart');
+                }
+            })
+            .catch(error => {
+                console.error('Network error:', error);
+            });
         }
     });
-});
 
-
-
-const xhr = new XMLHttpRequest();
-xhr.open('GET', '/cart/count', true);
-xhr.send();
-xhr.onload = function() {
-    if (this.status === 200) {
-        const cartCount = JSON.parse(this.responseText).count;
-        const cartCountElement = document.querySelector('.cart-count');
-        cartCountElement.innerHTML = cartCount;
-    } else {
-        console.error('Error fetching cart count');
+    function updateCartCount() {
+        fetch('/cart/count')
+        .then(response => response.json())
+        .then(data => {
+            const cartCount = data.count;
+            cartCountElement.innerHTML = cartCount;
+        })
+        .catch(error => {
+            console.error('Error fetching cart count:', error);
+        });
     }
-}
-let calcScrollValue = () => {
-let scrollProgress = document.getElementById("progress");
-let progressValue = document.getElementById("progress-value");
-let pos = document.documentElement.scrollTop;
-let calcHeight =
-document.documentElement.scrollHeight -
-document.documentElement.clientHeight;
-let scrollValue = Math.round((pos * 100) / calcHeight);
-if (pos > 100) {
-scrollProgress.style.display = "grid";
-} else {
-scrollProgress.style.display = "none";
-}
-scrollProgress.addEventListener("click", () => {
-document.documentElement.scrollTop = 0;
+
+    updateCartCount();
 });
-scrollProgress.style.background = `conic-gradient(#0f4c5c ${scrollValue}%, #d7d7d7 ${scrollValue}%)`;
-};
-
-window.onscroll = calcScrollValue;
-window.onload = calcScrollValue;
 
 
 
-window.onload = function () {
-
-// SLIDERI
-var slider = document.getElementsByClassName("sliderBlock_items");
-var slides = document.getElementsByClassName("sliderBlock_items__itemPhoto");
-var next = document.getElementsByClassName("sliderBlock_controls__arrowForward")[0];
-var previous = document.getElementsByClassName("sliderBlock_controls__arrowBackward")[0];
-var items = document.getElementsByClassName("sliderBlock_positionControls")[0];
-var currentSlideItem = document.getElementsByClassName("sliderBlock_positionControls__paginatorItem");
-
-var currentSlide = 0;
-var slideInterval = setInterval(nextSlide, 5000);  // 5 SEC
-
-function nextSlide() {
-goToSlide(currentSlide + 1);
-}
-
-function previousSlide() {
-goToSlide(currentSlide - 1);
-}
-
-
-function goToSlide(n) {
-slides[currentSlide].className = 'sliderBlock_items__itemPhoto';
-items.children[currentSlide].className = 'sliderBlock_positionControls__paginatorItem';
-currentSlide = (n + slides.length) % slides.length;
-slides[currentSlide].className = 'sliderBlock_items__itemPhoto sliderBlock_items__showing';
-items.children[currentSlide].className = 'sliderBlock_positionControls__paginatorItem sliderBlock_positionControls__active';
-}
-
-
-next.onclick = function () {
-nextSlide();
-};
-previous.onclick = function () {
-previousSlide();
-};
-
-
-function goToSlideAfterPushTheMiniBlock() {
-for (var i = 0; i < currentSlideItem.length; i++) {
-currentSlideItem[i].onclick = function (i) {
-    var index = Array.prototype.indexOf.call(currentSlideItem, this);
-    goToSlide(index);
-}
-}
-}
-
-goToSlideAfterPushTheMiniBlock();
 
 
 
-///// FUSHA E SPECIFIKIMIT
-
-
-var buttonFullSpecification = document.getElementsByClassName("block_specification")[0];
-var buttonSpecification = document.getElementsByClassName("block_specification__specificationShow")[0];
-var buttonInformation = document.getElementsByClassName("block_specification__informationShow")[0];
-
-var blockCharacteristiic = document.querySelector(".block_descriptionCharacteristic");
-var activeCharacteristic = document.querySelector(".block_descriptionCharacteristic__active");
-
-
-buttonFullSpecification.onclick = function () {
-
-console.log("OK");
-
-
-buttonSpecification.classList.toggle("hide");
-buttonInformation.classList.toggle("hide");
-
-
-blockCharacteristiic.classList.toggle("block_descriptionCharacteristic__active");
-
-
-};
-
-
-// SASIA
-
-var up = document.getElementsByClassName('block_quantity__up')[0],
-down = document.getElementsByClassName('block_quantity__down')[0],
-input = document.getElementsByClassName('block_quantity__number')[0];
-
-function getValue() {
-return parseInt(input.value);
-}
-
-up.onclick = function (event) {
-input.value = getValue() + 1;
-};
-down.onclick = function (event) {
-if (input.value <= 1) {
-return 1;
-} else {
-input.value = getValue() - 1;
-}
-
-}
-};
 
 const form = document.querySelector('form');
 form.addEventListener('submit', (event) => {
@@ -224,3 +116,54 @@ error: function(error) {
 });
 });
 
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    let slideIndex = 1;
+    const slides = document.getElementsByClassName("mySlides");
+    const dots = document.getElementsByClassName("dot");
+    
+    showSlides(slideIndex);
+
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+
+    function currentSlide(n) {
+        showSlides(slideIndex = n);
+    }
+
+    function showSlides(n) {
+        if (n > slides.length) {slideIndex = 1}    
+        if (n < 1) {slideIndex = slides.length}
+        
+        for (let i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";  
+        }
+        for (let i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+        }
+        
+        slides[slideIndex-1].style.display = "block";  
+        dots[slideIndex-1].className += " active";
+    }
+
+    const prevButton = document.querySelector(".prev");
+    const nextButton = document.querySelector(".next");
+    
+    prevButton.addEventListener("click", function() {
+        plusSlides(-1);
+    });
+
+    nextButton.addEventListener("click", function() {
+        plusSlides(1);
+    });
+
+    const dotIndicators = document.querySelectorAll(".dot");
+    
+    dotIndicators.forEach(function(dot, index) {
+        dot.addEventListener("click", function() {
+            currentSlide(index + 1);
+        });
+    });
+});

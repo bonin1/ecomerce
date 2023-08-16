@@ -22,29 +22,27 @@ const addToCartButtons = document.querySelectorAll('.add-to-cart');
         });
 //ADD TO CART
 
-let calcScrollValue = () => {
-    let scrollProgress = document.getElementById("progress");
-    let progressValue = document.getElementById("progress-value");
-    let pos = document.documentElement.scrollTop;
-    let calcHeight =
-    document.documentElement.scrollHeight -
-    document.documentElement.clientHeight;
-    let scrollValue = Math.round((pos * 100) / calcHeight);
-    if (pos > 100) {
-        scrollProgress.style.display = "grid";
-    } else {
-        scrollProgress.style.display = "none";
-    }
+document.addEventListener('DOMContentLoaded', function() {
+    const scrollProgress = document.getElementById("progress");
+    const progressValue = document.getElementById("progress-value");
+    const calcScrollValue = () => {
+        const pos = document.documentElement.scrollTop;
+        const calcHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrollValue = Math.round((pos * 100) / calcHeight);
+        if (pos > 100) {
+            scrollProgress.style.display = "grid";
+        } else {
+            scrollProgress.style.display = "none";
+        }
+        const sanitizedScrollValue = Math.max(0, Math.min(100, scrollValue));
+        scrollProgress.style.background = `conic-gradient(#0f4c5c ${sanitizedScrollValue}%, #d7d7d7 ${sanitizedScrollValue}%)`;
+    };
     scrollProgress.addEventListener("click", () => {
         document.documentElement.scrollTop = 0;
     });
-    scrollProgress.style.background = `conic-gradient(#0f4c5c ${scrollValue}%, #d7d7d7 ${scrollValue}%)`;
-};
-
-    window.onscroll = calcScrollValue;
-    window.onload = calcScrollValue;
-
-
+    window.addEventListener('scroll', calcScrollValue);
+    calcScrollValue();
+});
 
         //NAVBAR
 

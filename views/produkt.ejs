@@ -73,232 +73,194 @@
 <!-- navbari -->
 
 
-    <main class="main">
-        <div class="mainWrapper">
-            <div class="mainBackground clearfix">
-                <div class="row">
-                    <div class="column small-centered">
-                        <div class="productCard_block">
-                            <div class="row">
-                                <div class="small-12 large-6 columns">
-                                    <div class="productCard_leftSide clearfix">
-                                        
-    
-                                        <div class="sliderBlock">
-                                            <ul class="sliderBlock_items">
-                                                <li class="sliderBlock_items__itemPhoto sliderBlock_items__showing">
-                                                    <img src="<%= item.foto_produktit %>" alt="headphones">
-                                                </li>
-                                                <li class="sliderBlock_items__itemPhoto">
-                                                    <img src="<%= item.foto_produktit %>"  alt="headphones">
-                                                </li>
-                                                <li class="sliderBlock_items__itemPhoto">
-                                                    <img src="<%= item.foto_produktit %>"  alt="headphones">
-                                                </li>
-                                                <li class="sliderBlock_items__itemPhoto">
-                                                    <img src="<%= item.foto_produktit %>"  alt="headphones">
-                                                </li>
-                                                <li class="sliderBlock_items__itemPhoto">
-                                                    <img src="<%= item.foto_produktit %>"  alt="headphones">
-                                                </li>
-                                            </ul>
-    
-                                            
-                                            <div class="sliderBlock_controls">
-                                                <div class="sliderBlock_controls__navigatin">
-                                                    <div class="sliderBlock_controls__wrapper">
-                                                        <div class="sliderBlock_controls__arrow sliderBlock_controls__arrowBackward">
-                                                            <i class="fa fa-angle-left" aria-hidden="true"></i>
-                                                        </div>
-                                                        <div class="sliderBlock_controls__arrow sliderBlock_controls__arrowForward">
-                                                            <i class="fa fa-angle-right" aria-hidden="true"></i>
-                                                        </div>
-                                                    </div>
-                                                </div>
-    
-                                                <ul class="sliderBlock_positionControls">
-                                                    <li class="sliderBlock_positionControls__paginatorItem sliderBlock_positionControls__active"></li>
-                                                    <li class="sliderBlock_positionControls__paginatorItem"></li>
-                                                    <li class="sliderBlock_positionControls__paginatorItem"></li>
-                                                    <li class="sliderBlock_positionControls__paginatorItem"></li>
-                                                    <li class="sliderBlock_positionControls__paginatorItem"></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="small-12 large-6 columns">
-                                    <div class="productCard_rightSide">
-                                        <div class="block_specification">
-                                            <div class="block_specification__specificationShow">
-                                                <i class="fa fa-cog block_specification__button block_specification__button__rotate"aria-hidden="true"></i>
-                                                <span class="block_specification__text">spec</span>
-                                            </div>
-                                            <div class="block_specification__informationShow hide">
-                                                <i class="fa fa-info-circle block_specification__button block_specification__button__jump"aria-hidden="true"></i>
-                                                <span class="block_specification__text">inform</span>
-                                            </div>
-                                        </div>
-    
-                                        <p class="block_model">
-                                            <span class="block_model__text">Model: </span>
-                                            <span class="block_model__number">?</span>
-                                        </p>
-    
-                                        <div class="block_product">
-                                            <h2 class="block_name block_name__mainName">EMRI KOMPANISE <sup>&reg; </sup></h2>
-                                            <p class="block_product__advantagesProduct">
-                                                <%= item.emri_produktit %>
-                                            </p>
-                                            <div class="block_informationAboutDevice">
-                                                <div class="block_descriptionCharacteristic block_descriptionCharacteristic__disActive">
-                                                    <table class="block_specificationInformation_table">
-                                                        <tr>
-                                                            <th>Characteristic</th>
-                                                            <th>Value</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Ear Coupling</td>
-                                                            <td>Around Ear</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Transducer Principle</td>
-                                                            <td>Dynamic, Closed-back</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Frequency Response</td>
-                                                            <td>16Hz – 22kHz</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Sound Pressure Level (SPL)</td>
-                                                            <td>113 dB (Passive: 1 kHz/1 Vrms)</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Total Harmonic Distortion (THD)</td>
-                                                            <td>&lt;0.5% (1 kHz, 100 dB SPL)</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Volume Control</td>
-                                                            <td>Earcup control when Bluetooth connected</td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-    
-    
-                                                <div class="block_descriptionInformation">
-                                                    <span>
-                                                        <%= item.pershkrimi_produktit %>
-                                                    </span>
-                                                </div>
-                                                <form action="/produkt/<%= item.id %>" method="POST">
-                                                    <input type="hidden" name="product_id" value="<%= item.id %>">
-                                                    <input type="hidden" name="comment" value="<%= item.comment %>">
-                                                <div class="block_rating clearfix">
-                                                    <fieldset class="block_rating__stars">
-                                                        <input type="radio" id="star5" name="rating" value="5"/><label
-                                                            class="full" for="star5" title="Awesome - 5 stars"></label>
-                                                        <input type="radio" id="star4half" name="rating"
-                                                                value="4 and a half"/><label class="half" for="star4half"
-                                                                title="Pretty good - 4.5 stars"></label>
-                                                        <input type="radio" id="star4" name="rating" value="4"/><label
-                                                            class="full" for="star4" title="Good - 4 stars"></label>
-                                                        <input type="radio" id="star3half" name="rating"
-                                                                value="3 and a half"/><label class="half" for="star3half"
-                                                                title="Above average - 3.5 stars"></label>
-                                                        <input type="radio" id="star3" name="rating" value="3"/><label
-                                                            class="full" for="star3" title="Average - 3 stars"></label>
-                                                        <input type="radio" id="star2half" name="rating"
-                                                                value="2 and a half"/><label class="half" for="star2half"
-                                                                title="Kinda bad - 2.5 stars"></label>
-                                                        <input type="radio" id="star2" name="rating" value="2"/><label
-                                                            class="full" for="star2"
-                                                            title="Kinda bad - 2 stars"></label>
-                                                        <input type="radio" id="star1half" name="rating"
-                                                                value="1 and a half"/><label class="half" for="star1half"
-                                                                title="Meh - 1.5 stars"></label>
-                                                        <input type="radio" id="star1" name="rating" value="1"/><label
-                                                            class="full" for="star1"
-                                                            title="Sucks big time - 1 star"></label>
-                                                        <input type="radio" id="starhalf" name="rating" value="half"/><label
-                                                            class="half" for="starhalf"
-                                                            title="Sucks big time - 0.5 stars"></label>
-                                                    </fieldset>
-    
-                                                    <div class="average_rating"><%=averageRating%></div>
-                                                    <span class="block_rating__reviews"> <%= reviewCount %> Reviews </span>
-                                                    <input type="submit" value="Submit review">
-                                                </div>
-                                                </form>
-                                                <div class="row ">
-                                                    <div class="large-6 small-12 column left-align">
-                                                        <div class="block_price">
-                                                            <p class="block_price__currency"><%= item.cmimi_produktit %>€</p>
-                                                            <p class="block_price__shipping">Shipping and taxes extra</p>
-                                                        </div>
-                                                        <div class="block_quantity clearfix">
-                                                            <span class="text_specification">Sasia:</span>
-                                                            <div class="block_quantity__chooseBlock" style="display: flex !important;">
-                                                                <input class="block_quantity__number" name="quantityNumber" type="text" min="1" value="1">
-                                                                <div class="random-div" style="display: flex; flex-direction: column;">
-                                                                    <button class="block_quantity__button block_quantity__up"></button>
-                                                                    <button class="block_quantity__button block_quantity__down"></button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="large-6 small-12 column end">
-                                                        <div class="block_goodColor"></div>
-                                                            <% if (item.sasia_produktit > 0) { %>
-                                                                <div class="addtoCart">
-                                                                    <button class="button button_addToCard add-to-cart data-id="<%= item.id %>" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
-                                                                </div>
-                                                            <% } else { %>
-                                                                <p class="out-of-stock">Out of stock</p>
-                                                            <% } %>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+<!-- Main-product-section -->
+<main id="ProductMain">
+    <section id="ProductSection">
+        <aside class="Main-image ImageSlider aside">
+            <div class="slideshow-container">
+                <div class="mySlides fade1">
+                    <img src="/static/image/STRIKETECH-1.png" style="width:100%">
+                </div>
+                
+                <div class="mySlides fade1">
+                    <img src="/static/image/STRIKETECH-1.png" style="width:100%">
+                </div>
+                
+                <div class="mySlides fade1">
+                    <img src="/static/image/STRIKETECH-1.png" style="width:100%">
+                </div>
+
+                <footer>
+                    <a class="prev" onclick="plusSlides(-1)">❮</a>
+                    <div style="text-align:center">
+                        <span class="dot" onclick="currentSlide(1)">
+                            <img src="/static/image/STRIKETECH-1.png" style="width:100%">
+                        </span> 
+                        <span span class="dot" onclick="currentSlide(2)">
+                            <img src="/static/image/STRIKETECH-1.png" style="width:100%">
+                        </span> 
+                        <span class="dot" onclick="currentSlide(3)">
+                            <img src="/static/image/STRIKETECH-1.png" style="width:100%">
+                        </span> 
                     </div>
+                    <a class="next" onclick="plusSlides(1)">❯</a>
+                </footer>
+            </div>
+        </aside>
+        <aside class="ProductInsights aside">
+            <div class="CompanyName">
+                <a href="">
+                    <%= item.company_name %>
+                </a>
+            </div>
+
+            <div class="ProductName">
+                <h1>
+                    <%= item.emri_produktit %>
+                </h1>
+            </div>
+
+            <form action="/produkt/<%= item.id %>" method="POST">
+                <input type="hidden" name="product_id" value="<%= item.id %>">
+                <input type="hidden" name="comment" value="<%= item.comment %>">
+                <div class="RatingsDiv">
+                    <div class="average_rating">
+                        <svg width="15" height="15" fill="#ffffff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18.469 22.5a.75.75 0 0 1-.44-.14L12 17.99l-6.029 4.37a.75.75 0 0 1-1.15-.847l2.35-6.965-6.093-4.178A.75.75 0 0 1 1.5 9h7.518l2.268-6.981a.75.75 0 0 1 1.427 0l2.27 6.984H22.5a.75.75 0 0 1 .424 1.369l-6.096 4.176 2.35 6.963a.75.75 0 0 1-.71.99Z"></path>
+                        </svg>
+                        <%=averageRating%>
+                    </div>
+                    <span class="block_rating__reviews"> <%= reviewCount %> Reviews </span>
+                </div>
+                <div class="block_rating clearfix">
+                    <fieldset class="block_rating__stars">
+                        <input type="radio" id="star5" name="rating" value="5"/><label
+                            class="full" for="star5" title="Awesome - 5 stars"></label>
+                        <input type="radio" id="star4half" name="rating"
+                                value="4 and a half"/><label class="half" for="star4half"
+                                title="Pretty good - 4.5 stars"></label>
+                        <input type="radio" id="star4" name="rating" value="4"/><label
+                            class="full" for="star4" title="Good - 4 stars"></label>
+                        <input type="radio" id="star3half" name="rating"
+                                value="3 and a half"/><label class="half" for="star3half"
+                                title="Above average - 3.5 stars"></label>
+                        <input type="radio" id="star3" name="rating" value="3"/><label
+                            class="full" for="star3" title="Average - 3 stars"></label>
+                        <input type="radio" id="star2half" name="rating"
+                                value="2 and a half"/><label class="half" for="star2half"
+                                title="Kinda bad - 2.5 stars"></label>
+                        <input type="radio" id="star2" name="rating" value="2"/><label
+                            class="full" for="star2"
+                            title="Kinda bad - 2 stars"></label>
+                        <input type="radio" id="star1half" name="rating"
+                                value="1 and a half"/><label class="half" for="star1half"
+                                title="Meh - 1.5 stars"></label>
+                        <input type="radio" id="star1" name="rating" value="1"/><label
+                            class="full" for="star1"
+                            title="Sucks big time - 1 star"></label>
+                        <input type="radio" id="starhalf" name="rating" value="half"/><label
+                            class="half" for="starhalf"
+                            title="Sucks big time - 0.5 stars"></label>
+                    </fieldset>
+                
+                    <input type="submit" value="Submit review">
+                </div>
+            </form>
+
+            <div class="PriceDiv">
+                <h1>
+                    <%= item.cmimi_produktit %>€
+                </h1>
+                <svg width="10" height="10" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0_230_2)">
+                        <path d="M18 4C15.2311 4 12.5243 4.82109 10.222 6.35943C7.91973 7.89777 6.12532 10.0843 5.06569 12.6424C4.00607 15.2006 3.72882 18.0155 4.26901 20.7313C4.80921 23.447 6.14258 25.9416 8.10051 27.8995C10.0584 29.8574 12.553 31.1908 15.2687 31.731C17.9845 32.2712 20.7994 31.9939 23.3576 30.9343C25.9157 29.8747 28.1022 28.0803 29.6406 25.778C31.1789 23.4757 32 20.7689 32 18C32 14.287 30.525 10.726 27.8995 8.1005C25.274 5.475 21.713 4 18 4Z" fill="black"/>
+                    </g>
+                    <defs>
+                        <clipPath id="clip0_230_2">
+                            <rect width="36" height="36" fill="white"/>
+                        </clipPath>
+                    </defs>
+                </svg>
+                <h1>
+                    Garancion <%= item.garancioni %> vite
+                </h1>
+                <svg width="10" height="10" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0_230_2)">
+                        <path d="M18 4C15.2311 4 12.5243 4.82109 10.222 6.35943C7.91973 7.89777 6.12532 10.0843 5.06569 12.6424C4.00607 15.2006 3.72882 18.0155 4.26901 20.7313C4.80921 23.447 6.14258 25.9416 8.10051 27.8995C10.0584 29.8574 12.553 31.1908 15.2687 31.731C17.9845 32.2712 20.7994 31.9939 23.3576 30.9343C25.9157 29.8747 28.1022 28.0803 29.6406 25.778C31.1789 23.4757 32 20.7689 32 18C32 14.287 30.525 10.726 27.8995 8.1005C25.274 5.475 21.713 4 18 4Z" fill="black"/>
+                    </g>
+                    <defs>
+                        <clipPath id="clip0_230_2">
+                            <rect width="36" height="36" fill="white"/>
+                        </clipPath>
+                    </defs>
+                </svg>
+                <h1>
+                    Kodi serik: <span><%= item.serialcode %></span>
+                </h1>
+            </div>
+        </aside>
+    </section>
+</main>
+
+
+
+<!-- Main-product-section -->
+
+<!-- footer -->
+<footer class="text-center text-lg-start text-white" style=" background-color: #05A7BE;">
+    <div class="container p-4 pb-0">
+        <section>
+            <div class="row">
+                <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
+                    <h6 class="text-uppercase mb-4 font-weight-bold">StrikeTech</h6>
+                        <p>
+                            Our company is the best at selling every brand of technology thinks.
+                            Come and get everythink you need to us.
+                        </p>
+                </div>
+                <hr class="w-100 clearfix d-md-none" />
+                <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
+                    <h6 class=" mb-4 font-weight-bold">PRODUCTS</h6>
+                    <p class="plast"><button type="button" class="filter-button fund" data-value="studiodevices">Studio Devices</button></p>
+                    <p class="plast"><button type="button" class="filter-button fund" data-value="gaming">Gaming stuff</button></p>
+                    <p class="plast p1"><button type="button" class="filter-button fund " data-value="phone&headphones">Phones & Headphones</button></p>
+                    <p class="plast p1"><button type="button" class="filter-button fund " data-value="watches&cameras">Watches & Cameras</button></p>
+                </div>
+            <hr class="w-100 clearfix d-md-none" />
+                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mt-3">
+                    <h6 class="mb-4 font-weight-bold">ACCOUNT</h6>
+                    <p><a id="f1">My orders</a></p>
+                    <p><a id="f1">My address</a></p>
+                    <p><a id="f1">My User</a></p>
+                </div>
+            <hr class="w-100 clearfix d-md-none" />
+                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mt-3">
+                    <h6 class="mb-4 font-weight-bold">CONTACT</h6>
+                    <p><i class="fas fa-envelope mr-3"></i>Striketech.KS@gmail.com</p>
+                    <p><i class="fas fa-home mr-3"></i> Kosovë, Pejë, Filan Fisteku 7</p>
+                    <p><i class="fas fa-phone mr-3"></i>+383 49 115 898</p>
+                    <p><i class="fas fa-print mr-3"></i>+383 49 116 898</p>
                 </div>
             </div>
-        </div>
-    
-    </main>
-
-
-
-    <div class="cards">
-        <div class="random-card-container">
-            <div class="random-card">
-                <%items.forEach(row=>{ %>
-                    <div class="card2" data-category="<%= row.kategoria %>">
-                        <figure class="card2__thumb">
-                            <img src="<%= row.foto_produktit %>" class="card2__image">
-                            <figcaption class="card2__caption">
-                            <h2 class="card2__title"><%= row.emri_produktit %></h2>
-                            <% if (row.sasia_produktit > 0) { %>
-                                <h2 class="card2__snippet">Sasia: <%= row.sasia_produktit %></h2>
-                                <button class="card2__button" data-id="<%= row.id %>" class="add-to-cart" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
-                                <h2>Cmimi: <%=row.cmimi_produktit %>€</h2>
-                            <% } else { %>
-                                <p class="card2__button">Out of stock</p>
-                            <% } %>
-                            </figcaption>
-                        </figure>
+        </section>
+    <hr class="my-3">
+        <section class="p-3 pt-0">
+            <div class="row d-flex align-items-center">
+                <div class="col-md-7 col-lg-8 text-center text-md-start">
+                    <div class="p-3">
+                        © 2023 Copyright:<p class="copy" style="color:  rgb(13, 0, 255)" href="/"> StrikeTech</p>
                     </div>
-                <%})%>
+                </div>
+                <div class="col-md-5 col-lg-4 ml-lg-0 text-center text-md-end">
+                    <a class="btn btn-outline-primary btn-floating m-1" class="text-white" role="button"><i class="fab fa-facebook-f"></i></a>
+                    <a class="btn btn-outline-primary btn-floating m-1" class="text-white" role="button"><i class="fab fa-twitter"></i></a>
+                    <a class="btn btn-outline-danger btn-floating m-1" class="text-white" role="button"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
-        </div>
+        </section>
     </div>
-    <footer class="text-center text-lg-start text-white" style=" background: linear-gradient(90deg, rgb(67, 195, 221) 0%, rgb(51, 117, 241) 100%, rgb(51, 117, 241) 100%);">
-        <div class="container p-4 pb-0">
-            <section>
-    </div>
+</footer>
+<!-- footer -->
     <script src="/static/js/Produkt.js" defer></script>
 </body>
 </html>

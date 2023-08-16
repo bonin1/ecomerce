@@ -7,6 +7,10 @@ const Produkti = db2.define('produktet', {
         type: Sequelize.STRING,
         allowNull: false
     },
+    company_name: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
     pershkrimi_produktit: {
         type: Sequelize.TEXT,
         allowNull: false
@@ -29,6 +33,14 @@ const Produkti = db2.define('produktet', {
     },
     foto_produktit: {
         type: Sequelize.TEXT,
+        allowNull: false
+    },
+    garancioni: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    serialcode: {
+        type: Sequelize.STRING,
         allowNull: false
     },
     id: {
