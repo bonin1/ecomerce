@@ -167,3 +167,57 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// function openFullscreen() {
+//     document.getElementById("fullscreenDiv").style.display = "block";
+//     document.body.style.overflow = "hidden"; 
+// }
+
+// function closeFullscreen() {
+//     document.getElementById("fullscreenDiv").style.display = "none";
+//     document.body.style.overflow = "auto";
+// }
+
+// document.getElementById("originalImage").addEventListener("click", openFullscreen);
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const incrementButton = document.querySelector(".quantity-increment");
+    const decrementButton = document.querySelector(".quantity-decrement");
+    const quantityInput = document.querySelector(".styled-input-number");
+
+    incrementButton.addEventListener("click", () => {
+        if (quantityInput.value < quantityInput.getAttribute("max")) {
+            quantityInput.value++;
+        }
+    });
+
+    decrementButton.addEventListener("click", () => {
+        if (quantityInput.value > quantityInput.getAttribute("min")) {
+            quantityInput.value--;
+        }
+    });
+});
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const button1 = document.getElementById("button1");
+    const button2 = document.getElementById("button2");
+    const content1 = document.getElementById("content1");
+    const content2 = document.getElementById("content2");
+
+    // Set the first div to be opened by default
+    content1.style.display = "block";
+    content2.style.display = "none";
+
+    button1.addEventListener("click", function() {
+        content2.style.display = "none";
+        content1.style.display = "block";
+    });
+
+    button2.addEventListener("click", function() {
+        content1.style.display = "none";
+        content2.style.display = "block";
+    });
+});

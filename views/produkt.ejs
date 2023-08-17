@@ -79,24 +79,29 @@
         <aside class="Main-image ImageSlider aside">
             <div class="slideshow-container">
                 <div class="mySlides fade1">
-                    <img src="/static/image/STRIKETECH-1.png" style="width:100%">
+                    <img src="/static/image/STRIKETECH-1.png" style="width:100%" onclick="openFullscreen()">
                 </div>
-                
+
+                <!-- <div id="fullscreenDiv" class="fullscreen-overlay">
+                    <span class="close-btn" onclick="closeFullscreen()">&times;</span>
+                    <img src="/static/image/STRIKETECH-1.png" style="max-width: 100%; max-height: 100%;">
+                </div> -->
+
                 <div class="mySlides fade1">
                     <img src="/static/image/STRIKETECH-1.png" style="width:100%">
                 </div>
                 
-                <div class="mySlides fade1">
+                <div id="" class="mySlides fade1">
                     <img src="/static/image/STRIKETECH-1.png" style="width:100%">
                 </div>
 
                 <footer>
                     <a class="prev" onclick="plusSlides(-1)">❮</a>
-                    <div style="text-align:center">
+                    <div  style="text-align:center">
                         <span class="dot" onclick="currentSlide(1)">
                             <img src="/static/image/STRIKETECH-1.png" style="width:100%">
                         </span> 
-                        <span span class="dot" onclick="currentSlide(2)">
+                        <span class="dot" onclick="currentSlide(2)">
                             <img src="/static/image/STRIKETECH-1.png" style="width:100%">
                         </span> 
                         <span class="dot" onclick="currentSlide(3)">
@@ -169,7 +174,7 @@
 
             <div class="PriceDiv">
                 <h1>
-                    <%= item.cmimi_produktit %>€
+                    <%= item.cmimi_produktit %> €
                 </h1>
                 <svg width="10" height="10" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_230_2)">
@@ -198,10 +203,89 @@
                     Kodi serik: <span><%= item.serialcode %></span>
                 </h1>
             </div>
+            <div id="CreditDiv">
+                <img src="/static/image/Mastercard-Download-PNG.png" alt="">
+                <img src="/static/image/VISA.png" alt="">
+                <h3>
+                    deri në 12 këste pa kamatë për vetëm <span>$<%= dividedPrice %></span> në muaj
+                </h3>
+            </div>
+
+            <div class="Quantity">
+                Sasia <hr>
+            </div>
+
+            <div class="quantity-input">
+                <div class="custom-number-input">
+                    <input type="number" name="quantity" id="quantity" value="1" min="1" max="<%= item.sasia_produktit %>" class="styled-input-number">
+                    <div class="PlusMinus">
+                        <button type="button" class="quantity-increment">+</button>
+                        <button type="button" class="quantity-decrement">-</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="Quantity">
+                Transporti <hr>
+            </div>
+
+            <section class="TransportSection">
+                <img src="/static/image/icons8-delivery-scooter-94.png" alt="">
+                <div class="TransportText">
+                    <h3>Transport 24h</h3>
+                    <h3>Mbrenda ne Kosove falas</h3>
+                    <h3>Jasht kosoves pagese extra</h3>
+                </div>
+            </section>
+
+            <div class="Quantity">
+                Pagesa <hr>
+            </div>
+
+            <section class="PriceSection">
+                <div class="Cash">
+                    <img src="/static/image/icons8-cash-48.png" alt="">
+                    <h3>Pagesa ne dore</h3>
+                </div>
+                <div class="Onlinepayment">
+                    <img src="/static/image/icons8-online-payment-48.png" alt="">
+                    <h3>Pagese online</h3>
+                </div>
+                <div class="TransferBank">
+                    <img src="/static/image/icons8-bank-building-48.png" alt="">
+                    <h3>Pagese me tranfer bankar</h3>
+                </div>
+            </section>
+
+            <% if (item.sasia_produktit > 0) { %>
+                <div class="addtoCart">
+                    <button class="add-to-cart data-id="<%= item.id %>" data-is-logged-in="<%= isLoggedIn %>">
+                        <img src="/static/image/icons8-add-to-cart-53.png" alt="">
+                        Add to cart
+                    </button>
+                </div>
+            <% } else { %>
+                <p class="out-of-stock">Out of stock</p>
+            <% } %>
         </aside>
     </section>
 </main>
-
+<main id="MainDesription">
+    <footer id="ProductDES">
+        <div class="Button-DIV-DES">
+            <button class="toggle-button" id="button1">Pershkrimi</button>
+            <button class="toggle-button" id="button2">Detajet</button>
+        </div>
+        
+        <div class="content" id="content1">
+            <p><%= item.pershkrimi_produktit %></p>
+        </div>
+        
+        <div class="content" id="content2">
+            <p>This is Div 2 content.</p>
+        </div>
+    </footer>
+</main>
 
 
 <!-- Main-product-section -->

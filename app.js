@@ -151,6 +151,7 @@ app.get('/produkt/:id', async (req, res) => {
     const offset = (page - 1) * limit;
     const isLoggedIn = req.session.isLoggedIn;
     const productId = req.params.id;
+
     try {
         const product = await Produkti.findOne({
             where: { id: productId }
@@ -173,8 +174,9 @@ app.get('/produkt/:id', async (req, res) => {
             order: Sequelize.literal('RAND()'),
             limit: 4
         });
-
-        res.render('produkt', { item: product.dataValues, averageRating, reviewCount, items: randomItems,  isLoggedIn });
+        const productPrice = parseFloat(product.dataValues.cmimi_produktit);
+        const dividedPrice = (productPrice / 12).toFixed(2);
+        res.render('produkt', { item: product.dataValues, averageRating, reviewCount, items: randomItems,  isLoggedIn , dividedPrice });
     } catch(err) {
         console.log(err);
     }

@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Andika:wght@700&family=Merriweather:wght@700&family=Montserrat:wght@400;500&family=Poppins&family=Roboto:ital,wght@0,400;1,900&family=Stick+No+Bills:wght@800&display=swap');
+
+
+
 *{
     margin: 0px;
     padding:0 ;
@@ -236,8 +240,9 @@ nav{
 /* product card */
 
 #ProductMain{
+    margin-top: 30px;
     width: 100%;
-    height: 60rem;
+    height: fit-content;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -247,8 +252,10 @@ nav{
     width: 1200px;
     max-width: 1200px;
     height: 100%;
-    background-color: #e6e6e6;
+    background-color: #eeeeee;
     display: flex;
+    position: relative;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.147);
 }
 .aside{
     width: 50%;
@@ -258,7 +265,7 @@ nav{
 
 .slideshow-container {
     width: 100%;
-    height: 100%;
+    height:100% ;
     position: relative;
     margin: auto;
     display: flex;
@@ -330,6 +337,11 @@ nav{
 .ProductName > h1{
     font-size: 34px;
     margin-top: 30px;
+}
+.ProductInsights{
+    padding: 20px 20px;
+    background-color: #fff;
+
 }
 
 .ProductInsights > form{
@@ -440,7 +452,6 @@ input[type=checkbox] + label, input[type=radio] + label {
     display: flex;
     align-items: center;
     margin-top: 40px;
-    padding-right: 100px;
 }
 .PriceDiv > h1:nth-child(1){
     font-size: 30px;
@@ -461,6 +472,246 @@ input[type=checkbox] + label, input[type=radio] + label {
     margin: 0 10px;
     margin-bottom: 5px;
 }
+
+
+#CreditDiv{
+    width: 100%;
+    height: 50px;
+    margin-top: 40px;
+    border: 1px solid lightgray;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+#CreditDiv > img{
+    width: 50px;
+    object-fit: contain;
+    object-position: center;
+    margin: 0 10px;
+}
+#CreditDiv > h3{
+    font-size: 14px;
+    margin-top: 7px;
+}
+#CreditDiv > h3 > span{
+    color:orangered;
+    font-weight: 700;
+}
+.Quantity{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    font-weight: 500;
+    color: gray;
+    font-size: 13px;
+}
+
+.Quantity > hr{
+    width: 100%;
+    height: 3px;
+    color: black;
+    margin: 0 0 0 10px;
+}
+.custom-number-input {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    height: 40px;
+}
+
+.custom-number-input button {
+    font-size: 14px;
+    background-color: #ccc;
+    border: none;
+    cursor: pointer;
+    padding: 2.9px 3px;
+}
+.custom-number-input button:hover{
+    background-color: #9f9f9f;
+}
+
+.custom-number-input input[type="number"] {
+    width: 50px;
+    padding: 5px;
+    height: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    font-size: 14px;
+}
+.styled-input-number::-webkit-inner-spin-button,
+.styled-input-number::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.PlusMinus{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+
+.TransportSection{
+    width: 100%;
+    display: flex;
+    margin-top: 10px;
+}
+.TransportSection > img{
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    object-position: center;
+    background-color: #eeeeee;
+    border-radius: 10px;
+}
+.TransportSection > .TransportText{
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+}
+.TransportSection > .TransportText > h3{
+    font-size: 15px;
+    line-height: 10px;
+}
+
+.PriceSection{
+    width: 100%;
+    display: flex;
+    margin-top: 10px;
+    justify-content: space-evenly;
+}
+.Cash,
+.Onlinepayment,
+.TransferBank {
+    display: flex;
+    align-items: center;
+}
+.Cash > img,
+.Onlinepayment > img,
+.TransferBank > img{
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    object-position: center;
+    background-color: #eeeeee;
+    border-radius: 10px;
+}
+.Cash > h3,
+.Onlinepayment > h3,
+.TransferBank > h3{
+    font-size: 14px;
+    color: orangered;
+    margin-top: 6px;
+    margin-left: 3px;
+}
+.addtoCart{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+.add-to-cart{
+    display: inline-block;
+    padding: 10px 100px;
+    color: white;
+    border: 1px solid white;
+    font-family: "Roboto", sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: 0.2s;
+    background-color: #087EA2;
+    font-weight: 600;
+    border: none;
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.add-to-cart:hover{
+    color: black;
+    background-color: rgb(205, 205, 205);
+}
+.add-to-cart > img{
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+}
+
+
+
+
+#MainDesription{
+    margin: 30px 0;
+    width: 100%;
+    height: fit-content;
+    display:flex;
+    justify-content: center;
+    padding: 0;
+}
+#ProductDES{
+    min-width: 300px;
+    width: 1200px;
+    max-width: 1200px;
+    height: 100%;
+    background-color: #fff;
+    position: relative;
+    padding: 0;
+    margin: 0;
+}
+.Button-DIV-DES{
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: space-evenly;
+    border-bottom: 1px solid lightgray;
+}
+.Button-DIV-DES > button{
+    width: 50%;
+    height: 100%;
+    background-color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+}
+.Button-DIV-DES > button:hover{
+    background-color: #b3b2b2;
+}
+.content {
+    display: none;
+    padding: 10px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+
+/* .fullscreen-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ededed;
+    z-index: 9999;
+    text-align: center;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 30px;
+    color: black;
+    cursor: pointer;
+}
+
+.fullscreen-overlay img {
+    margin-top: 10%;
+    max-width: 80%;
+    max-height: 80%;
+} */
+
 /* product card */
 
 
@@ -569,6 +820,17 @@ input[type=checkbox] + label, input[type=radio] + label {
     }
     .rcmn-li{
         width:88.5%;
+    }
+    #ProductSection{
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .aside{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
     }
 }
 @media only screen and (max-width:1024px){
