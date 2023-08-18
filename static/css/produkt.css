@@ -288,8 +288,9 @@ nav{
     right: 0;
     border-radius: 3px 0 0 3px;
 }
-
-
+.dot-container{
+    max-width: 100%;
+}
 .dot {
     cursor: pointer;
     height: 60px;
@@ -297,6 +298,13 @@ nav{
     margin: 0 2px;
     background-color: #fff;
     display: inline-block;
+    margin-top: 10px;
+}
+.slideshow-container > footer{
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
 .active, .dot:hover {
@@ -322,12 +330,7 @@ nav{
     object-fit: contain;
     object-position: center;
 }
-.slideshow-container > footer{
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-}
+
 .CompanyName{
     width: 100%;
     display: flex;

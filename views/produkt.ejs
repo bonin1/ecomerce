@@ -90,18 +90,10 @@
                     <img src="/static/image/STRIKETECH-1.png" style="max-width: 100%; max-height: 100%;">
                 </div> -->
 
-                <!-- <div class="mySlides fade1">
-                    <img src="/static/image/STRIKETECH-1.png" style="width:100%">
-                </div>
-                
-                <div id="" class="mySlides fade1">
-                    <img src="/static/image/STRIKETECH-1.png" style="width:100%">
-                </div> -->
-
                 <footer>
                     <a class="prev" onclick="plusSlides(-1)">❮</a>
                     <div class="dot-container" style="text-align: center;">
-                        <% images.slice(0, 6).forEach((image, index) => { %>
+                        <% images.forEach((image, index) => { %>
                             <span class="dot" data-index="<%= index %>" onclick="handleDotClick(this)">
                                 <img src="<%= image.foto_produktit %>" alt="Thumbnail Image">
                             </span>

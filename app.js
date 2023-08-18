@@ -10,6 +10,7 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
 const  {check,validationResult} = require('express-validator')
+const multer = require('multer');
 
 
     const Home = require('./Models/HomeModel')
@@ -471,19 +472,35 @@ app.post('/search', (req, res) => {
     });
 });
 
-app.get('/item/:id',(req,res)=>{
-    if (!req.session.isLogged) {
-        return res.redirect('/admin');
+
+
+
+
+app.get('/item/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const query = `SELECT * FROM produktet WHERE id = ?`;
+        db.query(query, id, async (err, results, fields) => {
+            if (err) {
+                console.log(err);
+                return res.status(500).send('Internal Server Error');
+            }
+            try {
+                const images = await ProduktImages.findAll({
+                    where: { produkt_id: id }
+                });
+                res.render('produktet', { data: results, images: images });
+            } catch (imageErr) {
+                console.log(imageErr);
+                return res.status(500).send('Internal Server Error');
+            }
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send('Internal Server Error');
     }
-    const {id} = req.params
-    const query = `SELECT * FROM produktet WHERE id = ?`
-    db.query(query,id,(err,results,fields)=>{
-        if(err){
-            console.log(err)
-        }
-        res.render('produktet',{data:results})
-    })
-})
+});
+
 
 app.get('/edit/:id',(req,res)=>{
     if (!req.session.isLogged) {
@@ -500,9 +517,9 @@ app.post('/edit/:id',(req,res)=>{
         return res.redirect('/admin')
     }
     const {id} = req.params
-    const{emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria,foto_produktit} = req.body
-    const query = `UPDATE produktet SET emri_produktit = ?, pershkrimi_produktit = ?, cmimi_produktit = ?, origjina_produktit = ?, sasia_produktit = ?,kategoria = ?, foto_produktit = ?  WHERE id = ?`
-    const data = [emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria,foto_produktit,id]
+    const{emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria} = req.body
+    const query = `UPDATE produktet SET emri_produktit = ?, pershkrimi_produktit = ?, cmimi_produktit = ?, origjina_produktit = ?, sasia_produktit = ?,kategoria = ?  WHERE id = ?`
+    const data = [emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria,id]
     db.query(query,data,(err,results,fields)=>{
         res.redirect(`/produktet?alert=Produkti%20u%20perditsua`)
     })

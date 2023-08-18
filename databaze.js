@@ -67,7 +67,6 @@ db.query(
         sasia_produktit INT(255) NOT NULL,
         id BIGINT NOT NULL AUTO_INCREMENT,
         kategoria TEXT DEFAULT NULL,
-        foto_produktit LONGTEXT NOT NULL,
         PRIMARY KEY (id)
     );`,
     (error, results) => {
@@ -87,6 +86,23 @@ db.query(
         user_id INT DEFAULT NULL,
         PRIMARY KEY (id)
     );`,
+    (error, results) => {
+        if (error) {
+            console.error(error);
+        } else {
+            console.log('Table created successfully');
+        }
+    }
+);
+db.query(
+    `CREATE TABLE IF NOT EXISTS produktimages (
+        id BIGINT NOT NULL AUTO_INCREMENT,
+        produkt_id BIGINT NOT NULL,
+        foto_produktit LONGTEXT NOT NULL,
+        PRIMARY KEY (id),
+        FOREIGN KEY (produkt_id) REFERENCES produktet(id)
+    );
+    `,
     (error, results) => {
         if (error) {
             console.error(error);

@@ -30,12 +30,18 @@
                 <input type="image" src="" alt="">
                 <input type="submit" value="Submit">
             </form>
-            <form action="/delete/<%=row.id %>" method="POST">
+            <form action="/delete/<%=row.id %>" method="POST" >
                 <input type="submit" class="fshimja" value="X">
             </form>
         </div>
     <% }) %>
-    
+
+    <% images.forEach((image, index) => { %>
+        <div>
+            <input type="text" name="foto_produktit" value="<%= image.foto_produktit %>" id="">
+        </div>
+    <% }); %>
+
     <% if (typeof alert !== 'undefined') { %>
         <% if (alert === 'Produkti u perditsua') {%>
             <div class="alert alert-success alert-dismissible fade show fixed-top" role="alert">
