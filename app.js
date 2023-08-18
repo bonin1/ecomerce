@@ -16,6 +16,7 @@ const  {check,validationResult} = require('express-validator')
     const Search = require('./Models/SearchModel')
     const Produkti = require('./Models/ProductIdModel')
     const Review = require('./Models/ReviewsModel')
+    const ProduktImages = require('./Models/ProduktImagesModel');
 
     app.use(bodyParser.json()); 
     app.use(bodyParser.urlencoded({ extended: true }));
@@ -144,7 +145,6 @@ app.get('/search', (req, res) => {
         res.sendStatus(500);
     });
 });
-
 app.get('/produkt/:id', async (req, res) => {
     const page = req.query.page || 1;
     const limit = req.query.limit || 10;
@@ -155,6 +155,9 @@ app.get('/produkt/:id', async (req, res) => {
     try {
         const product = await Produkti.findOne({
             where: { id: productId }
+        });
+        const images = await ProduktImages.findAll({
+            where: { produkt_id: productId }
         });
         const reviews = await Review.findAll({
             where: { product_id: req.params.id },
@@ -167,8 +170,8 @@ app.get('/produkt/:id', async (req, res) => {
             totalRating += review.rating;
         });
         let averageRating = 0;
-        if(reviewCount>0){
-            averageRating = (totalRating/reviewCount).toFixed(1);
+        if (reviewCount > 0) {
+            averageRating = (totalRating / reviewCount).toFixed(1);
         }
         const randomItems = await Produkti.findAll({
             order: Sequelize.literal('RAND()'),
@@ -176,11 +179,14 @@ app.get('/produkt/:id', async (req, res) => {
         });
         const productPrice = parseFloat(product.dataValues.cmimi_produktit);
         const dividedPrice = (productPrice / 12).toFixed(2);
-        res.render('produkt', { item: product.dataValues, averageRating, reviewCount, items: randomItems,  isLoggedIn , dividedPrice });
-    } catch(err) {
+        res.render('produkt', { item: product.dataValues, images, averageRating, reviewCount, items: randomItems, isLoggedIn, dividedPrice });
+    } catch (err) {
         console.log(err);
     }
 });
+
+
+
 // item: product.dataValues,
 
 

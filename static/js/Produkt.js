@@ -167,7 +167,28 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+document.addEventListener('DOMContentLoaded', function() {
+    const dotContainer = document.querySelector(".dot-container");
+    const images = document.querySelectorAll(".dot img");
+    
+    let selectedImageIndex = 0;
 
+    function updateSlider() {
+        const imageWidth = images[0].clientWidth;
+        const offset = (dotContainer.clientWidth - imageWidth) / 2;
+        const imagePosition = imageWidth * selectedImageIndex;
+
+        dotContainer.scrollLeft = imagePosition - offset;
+    }
+
+    function handleDotClick(dot) {
+        selectedImageIndex = parseInt(dot.getAttribute("data-index"));
+        updateSlider();
+        currentSlide(selectedImageIndex + 1);
+    }
+
+    updateSlider();
+});
 // function openFullscreen() {
 //     document.getElementById("fullscreenDiv").style.display = "block";
 //     document.body.style.overflow = "hidden"; 

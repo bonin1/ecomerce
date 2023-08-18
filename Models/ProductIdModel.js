@@ -1,5 +1,5 @@
 const { Sequelize, literal } = require('sequelize');
-const db2 = require('../db2');
+const db2 = require('../db2'); 
 
 
 const Produkti = db2.define('produktet', {

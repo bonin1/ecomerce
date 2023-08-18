@@ -95,7 +95,6 @@ db.query(
         }
     }
 );
-
 db.query('USE ecomercedb;', (error, results) => {
     if (error) {
         console.error(error);

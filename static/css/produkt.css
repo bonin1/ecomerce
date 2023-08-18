@@ -316,7 +316,12 @@ nav{
         opacity: 1
     }
 }
-
+.mySlides > img{
+    width: 100%;
+    height: 40rem;
+    object-fit: contain;
+    object-position: center;
+}
 .slideshow-container > footer{
     width: 100%;
     display: flex;

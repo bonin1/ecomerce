@@ -78,35 +78,34 @@
     <section id="ProductSection">
         <aside class="Main-image ImageSlider aside">
             <div class="slideshow-container">
-                <div class="mySlides fade1">
-                    <img src="/static/image/STRIKETECH-1.png" style="width:100%" onclick="openFullscreen()">
-                </div>
+                <% images.forEach((image, index) => { %>
+                    <div class="mySlides fade1">
+                        <img src="<%= image.foto_produktit %>" alt="Product Image">
+                    </div>
+                <% }); %>
 
+                <!-- onclick="openFullscreen()"~ -->
                 <!-- <div id="fullscreenDiv" class="fullscreen-overlay">
                     <span class="close-btn" onclick="closeFullscreen()">&times;</span>
                     <img src="/static/image/STRIKETECH-1.png" style="max-width: 100%; max-height: 100%;">
                 </div> -->
 
-                <div class="mySlides fade1">
+                <!-- <div class="mySlides fade1">
                     <img src="/static/image/STRIKETECH-1.png" style="width:100%">
                 </div>
                 
                 <div id="" class="mySlides fade1">
                     <img src="/static/image/STRIKETECH-1.png" style="width:100%">
-                </div>
+                </div> -->
 
                 <footer>
                     <a class="prev" onclick="plusSlides(-1)">❮</a>
-                    <div  style="text-align:center">
-                        <span class="dot" onclick="currentSlide(1)">
-                            <img src="/static/image/STRIKETECH-1.png" style="width:100%">
-                        </span> 
-                        <span class="dot" onclick="currentSlide(2)">
-                            <img src="/static/image/STRIKETECH-1.png" style="width:100%">
-                        </span> 
-                        <span class="dot" onclick="currentSlide(3)">
-                            <img src="/static/image/STRIKETECH-1.png" style="width:100%">
-                        </span> 
+                    <div class="dot-container" style="text-align: center;">
+                        <% images.slice(0, 6).forEach((image, index) => { %>
+                            <span class="dot" data-index="<%= index %>" onclick="handleDotClick(this)">
+                                <img src="<%= image.foto_produktit %>" alt="Thumbnail Image">
+                            </span>
+                        <% }); %>
                     </div>
                     <a class="next" onclick="plusSlides(1)">❯</a>
                 </footer>
