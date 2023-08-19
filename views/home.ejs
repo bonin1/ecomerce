@@ -127,7 +127,11 @@
                 <% data.forEach(row=>{ %>
                         <div class="card1" data-category="<%= row.kategoria %>">
                             <figure class="card1__thumb">
-                                <img src="<%= row.foto_produktit %>" class="card1__image">
+                                <% if (row.produktimage) { %>
+                                    <img src="/image/<%= row.id %>" class="card1__image">
+                                <% } else { %>
+                                    <img src="default_image.jpg" class="card1__image">
+                                <% } %>
                                 <figcaption class="card1__caption">
                                 <h2 class="card1__title"><%= row.emri_produktit %></h2>
                                 <% if (row.sasia_produktit > 0) { %>

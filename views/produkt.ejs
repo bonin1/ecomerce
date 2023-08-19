@@ -80,7 +80,7 @@
             <div class="slideshow-container">
                 <% images.forEach((image, index) => { %>
                     <div class="mySlides fade1">
-                        <img src="<%= image.foto_produktit %>" alt="Product Image">
+                        <img src="data:image/jpeg;base64,<%= image.foto_produktit.toString('base64') %>" alt="Product Image">
                     </div>
                 <% }); %>
 
@@ -95,9 +95,10 @@
                     <div class="dot-container" style="text-align: center;">
                         <% images.forEach((image, index) => { %>
                             <span class="dot" data-index="<%= index %>" onclick="handleDotClick(this)">
-                                <img src="<%= image.foto_produktit %>" alt="Thumbnail Image">
+                                <img src="data:image/jpeg;base64,<%= image.foto_produktit.toString('base64') %>" alt="Thumbnail Image">
                             </span>
                         <% }); %>
+                        
                     </div>
                     <a class="next" onclick="plusSlides(1)">❯</a>
                 </footer>

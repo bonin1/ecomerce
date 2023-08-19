@@ -447,7 +447,7 @@ input[type=range]{
         transition: 0.5s ease-in-out;
         width: 100%;
         height: 110%;
-        object-fit: cover;
+        object-fit: contain;
         object-position: center;
     }
     .card1__caption {

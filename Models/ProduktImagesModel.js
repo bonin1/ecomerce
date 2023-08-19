@@ -8,7 +8,7 @@ const ProduktImages = db2.define('produktimages', {
         allowNull: false
     },
     foto_produktit: {
-        type: Sequelize.TEXT,
+        type: Sequelize.BLOB,
         allowNull: false
     },
     id: {

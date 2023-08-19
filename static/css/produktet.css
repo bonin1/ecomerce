@@ -67,3 +67,55 @@ body{
 .fshimja:hover{
     background-color: rgb(146, 0, 0);
 }
+.images{
+    width: 400px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    color: transparent;
+    background-color: rgb(203, 203, 203);
+    border: 1px solid black;
+    margin-left: 10px;
+    border-radius: 10px;
+}
+.images > img{
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    object-position: center;
+    background-color: #fff;
+}
+.images > form{
+    width: 150px;
+}
+.images > form > button{
+    color: #000;
+    background-color: transparent;
+    border: 1px solid black;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 5px 10px;
+    font-family: "DM Sans";
+}
+.images > form > label:hover,
+.images > form > button:hover{
+    background-color: #fff;
+}
+.images > button{
+    color: #fff;
+    border: 1px solid red;
+    background-color: rgb(255, 102, 102);
+    padding: 0px 5px;
+    font-family: "DM Sans";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.images > button:hover{
+    background-color: rgb(166, 53, 53);
+}
+.mainProdukts{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}

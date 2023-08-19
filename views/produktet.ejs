@@ -36,12 +36,26 @@
         </div>
     <% }) %>
 
-    <% images.forEach((image, index) => { %>
-        <div>
-            <input type="text" name="foto_produktit" value="<%= image.foto_produktit %>" id="">
-        </div>
-    <% }); %>
+    <main class="mainProdukts">
+        <% images.forEach((image, index) => { %>
+            <div class="images">
+                <img src="data:image/jpeg;base64,<%= image.foto_produktit.toString('base64') %>" alt="Product Image">
+                <form action="/updateImage/<%= image.id %>" method="post" enctype="multipart/form-data">
+                    <input type="file" name="file" id="fileInput" class="file-input">
+                    <button type="submit">Edit Image</button>
+                </form>
+                
+                <button class="delete-button" onclick="deleteImage('<%= image.id %>')">X</button>
+            </div>
+        <% }); %>
+    </main>
+    
+    <form action="/insertImage/<%= id %>" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" class="file-input">
+        <button type="submit">Upload Image</button>
+    </form>
 
+    
     <% if (typeof alert !== 'undefined') { %>
         <% if (alert === 'Produkti u perditsua') {%>
             <div class="alert alert-success alert-dismissible fade show fixed-top" role="alert">
@@ -59,5 +73,26 @@
             </div>
         <% } %>
     <% } %>
+    <script>
+        // Delete an image
+async function deleteImage(imageId) {
+    try {
+        const response = await fetch(`/deleteImage/${imageId}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            // Reload the page to reflect the changes
+            location.reload();
+        } else {
+            console.error('Failed to delete image');
+        }
+    } catch (error) {
+        console.error('Error deleting image:', error);
+    }
+}
+
+
+    </script>
 </body>
 </html>

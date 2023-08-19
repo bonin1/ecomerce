@@ -11,6 +11,8 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config()
 const  {check,validationResult} = require('express-validator')
 const multer = require('multer');
+const fs = require('fs')
+const path = require('path');
 
 
     const Home = require('./Models/HomeModel')
@@ -51,7 +53,8 @@ app.get('/', [
     check('category').optional().isString(),
     check('minPrice').optional().isFloat(),
     check('maxPrice').optional().isFloat()
-    ], (req, res) => {
+    ], async (req, res) => {
+        const productId = req.params.id;
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).json({ errors: errors.array() });
@@ -78,26 +81,63 @@ app.get('/', [
                 [Sequelize.Op.between]: [minPrice, maxPrice]
             };
         }
-
+        
         Home.findAll({
             ...query,
             replacements: query.where,
-            model: Home,
+            model: Produkti,
             mapToModel: true
         })
-        .then(results => {
+        .then(async results => {
+            for (const row of results) {
+                const images = await ProduktImages.findAll({
+                    where: { produkt_id: row.id },
+                    limit: 1,
+                    order: [['id', 'ASC']]
+                });
+                row.produktimage = images[0] || null;
+            }
             res.render('home', { data: results, isLoggedIn:req.session.isLoggedIn, minPrice, maxPrice });
         })
         .catch(err => {
             console.log(err);
         });
+        
     });
 
 
 
 
 
-
+    app.get('/image/:id', (req, res) => {
+        const productId = req.params.id;
+    
+        ProduktImages.findOne({
+            where: { produkt_id: productId },
+            order: [['id', 'ASC']]
+        })
+        .then(image => {
+            if (image) {
+                const imageBuffer = image.foto_produktit;
+                let contentType;
+                if (imageBuffer[0] === 0x89 && imageBuffer[1] === 0x50 && imageBuffer[2] === 0x4E && imageBuffer[3] === 0x47) {
+                    contentType = 'image/jpeg';
+                } else if (imageBuffer[0] === 0x47 && imageBuffer[1] === 0x49 && imageBuffer[2] === 0x46) {
+                    contentType = 'image/gif';
+                } else {
+                    contentType = 'image/png'; 
+                }
+                res.setHeader('Content-Type', contentType);
+                res.end(imageBuffer);
+            } else {
+                res.status(404).send('Image not found');
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).send('Internal server error');
+        });
+    });
 
 
 
@@ -472,8 +512,102 @@ app.post('/search', (req, res) => {
     });
 });
 
+const storage = multer.diskStorage({
+    destination: function (req, file, callback) {
+        callback(null, __dirname + '/uploads/');
+    },
+    filename: function (req, file, callback) {
+        callback(null, file.originalname);
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 10 * 1024 * 1024 }
+});
 
 
+
+app.post('/upload',function(req,res){
+    upload(req,res,function(err){
+        if(err){
+            console.log(err)
+        }else if(!req.file){
+            console.log('No file uploaded')
+        }else{
+            console.log(req.file)
+            const image = {
+                name: req.file.originalname,
+                data: fs.readFileSync(req.file.path)
+            }
+        }
+        
+    })
+})
+
+
+app.post('/updateImage/:id', upload.single('file'), async (req, res) => {
+    const { id } = req.params;
+    const newImage = {
+        name: req.file.originalname,
+        data: fs.readFileSync(req.file.path)
+    };
+
+    try {
+        const image = await ProduktImages.findByPk(id);
+        if (!image) {
+            return res.json({ error: 'Image not found' });
+        }
+        image.foto_produktit = newImage.data;
+        await image.save();
+        await fs.promises.unlink(req.file.path);
+
+        res.redirect(`/item/${id}`);
+    } catch (error) {
+        console.error(error);
+        res.redirect(`/item/${id}`);
+    }
+});
+
+app.post('/insertImage/:id', upload.single('file'), async (req, res) => {
+    const { id } = req.params;
+    const newImage = {
+        name: req.file.originalname,
+        data: fs.readFileSync(req.file.path)
+    };
+
+    try {
+        // Insert the new image record into the database
+        const image = await ProduktImages.create({
+            produkt_id: id, // Associate the image with the product
+            foto_produktit: newImage.data
+        });
+
+        // Delete the temporary file after successfully creating the image record
+        await fs.promises.unlink(req.file.path);
+
+        res.redirect(`/item/${id}`);
+    } catch (error) {
+        console.error(error);
+        res.redirect(`/item/${id}`);
+    }
+});
+
+
+app.delete('/deleteImage/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const image = await ProduktImages.findByPk(id);
+        if (!image) {
+            return res.status(404).json({ error: 'Image not found' });
+        }
+        await image.destroy();
+        return res.status(200).json({ message: 'Image deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Error deleting image' });
+    }
+});
 
 
 app.get('/item/:id', async (req, res) => {
@@ -489,7 +623,7 @@ app.get('/item/:id', async (req, res) => {
                 const images = await ProduktImages.findAll({
                     where: { produkt_id: id }
                 });
-                res.render('produktet', { data: results, images: images });
+                res.render('produktet', { data: results, images: images, id: id });
             } catch (imageErr) {
                 console.log(imageErr);
                 return res.status(500).send('Internal Server Error');
@@ -500,6 +634,7 @@ app.get('/item/:id', async (req, res) => {
         return res.status(500).send('Internal Server Error');
     }
 });
+
 
 
 app.get('/edit/:id',(req,res)=>{

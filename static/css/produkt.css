@@ -300,6 +300,15 @@ nav{
     display: inline-block;
     margin-top: 10px;
 }
+.dot > img{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    object-fit: contain;
+    object-position: center;
+}
 .slideshow-container > footer{
     width: 100%;
     display: flex;
