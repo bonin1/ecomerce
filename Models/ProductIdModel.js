@@ -37,7 +37,7 @@ const Produkti = db2.define('produktet', {
     },
     serialcode: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
     },
     id: {
         type: Sequelize.BIGINT,

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Striketech</title>
+    <title>Admin only!</title>
     <link rel="icon" href="/static/image/STRIKETECH-1.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
@@ -12,29 +12,37 @@
     <link rel="stylesheet" href="/static/css/produktet.css">
 </head> 
 <body>
-    <% data.forEach(row=>{ %>
         <div class="card-1">
-            <form action="/edit/<%= row.id %>" class="form-product" method="POST">
-                <input type="text" name="emri_produktit" placeholder="emri produktit" value="<%= row.emri_produktit %>">
-                <textarea name="pershkrimi_produktit" placeholder="pershkrimi produktit"  id="" cols="30" rows="10"><%= row.pershkrimi_produktit %></textarea>
-                <input type="text" name="cmimi_produktit" placeholder="cmimi produktit" value="<%= row.cmimi_produktit %>">
-                <input type="text" name="origjina_produktit" placeholder="origjina produktit" value="<%= row.origjina_produktit %>">
-                <input type="number" name="sasia_produktit" placeholder="sasia" value="<%= row.sasia_produktit %>" id="">
-                <input type="text" name="foto_produktit" placeholder="URL e fotos se produktit" value="<%= row.foto_produktit %>">
+            <form action="/edit/<%= data.id %>" class="form-product" method="POST">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="emri_produktit" placeholder="emri produktit" value="<%= data.emri_produktit %>">
+                <label for="Company">Company Name:</label>
+                <input type="text" id="Company" placeholder="Company" name="company_name" value="<%= data.company_name %>">
+                <label for="des">Description:</label>
+                <textarea name="pershkrimi_produktit" id="des" placeholder="pershkrimi produktit"  id="" cols="30" rows="10"><%= data.pershkrimi_produktit %></textarea>
+                <label for="price">Price:</label>
+                <input type="text" id="price" name="cmimi_produktit" placeholder="cmimi produktit" value="<%= data.cmimi_produktit %>">
+                <label for="origjina">Origjina:</label>
+                <input type="text" id="origjina" name="origjina_produktit" placeholder="origjina produktit" value="<%= data.origjina_produktit %>">
+                <label for="saisa">Sasia:</label>
+                <input type="number" id="sasia" name="sasia_produktit" placeholder="sasia" value="<%= data.sasia_produktit %>" id="">
+                <label for="">Kategoria</label>
                 <select name="kategoria" id="">
                     <option value="studiodevices">Studio Devices</option>
                     <option value="gaming">Gaming</option>
                     <option value="phone&headphones">phone&headphones</option>
                     <option value="watches&cameras">Watches&cameras</option>
                 </select>
+                <label for="grancioni">Garancioni:</label>
+                <input type="text" id="garancioni" name="garancioni" placeholder="Garancioni" value="<%= data.garancioni %>">
                 <input type="image" src="" alt="">
-                <input type="submit" value="Submit">
+                <input type="submit" value="Perditso produktin!">
             </form>
-            <form action="/delete/<%=row.id %>" method="POST" >
+            <form class="form-delete" action="/delete/<%=data.id %>" method="POST" >
+                <h4>Kujdes! ketu fshihet produkti</h4>
                 <input type="submit" class="fshimja" value="X">
             </form>
         </div>
-    <% }) %>
 
     <main class="mainProdukts">
         <% images.forEach((image, index) => { %>
@@ -50,12 +58,13 @@
         <% }); %>
     </main>
     
-    <form action="/insertImage/<%= id %>" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" class="file-input">
-        <button type="submit">Upload Image</button>
+    <form action="/insertImages/<%= id %>" method="post" enctype="multipart/form-data">
+        <input type="file" name="files" class="file-input" multiple onchange="previewImages(this)">
+        <button class="upload" type="submit">Upload Images</button>
     </form>
-
     
+    <div id="imagePreview"></div>
+
     <% if (typeof alert !== 'undefined') { %>
         <% if (alert === 'Produkti u perditsua') {%>
             <div class="alert alert-success alert-dismissible fade show fixed-top" role="alert">
@@ -74,24 +83,21 @@
         <% } %>
     <% } %>
     <script>
-        // Delete an image
-async function deleteImage(imageId) {
-    try {
-        const response = await fetch(`/deleteImage/${imageId}`, {
-            method: 'DELETE'
-        });
+        async function deleteImage(imageId) {
+            try {
+                const response = await fetch(`/deleteImage/${imageId}`, {
+                    method: 'DELETE'
+                });
 
-        if (response.ok) {
-            // Reload the page to reflect the changes
-            location.reload();
-        } else {
-            console.error('Failed to delete image');
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    console.error('Failed to delete image');
+                }
+            } catch (error) {
+                console.error('Error deleting image:', error);
+            }
         }
-    } catch (error) {
-        console.error('Error deleting image:', error);
-    }
-}
-
 
     </script>
 </body>

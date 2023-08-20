@@ -15,7 +15,14 @@ body{
     width: 50%;
     display: flex;
     justify-content: center;
+    flex-direction: column;
     margin-top: 100px;
+    padding: 0 30px;
+}
+.card-1 > h1,
+.card-2 > h1{
+    font-family: "DM Sans";
+    text-decoration: underline;
 }
 .form-product{
     display: flex;

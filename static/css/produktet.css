@@ -14,9 +14,12 @@ body{
 }
 
 .card-1{
+    width: 50%;
+    height: 50rem;
     display: flex;
     justify-content: center;
     flex-direction: column;
+    margin-top: 600px ;
 }
 .form-product{
     display: flex;
@@ -57,15 +60,33 @@ body{
     background-color: rgb(102, 143, 157);
 }
 .fshimja{
-    width: 100%;
-    background-color: red;
+    width: 40%;
+    background-color: rgb(255, 73, 73);
     color: white;
     font-weight: 500;
     border: none;
     border-radius: 2px;
+    cursor: pointer;
 }
 .fshimja:hover{
     background-color: rgb(146, 0, 0);
+}
+.form-delete{
+    background-color: red;
+    padding: 10px 30px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+.form-delete > h4{
+    color: #fff;
+}
+.mainProdukts{
+    width: 100%;
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-evenly;
 }
 .images{
     width: 400px;
@@ -75,8 +96,8 @@ body{
     color: transparent;
     background-color: rgb(203, 203, 203);
     border: 1px solid black;
-    margin-left: 10px;
     border-radius: 10px;
+    margin-top: 30px;
 }
 .images > img{
     width: 100px;
@@ -97,7 +118,6 @@ body{
     padding: 5px 10px;
     font-family: "DM Sans";
 }
-.images > form > label:hover,
 .images > form > button:hover{
     background-color: #fff;
 }
@@ -118,4 +138,21 @@ body{
     width: 100%;
     display: flex;
     flex-wrap: wrap;
+}
+.upload{
+    color: #000;
+    background-color: transparent;
+    border: 1px solid black;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 5px 10px;
+    font-family: "DM Sans";
+    margin-top: 30px;
+}
+.upload:hover{
+    background-color: #fff;
+}.preview-image {
+    margin: 10px;
+    max-width: 200px;
+    max-height: 200px;
 }

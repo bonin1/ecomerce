@@ -45,7 +45,7 @@ app.use(session({
 app.use('/login',require('./routes/LoginRoute'))
 app.use('/admin',require('./routes/AdminRoute'))
 app.get('/protected',require('./routes/ProtectedRoute'))
-
+app.use('/protected',require('./routes/ProtectedRoute'))
 
 
 
@@ -65,7 +65,7 @@ app.get('/', [
 
         const query = {
             order: [[Sequelize.fn('RAND')]],
-            limit: 9
+            limit: 12
         };
 
         if (category || (minPrice && maxPrice)) {
@@ -467,35 +467,6 @@ app.post('/changepassword',(req,res)=>{
 
 
 
-
-
-
-app.post('/produkt/register',(req,res)=>{
-    const {emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria,foto_produktit} = req.body
-    const query = `SELECT * FROM produktet WHERE emri_produktit = ?`
-    const data = [emri_produktit]
-    db.query(query,data,(err,results,fields)=>{
-        if(err){
-            console.log(err)
-        }
-        if(results.length > 0){
-            res.render('protected', { alert: 'Ky produkt ekziston' });
-        }
-        else{
-            const query = `INSERT INTO produktet (emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria,foto_produktit) VALUES (?,?,?,?,?,?,?)`
-            const data = [emri_produktit,pershkrimi_produktit,cmimi_produktit,origjina_produktit,sasia_produktit,kategoria,foto_produktit]
-            db.query(query,data,(err,results,fields)=>{
-                if(err){
-                    console.log(err)
-                }
-                res.render('protected', { alert: 'Produkti u krijua me sukses' });
-            })
-        }
-    })
-})
-
-
-
 app.post('/search', (req, res) => {
     var query = req.body.query;
     if (query === '') {
@@ -569,29 +540,29 @@ app.post('/updateImage/:id', upload.single('file'), async (req, res) => {
     }
 });
 
-app.post('/insertImage/:id', upload.single('file'), async (req, res) => {
+app.post('/insertImages/:id', upload.array('files', 10), async (req, res) => {
     const { id } = req.params;
-    const newImage = {
-        name: req.file.originalname,
-        data: fs.readFileSync(req.file.path)
-    };
-
     try {
-        // Insert the new image record into the database
-        const image = await ProduktImages.create({
-            produkt_id: id, // Associate the image with the product
-            foto_produktit: newImage.data
+        const imagesPromises = req.files.map(async (file) => {
+            const newImage = {
+                name: file.originalname,
+                data: fs.readFileSync(file.path)
+            };
+            const image = await ProduktImages.create({
+                produkt_id: id,
+                foto_produktit: newImage.data
+            });
+            await fs.promises.unlink(file.path);
+            return image;
         });
-
-        // Delete the temporary file after successfully creating the image record
-        await fs.promises.unlink(req.file.path);
-
+        await Promise.all(imagesPromises);
         res.redirect(`/item/${id}`);
     } catch (error) {
         console.error(error);
         res.redirect(`/item/${id}`);
     }
 });
+
 
 
 app.delete('/deleteImage/:id', async (req, res) => {
@@ -613,22 +584,16 @@ app.delete('/deleteImage/:id', async (req, res) => {
 app.get('/item/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const query = `SELECT * FROM produktet WHERE id = ?`;
-        db.query(query, id, async (err, results, fields) => {
-            if (err) {
-                console.log(err);
-                return res.status(500).send('Internal Server Error');
-            }
-            try {
-                const images = await ProduktImages.findAll({
-                    where: { produkt_id: id }
-                });
-                res.render('produktet', { data: results, images: images, id: id });
-            } catch (imageErr) {
-                console.log(imageErr);
-                return res.status(500).send('Internal Server Error');
-            }
+        const data = await Produkti.findByPk(id);
+        if (!data) {
+            return res.status(404).send('Product not found');
+        }
+
+        const images = await ProduktImages.findAll({
+            where: { produkt_id: id }
         });
+
+        res.render('produktet', { data, images, id });
     } catch (err) {
         console.log(err);
         return res.status(500).send('Internal Server Error');
