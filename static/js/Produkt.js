@@ -167,6 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
 document.addEventListener('DOMContentLoaded', function() {
     const dotContainer = document.querySelector(".dot-container");
     const images = document.querySelectorAll(".dot img");
@@ -189,18 +190,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
     updateSlider();
 });
-// function openFullscreen() {
-//     document.getElementById("fullscreenDiv").style.display = "block";
-//     document.body.style.overflow = "hidden"; 
-// }
 
-// function closeFullscreen() {
-//     document.getElementById("fullscreenDiv").style.display = "none";
-//     document.body.style.overflow = "auto";
-// }
+function openFullscreen(clickedImage) {
+    const index = clickedImage.dataset.index;
+    const overlayDivs = document.querySelectorAll('.fullscreen-overlay');
+    overlayDivs[index].style.display = "block";
+    document.body.style.overflow = "hidden";
+}
 
-// document.getElementById("originalImage").addEventListener("click", openFullscreen);
+function closeFullscreen() {
+    const overlayDivs = document.querySelectorAll('.fullscreen-overlay');
+    overlayDivs.forEach((overlayDiv) => {
+        overlayDiv.style.display = "none";
+    });
+    document.body.style.overflow = "auto";
+}
 
+window.addEventListener('click', function(event) {
+    const overlayContents = document.querySelectorAll('.overlay-content');
+    
+    overlayContents.forEach((overlayContent, index) => {
+        if (overlayContent.contains(event.target)) {
+            // SEN
+        } else {
+            const overlayDivs = document.querySelectorAll('.fullscreen-overlay');
+            overlayDivs[index].style.display = "none";
+            document.body.style.overflow = "auto";
+        }
+    });
+});
+
+function stopPropagation(event) {
+    event.stopPropagation();
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     const incrementButton = document.querySelector(".quantity-increment");
@@ -228,7 +250,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const content1 = document.getElementById("content1");
     const content2 = document.getElementById("content2");
 
-    // Set the first div to be opened by default
     content1.style.display = "block";
     content2.style.display = "none";
 

@@ -80,15 +80,17 @@
             <div class="slideshow-container">
                 <% images.forEach((image, index) => { %>
                     <div class="mySlides fade1">
-                        <img src="data:image/jpeg;base64,<%= image.foto_produktit.toString('base64') %>" alt="Product Image">
+                        <img onclick="openFullscreen(this)" data-index="<%= index %>" class="clickable-image" src="data:image/jpeg;base64,<%= image.foto_produktit.toString('base64') %>" alt="Product Image">
                     </div>
                 <% }); %>
+                
 
-                <!-- onclick="openFullscreen()"~ -->
-                <!-- <div id="fullscreenDiv" class="fullscreen-overlay">
-                    <span class="close-btn" onclick="closeFullscreen()">&times;</span>
-                    <img src="/static/image/STRIKETECH-1.png" style="max-width: 100%; max-height: 100%;">
-                </div> -->
+                <% images.forEach((image, index) => { %>
+                    <div id="fullscreenDiv"onclick="closeFullscreen()" class="fullscreen-overlay">
+                        <span class="close-btn" onclick="closeFullscreen()">&times;</span>
+                        <img src="data:image/jpeg;base64,<%= image.foto_produktit.toString('base64') %>" style="max-width: 100%; max-height: 100%;" onclick="stopPropagation(event)"">
+                    </div>
+                <% }); %>
 
                 <footer>
                     <a class="prev" onclick="plusSlides(-1)">❮</a>
