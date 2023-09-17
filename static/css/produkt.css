@@ -113,18 +113,13 @@ nav{
 }
 #search-form{
     box-sizing: content-box;
-    /* padding: 20px; */
+    padding: 20px;
     display: flex;
     flex-direction: row !important;
-    align-items: center;
+    align-items: flex-start;
     position: sticky;
     top: 42px;
 }
-/* #search-form{
-    width: 100%;
-    padding: 0;
-} */
-
 #search-input{
     padding: 8px 0px;
     border: 1px solid gray;
@@ -137,12 +132,10 @@ nav{
     border: none;
     outline: none;
     color: white;
-    margin: 0;
 }
 #search-input::placeholder{
     color: #fff;
 }
-
 #search-input:focus{
     outline: none;
 }
@@ -152,7 +145,7 @@ nav{
     font-size: 20px;
     cursor: pointer;
     background-color: #087EA2;
-    padding: 9.5px 9px ;
+    padding: 9.4px 9px ;
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
     border-top-right-radius: 5px;
@@ -165,8 +158,9 @@ nav{
     align-items: center;
 }
 .imagesa{
-    background: linear-gradient(90deg, rgb(51, 117, 241) 0%, rgb(45, 177, 166) 100%, rgb(67, 195, 221) 100%);
-    background: linear-gradient(90deg, rgb(67, 195, 221) 0%, rgb(51, 117, 241) 100%, rgb(51, 117, 241) 100%);
+    /* background: linear-gradient(90deg, rgb(51, 117, 241) 0%, rgb(45, 177, 166) 100%, rgb(67, 195, 221) 100%);
+    background: linear-gradient(90deg, rgb(67, 195, 221) 0%, rgb(51, 117, 241) 100%, rgb(51, 117, 241) 100%); */
+    background-color:  #05A7BE;
 }
 
 
@@ -176,25 +170,35 @@ nav{
     list-style-type: none;
     z-index: 100;
     background-color: white;
-    width: 32.2rem;
+    width: 32.3rem;
     /* border-radius: 5px ; */
     box-sizing: content-box;
     box-shadow: 1px 1px 9px 1px gray;
     margin-top: 6px;
 }
 .rcmn-li{
-    width: 96.2%;
+    width: 100%;
     /* margin: 10px 0; */
     padding: 5px 0;
     cursor: pointer;
-    padding: 10px 10px 10px 10px;
-
+    padding: 10px;
 }
 .rcmn-li:hover{
     background-color: #4AA1AC;
     color: white;
     transition: 0.2s;
     /* border-radius: 5px; */
+}
+.cart-color{
+    color: white;
+}
+#logout-form{
+    border: none;
+    outline: none;
+}
+#logout-form > input{
+    border:none;
+    outline:none;
 }
 .cart-color{
     color: white;
@@ -659,7 +663,6 @@ input[type=checkbox] + label, input[type=radio] + label {
 
 
 
-
 #MainDesription{
     margin: 30px 0;
     width: 100%;
@@ -826,7 +829,6 @@ input[type=checkbox] + label, input[type=radio] + label {
     }
     .search-submit{
         padding: 9.5px 8px;
-
     }
     #recommendations{
         width: 33% !important;
