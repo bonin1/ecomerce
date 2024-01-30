@@ -48,7 +48,6 @@ app.get('/protected',require('./routes/ProtectedRoute'))
 app.use('/protected',require('./routes/ProtectedRoute'))
 
 
-
 app.get('/', [
     check('category').optional().isString(),
     check('minPrice').optional().isFloat(),
@@ -102,7 +101,6 @@ app.get('/', [
         .catch(err => {
             console.log(err);
         });
-        
     });
 
 
@@ -197,33 +195,43 @@ app.get('/produkt/:id', async (req, res) => {
         const product = await Produkti.findOne({
             where: { id: productId }
         });
-        const images = await ProduktImages.findAll({
-            where: { produkt_id: productId }
-        });
-        const reviews = await Review.findAll({
-            where: { product_id: req.params.id },
-            limit: limit,
-            offset: offset
-        });
-        const reviewCount = reviews.length;
-        let totalRating = 0;
-        reviews.forEach(review => {
-            totalRating += review.rating;
-        });
-        let averageRating = 0;
-        if (reviewCount > 0) {
-            averageRating = (totalRating / reviewCount).toFixed(1);
+    
+        // Check if product is not null before accessing its properties
+        if (product !== null) {
+            const images = await ProduktImages.findAll({
+                where: { produkt_id: productId }
+            });
+            const reviews = await Review.findAll({
+                where: { product_id: req.params.id },
+                limit: limit,
+                offset: offset
+            });
+            const reviewCount = reviews.length;
+            let totalRating = 0;
+            reviews.forEach(review => {
+                totalRating += review.rating;
+            });
+            let averageRating = 0;
+            if (reviewCount > 0) {
+                averageRating = (totalRating / reviewCount).toFixed(1);
+            }
+            const randomItems = await Produkti.findAll({
+                order: Sequelize.literal('RAND()'),
+                limit: 4
+            });
+    
+            const productPrice = parseFloat(product.dataValues.cmimi_produktit);
+            const dividedPrice = (productPrice / 12).toFixed(2);
+    
+            res.render('produkt', { item: product.dataValues, images, averageRating, reviewCount, items: randomItems, isLoggedIn, dividedPrice });
+        } else {
+            console.log('Product not found');
+            res.status(404).send('Product not found');
         }
-        const randomItems = await Produkti.findAll({
-            order: Sequelize.literal('RAND()'),
-            limit: 4
-        });
-        const productPrice = parseFloat(product.dataValues.cmimi_produktit);
-        const dividedPrice = (productPrice / 12).toFixed(2);
-        res.render('produkt', { item: product.dataValues, images, averageRating, reviewCount, items: randomItems, isLoggedIn, dividedPrice });
     } catch (err) {
         console.log(err);
     }
+    
 });
 
 
