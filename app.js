@@ -391,15 +391,16 @@ app.get('/produktet',(req,res)=>{
     
 })
 
-app.post('/logout',(req,res)=>{
-    req.session.destroy(err=>{
-        if(err){
-            console.log(console.err)
+app.post('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error(err);
         }
-        
-        res.redirect('/login')
-        })
-    })
+        res.clearCookie('rememberToken');
+        res.redirect('/login');
+    });
+});
+
 
 
 

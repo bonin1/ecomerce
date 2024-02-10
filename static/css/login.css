@@ -98,7 +98,17 @@ a{
     width: 85%;
     height: 100%;
 }
-
+.input-box{
+    position: relative;
+}
+.input-box .Show_Hide{
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #A6A6A6;
+    cursor: pointer;
+}
 .input:focus {
     outline: none;
 }
