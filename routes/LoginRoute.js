@@ -74,15 +74,10 @@ router.post('/', loginLimiter, async (req, res) => {
             return res.render('login', { message: 'incorrect email or password',csrfToken: req.session.csrfToken });
         }
 
-        // Check if the user has selected "Remember me"
         const rememberMe = req.body.rememberMe === 'on';
 
-        // If "Remember me" is selected, set a cookie to remember the user's session
         if (rememberMe) {
-            // Generate a unique token for the user's session
             const rememberToken = crypto.randomBytes(64).toString('hex');
-
-            // Set the remember token as a cookie with a specific expiration time (e.g., 30 days)
             res.cookie('rememberToken', rememberToken, { maxAge: 30 * 24 * 60 * 60 * 1000 });
         }
 
@@ -94,10 +89,5 @@ router.post('/', loginLimiter, async (req, res) => {
         return res.render('login', { message: 'An error occurred while processing your request', csrfToken: req.session.csrfToken });
     }
 });
-
-// Export the router
-module.exports = router;
-
-
 
 module.exports = router;

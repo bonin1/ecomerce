@@ -20,68 +20,11 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
-    <nav class="imagesa navbar navbar-expand-lg navbar-light">
-        <div class="pjesa1">
-            <div class="logoja">
-                <img class="logo" src="/static/image/STRIKETECH-1.png" alt="">
-            </div>
-        </div>
-        <div class="pjesa2">
-            <div class="rcmn">
-                <form id="search-form">
-                    <input type="text" id="search-input" autocomplete="off">
-                    <button class="search-submit" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
-                </form>
-                <div id="recommendations"></div>
-            </div>
-        </div>
-        <div class="button1">
-            <button 
-            style="background-color: white; position: relative; right: 10px; "
-            class="navbar-toggler" 
-            type="button" 
-            data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" 
-            aria-expanded="false"
-            aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-        <div class="collapse navbar-collapse navbar-nav w-33 " id="navbarSupportedContent">
-            <a  id="a1" class="nav-link" href="/">Home</a>
-            <a  id="a1" class="nav-link" href="/register">Register</a>
-            <div class="carda">
-                <a href="/cart"><a class="cart-color" href="/cart"><i   class="fa-sharp fa-solid fa-cart-shopping"></i></a></i><sup><a href="/cart" style="color: white; text-decoration: none;" class="cart-count"></a></sup></a>
-            </div>
-        </div>
-    </nav>
-    <div class="main">
-        <div class="card">
-            <h2 class="regist">Regjistrohu per ti perdorur sherbimet tona</h2>
-            <form action="/create" class="form-register" method="POST">
-                <input class="inputt" type="text" placeholder="Emri:" name="emri" required >
-                <input class="inputt" type="text" placeholder="Mbiemri:" name="mbiemri" required>
-                <input class="inputt" type="email" placeholder="Emaili:" name="email" required>
-                
-                <div class="container">
-                    <div class="input-box">
-                        <i class="fas fa-eye-slash Show_Hide"></i>
-                        <input spellcheck="false" class="inputt" id="mala-input" name="password" minlength="8"  type="password" placeholder="Konfirmo passwordin:">
-                    </div>
-                </div>
-                <!-- <input class="inputt" spellcheck="false" type="password" placeholder="Konfirmimi fjalkalimit:" name="oldpassword" minlength="8" required > -->
-                <h5 class="regist">Nese keni account: <a href="/login">Log in</a></h5>
-                <input class="regjistrimi" type="submit" value="Regjistrohu">
-            </form>
-            <%if(message){ %>
-                <h4 id="message"><%= message %></h4>
-            <% } %>
-        </div>
-    </div>
+    
+    
     
     <div class="main">
-        <form class="form" action="/login" method="POST">
+        <form class="form" action="/register" method="POST">
             <div class="Logo-container">
                 <a href="/"><img src="/static/image/STRIKETECH-1.png" alt=""></a>
             </div>
@@ -90,36 +33,41 @@
             </div>
             <div class="inputForm">
                 <svg height="20" viewBox="0 0 32 32" width="20" xmlns="http://www.w3.org/2000/svg"><g id="Layer_3" data-name="Layer 3"><path d="m30.853 13.87a15 15 0 0 0 -29.729 4.082 15.1 15.1 0 0 0 12.876 12.918 15.6 15.6 0 0 0 2.016.13 14.85 14.85 0 0 0 7.715-2.145 1 1 0 1 0 -1.031-1.711 13.007 13.007 0 1 1 5.458-6.529 2.149 2.149 0 0 1 -4.158-.759v-10.856a1 1 0 0 0 -2 0v1.726a8 8 0 1 0 .2 10.325 4.135 4.135 0 0 0 7.83.274 15.2 15.2 0 0 0 .823-7.455zm-14.853 8.13a6 6 0 1 1 6-6 6.006 6.006 0 0 1 -6 6z"></path></g></svg>
-                <input type="email" required class="input" name="email" placeholder="Enter your Email">
+                <input type="email" class="input" name="email" placeholder="Enter your Email">
             </div>
             
             <div class="flex-column">
                 <label>Password </label>
             </div>
-            <div class="inputForm">
+            <div class="inputForm" id="color-div">
                 <svg height="20" viewBox="-64 0 512 512" width="20" xmlns="http://www.w3.org/2000/svg"><path d="m336 512h-288c-26.453125 0-48-21.523438-48-48v-224c0-26.476562 21.546875-48 48-48h288c26.453125 0 48 21.523438 48 48v224c0 26.476562-21.546875 48-48 48zm-288-288c-8.8125 0-16 7.167969-16 16v224c0 8.832031 7.1875 16 16 16h288c8.8125 0 16-7.167969 16-16v-224c0-8.832031-7.1875-16-16-16zm0 0"></path><path d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0"></path></svg>        
                 <div class="container">
-                    <div class="input-box">
+                    <div class="input-box" >
                         <i class="fas fa-eye-slash show_hide"></i>
                         <input spellcheck="false" name="password" minlength="8" id="input-check" class="input" type="password" placeholder="Enter password:">
                     </div>
                     <div class="indicator"></div>
                 </div>
-                
+            </div>
+            <div class="inputForm" id="color-div">
+                <svg height="20" viewBox="-64 0 512 512" width="20" xmlns="http://www.w3.org/2000/svg"><path d="m336 512h-288c-26.453125 0-48-21.523438-48-48v-224c0-26.476562 21.546875-48 48-48h288c26.453125 0 48 21.523438 48 48v224c0 26.476562-21.546875 48-48 48zm-288-288c-8.8125 0-16 7.167969-16 16v224c0 8.832031 7.1875 16 16 16h288c8.8125 0 16-7.167969 16-16v-224c0-8.832031-7.1875-16-16-16zm0 0"></path><path d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0"></path></svg>        
+                <div class="container">
+                    <div class="input-box" >
+                        <i class="fas fa-eye-slash Show_Hide"></i>
+                        <input spellcheck="false" name="oldpassword" minlength="8" id="input-check2" class="input" type="password" placeholder="Enter password:">
+                    </div>
+                    <div class="indicator"></div>
+                </div>
+            </div>
+            <div class="flex-row">
+                <%if(message){ %>
+                    <h4 id="message"><%= message %></h4>
+                <% } %>
             </div>
             
-            <div class="flex-row">
-                <div>
-                    <input type="checkbox">
-                    <label>Remember me </label>
-                </div>
-                <a href="/changepassword"><span class="span" >Forgot password?</span></a>
-            </div>
-    
             <button class="button-submit" type="submit">Sign In</button>
             <p class="p">Don't have an account? <a href="/register" class="span">Sign Up</a></p>
             <p class="p line">Or With</p>
-        
             <div class="flex-row">
                 <button class="butn google">
                     <svg version="1.1" width="20" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
@@ -206,68 +154,6 @@
         </div>
     </footer>
 
-    <script>
-        const input = document.getElementById("input-check"),
-        showHide = document.querySelector(".show_hide"),
-        indicator = document.querySelector(".indicator")
-
-        showHide.addEventListener("click", ()=>{
-            if(input.type === "password"){
-                input.type = "text";
-                showHide.classList.replace("fa-eye-slash","fa-eye");
-            }else {
-                input.type = "password";
-                showHide.classList.replace("fa-eye","fa-eye-slash");
-            }
-        });
-        
-        const inputA = document.getElementById('mala-input')
-        const ShowHide = document.querySelector('.Show_Hide')
-
-        ShowHide.addEventListener('click',()=>{
-            if(inputA.type === 'password'){
-                inputA.type = 'text'
-                ShowHide.classList.replace('fa-eye-slash','fa-eye')
-            }
-            else{
-                inputA.type = ('password')
-                ShowHide.classList.replace('fa-eye','fa-eye-slash')
-            }
-        })
-
-        let alphabet = /[a-zA-Z]/,
-        numbers = /[0-9]/, 
-        scharacters = /[!,@,#,$,%,^,&,*,?,_,(,),-,+,=,~]/;
-
-        input.addEventListener("keyup", ()=>{
-            indicator.classList.add("active");
-
-            let val = input.value;
-            if(val.match(alphabet) || val.match(numbers) || val.match(scharacters)){
-                input.style.borderColor = "#FF6333";
-                showHide.style.color = "#FF6333";
-            }
-            if(val.match(alphabet) && val.match(numbers) && val.length >= 6){
-                input.style.borderColor = "#cc8500";
-                showHide.style.color = "#cc8500";
-            }
-            if(val.match(alphabet) && val.match(numbers) && val.match(scharacters) && val.length >= 8){
-                input.style.borderColor = "#22C32A";
-                showHide.style.color = "#22C32A";
-            }
-
-            if(val == ""){
-                indicator.classList.remove("active");
-                input.style.borderColor = "#A6A6A6";
-                showHide.style.color = "#A6A6A6";
-            }
-        });
-        
-
-
-        //NAVBAR
-
-        
-    </script>
+    <script src="/static/js/Register.js" defer></script>
 </body>
 </html>

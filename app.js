@@ -20,7 +20,6 @@ const path = require('path');
     const Produkti = require('./Models/ProductIdModel')
     const Review = require('./Models/ReviewsModel')
     const ProduktImages = require('./Models/ProduktImagesModel');
-
     app.use(bodyParser.json()); 
     app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -41,11 +40,10 @@ app.use(session({
     cookie:{maxAge: 30 * 60 * 1000} 
 }))
 
-
+app.use('/register',require('./routes/RegisterRoute'))
 app.use('/login',require('./routes/LoginRoute'))
 app.use('/admin',require('./routes/AdminRoute'))
 app.get('/protected',require('./routes/ProtectedRoute'))
-app.use('/protected',require('./routes/ProtectedRoute'))
 
 
 app.get('/', [
@@ -363,10 +361,7 @@ app.get('/cart/count', (req, res) => {
 
 
 
-app.get('/register',(req,res)=>{
-    const isLoggedIn = req.session.isLoggedIn;
-    res.render('register',{message:'', isLoggedIn})
-})
+
 
 app.get('/changepassword',(req,res)=>{
     const isLoggedIn = req.session.isLoggedIn;
@@ -404,30 +399,7 @@ app.post('/logout', (req, res) => {
 
 
 
-app.post('/create',(req,res)=>{
-    const{emri,mbiemri,email,password,oldpassword,status} = req.body
-    const query = `SELECT email FROM login_information WHERE email = ? `
-    db.query(query,email,async(err,results,fields)=>{
-        if(err){
-            console.log(err)
-        }
-        if(results.length > 0){
-            return res.render('register',{message:'Ky email eksziston!'})
-        }
-        if(password != oldpassword){
-            return res.render('register',{message:'Fjalkalimi nuk perputhet!'})
-        }
-        let hashpassword = await bcrypt.hash(password,8)
-        const iquery = `INSERT INTO login_information (emri,mbiemri,email,password) VALUES (?,?,?,?)`;
-        const data = [emri, mbiemri, email, hashpassword];
-        db.query(iquery, data, (error, results, fields) => {
-            if (error) {
-                console.log(error);
-            }
-            res.render('login', { message: '' });
-        });
-    })
-})
+
 
 
 
