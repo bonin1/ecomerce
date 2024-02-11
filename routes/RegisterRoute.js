@@ -34,7 +34,7 @@ router.post('/',(req,res)=>{
             if (error) {
                 console.log(error);
             }
-            res.render('/', { message: '' });
+            res.redirect('/login', { message: '' });
         });
     })
 })
