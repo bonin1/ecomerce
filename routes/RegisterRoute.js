@@ -4,11 +4,11 @@ const db = require('../databaze');
 const bcrypt = require('bcryptjs');
 const router = express.Router();
 require('dotenv').config();
-
+const Footer = require('../Footer')
 
 router.get('/',(req,res)=>{
     const isLoggedIn = req.session.isLoggedIn;
-    res.render('register',{message:'', isLoggedIn})
+    res.render('register',{message:'', isLoggedIn, footer : Footer()})
 })
 
 router.post('/',(req,res)=>{
@@ -34,7 +34,7 @@ router.post('/',(req,res)=>{
             if (error) {
                 console.log(error);
             }
-            res.redirect('/login', { message: '' });
+            res.redirect('/login');
         });
     })
 })

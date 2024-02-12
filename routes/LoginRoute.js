@@ -12,7 +12,7 @@ const helmet = require('helmet');
 const router = express.Router();
 const crypto = require('crypto');
 require('dotenv').config();
-
+const Footer = require('../Footer')
 
 const  LoginInformation  = require('../Models/LoginModel');
 
@@ -46,7 +46,7 @@ router.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 router.get('/', (req, res) => {
     const csrfToken = crypto.randomBytes(64).toString('hex');
     req.session.csrfToken = csrfToken;
-    res.render('login', { message: '', csrfToken });
+    res.render('login', { message: '', csrfToken ,footer: Footer()});
 });
 
 router.post('/', loginLimiter, async (req, res) => {

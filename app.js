@@ -23,7 +23,7 @@ const path = require('path');
     app.use(bodyParser.json()); 
     app.use(bodyParser.urlencoded({ extended: true }));
 
-
+    const Footer = require('./Footer')
 
 
 
@@ -94,7 +94,7 @@ app.get('/', [
                 });
                 row.produktimage = images[0] || null;
             }
-            res.render('home', { data: results, isLoggedIn:req.session.isLoggedIn, minPrice, maxPrice });
+            res.render('home', { data: results, isLoggedIn:req.session.isLoggedIn, minPrice, maxPrice,footer: Footer() });
         })
         .catch(err => {
             console.log(err);
@@ -240,15 +240,14 @@ app.get('/produkt/:id', async (req, res) => {
 app.post('/produkt/:id', async (req, res) => {
     const userId = req.session.userId;
     const { rating, product_id, comment } = req.body;
+
     if (!userId) return res.redirect('/login');
 
     try {
         const existingReview = await Review.findOne({
             where: { product_id, userId }
         });
-        if (existingReview) {
-            return res.redirect(`/produkt/${product_id}`);
-        }
+
         await Review.create({ rating, product_id, userId, comment });
         res.redirect(`/produkt/${product_id}`);
     } catch (err) {
@@ -256,6 +255,7 @@ app.post('/produkt/:id', async (req, res) => {
         res.redirect(`/produkt/${product_id}`);
     }
 });
+
 
 
 
