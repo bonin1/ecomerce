@@ -277,7 +277,7 @@ app.post('/cart',(req, res) => {
                 res.sendStatus(500);
                 return;
             }   
-            res.render('cart');
+            res.render('cart',{isLoggedIn:req.session.isLoggedIn});
         }
     );
 });
@@ -299,7 +299,7 @@ app.get('/cart', (req, res) => {
                 res.sendStatus(500);
                 return;
             }
-            res.render('cart', { items: results  });
+            res.render('cart', { items: results ,isLoggedIn:req.session.isLoggedIn ,footer: Footer() });
         }
     );
 });
