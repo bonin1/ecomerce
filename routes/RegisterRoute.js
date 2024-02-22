@@ -6,10 +6,11 @@ const router = express.Router();
 require('dotenv').config();
 const Footer = require('../Footer')
 
-router.get('/',(req,res)=>{
+router.get('/', (req, res) => {
     const isLoggedIn = req.session.isLoggedIn;
-    res.render('register',{message:'', isLoggedIn, footer : Footer()})
-})
+    res.render('register', { message: '', isLoggedIn, footer: Footer() });
+});
+
 
 router.post('/',(req,res)=>{
     const{emri,mbiemri,email,password,oldpassword,status} = req.body
@@ -35,6 +36,7 @@ router.post('/',(req,res)=>{
                 console.log(error);
             }
             res.redirect('/login');
+
         });
     })
 })

@@ -66,32 +66,31 @@
     <div class="main">
         <div class="container1">
             <div class="first-part">
-                    <% if (items.length === 0) { %>
-                        <p class="skaprod">No products in your cart</p>
-                    <% } else { %>
-                        <% items.forEach(item => { %>
-                            
-                            <div class="cart-card">
+                <% if (items.length === 0) { %>
+                    <p class="skaprod">No products in your cart</p>
+                <% } else { %>
+                    <% items.forEach(item => { %>
+                        <div class="cart-card">
                             <div class="item">
                                 <div class="img">
-                                    <img class="img-cart" src="<%= item.foto_produktit %>" alt="">
+                                    <img class="img-cart" src="data:image/jpeg;base64,<%= item.produktet.dataValues.foto_produktit %>" alt="">
                                 </div>
                                 <div class="container2">
                                     <div class="title">
                                         <div class="title-inside">
-                                        <h2 class="title-cart"><%= item.emri_produktit %></h2>
+                                            <h2 class="title-cart"><%= item.produktet.dataValues.emri_produktit %></h2>
                                         </div>
                                     </div>
                                     <div class="contenti">
                                         <p class="sasia-cart">Sasia: <%= item.quantity %></p>
-                                        <h2 class="cmimi-cart">Cmimi: <%= item.cmimi_produktit %>€</h2>
-                                        <button class="remove-from-cart" data-id="<%= item.produkt_id %>">Remove</button>
+                                        <h2 class="cmimi-cart">Cmimi: <%= item.produktet.dataValues.cmimi_produktit %>€</h2>
+                                        <button class="remove-from-cart" data-id="<%= item.produktet.dataValues.id %>">Remove</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <% }); %>
-                    <% } %>
+                    <% }); %>
+                <% } %>
             </div>
             <div class="second-part">
                 <div class="total-card">

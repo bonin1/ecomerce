@@ -13,6 +13,7 @@ const  {check,validationResult} = require('express-validator')
 const multer = require('multer');
 const fs = require('fs')
 const path = require('path');
+const { QueryTypes } = require('sequelize');
 
 
     const Home = require('./Models/HomeModel')
@@ -44,7 +45,7 @@ app.use('/register',require('./routes/RegisterRoute'))
 app.use('/login',require('./routes/LoginRoute'))
 app.use('/admin',require('./routes/AdminRoute'))
 app.use('/protected',require('./routes/ProtectedRoute'))
-
+app.use('/cart',require('./routes/CartRoute'))
 
 app.get('/', [
     check('category').optional().isString(),
@@ -258,80 +259,6 @@ app.post('/produkt/:id', async (req, res) => {
 
 
 
-
-app.post('/cart',(req, res) => {
-    if (!req.session.isLoggedIn) {
-        return res.redirect('/login');
-    }
-
-    const userId = req.session.userId;
-    const itemId = req.body.id;
-    const quantity = req.body.quantity;
-
-    db.query(
-        'INSERT INTO cart (user_id, produkt_id, quantity) VALUES (?, ?, ?)',
-        [userId, itemId, quantity],
-        (err, results) => {
-            if (err) {
-                console.error(err);
-                res.sendStatus(500);
-                return;
-            }   
-            res.render('cart',{isLoggedIn:req.session.isLoggedIn});
-        }
-    );
-});
-
-// const csrfProtection = csrf();
-// app.use(csrfProtection);
-
-app.get('/cart', (req, res) => {
-    if (!req.session.isLoggedIn) {
-        return res.redirect('/login');
-    }
-    const userId = req.session.userId;
-    db.query(
-        'SELECT produktet.*, cart.produkt_id, cart.quantity FROM produktet INNER JOIN cart ON produktet.id = cart.produkt_id WHERE cart.user_id = ?',
-        [userId],
-        (err, results) => {
-            if (err) {
-                console.error(err);
-                res.sendStatus(500);
-                return;
-            }
-            res.render('cart', { items: results ,isLoggedIn:req.session.isLoggedIn ,footer: Footer() });
-        }
-    );
-});
-
-
-
-app.delete('/cart/:itemId', (req, res) => {
-    if (!req.session.isLoggedIn) {
-        return res.redirect('/login');
-    }
-    
-    const userId = req.session.userId;
-    const itemId = req.params.itemId;
-
-    db.query('DELETE FROM cart WHERE produkt_id = ? AND user_id = ?', [itemId, userId], (err, results) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        db.query(
-            'SELECT produktet.*, cart.produkt_id, cart.quantity FROM produktet INNER JOIN cart ON produktet.id = cart.produkt_id WHERE cart.user_id = ?',
-            [userId],
-            (err, results) => {
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-                res.send({ items: results});
-            }
-        );
-    });
-});
 
 
 

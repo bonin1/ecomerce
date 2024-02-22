@@ -52,7 +52,7 @@
         
         <div class="flex-row">
             <div>
-                <input type="checkbox">
+                <input type="checkbox" name="rememberMe">
                 <label>Remember me </label>
             </div>
             <a href="/changepassword"><span class="span" >Forgot password?</span></a>
@@ -88,7 +88,9 @@
         </div>
     </form>
 </div>
-    <%- footer %>
+    <% if (footer) { %>
+        <%- footer %>
+    <% } %>
     </body>
-    <script src="/static//js/login.js" defer></script>
+    <script src="/static/js/login.js" defer></script>
 </html>

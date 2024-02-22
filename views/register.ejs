@@ -117,7 +117,10 @@
     </div>
 
 
-    <%- footer %>
+    <% if (footer) { %>
+        <%- footer %>
+    <% } %>
+    
 
     <script src="/static/js/Register.js" defer></script>
 </body>

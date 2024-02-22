@@ -80,6 +80,7 @@ router.post('/', loginLimiter, async (req, res) => {
             const rememberToken = crypto.randomBytes(64).toString('hex');
             res.cookie('rememberToken', rememberToken, { maxAge: 30 * 24 * 60 * 60 * 1000 });
         }
+        
 
         req.session.isLoggedIn = true;
         req.session.userId = user.id;
