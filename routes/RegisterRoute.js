@@ -4,11 +4,10 @@ const db = require('../databaze');
 const bcrypt = require('bcryptjs');
 const router = express.Router();
 require('dotenv').config();
-const Footer = require('../Footer')
 
 router.get('/', (req, res) => {
     const isLoggedIn = req.session.isLoggedIn;
-    res.render('register', { message: '', isLoggedIn, footer: Footer() });
+    res.render('register', { message: '', isLoggedIn });
 });
 
 

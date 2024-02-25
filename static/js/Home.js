@@ -100,86 +100,110 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         //search bar
 
-        //shopping icona
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', '/cart/count', true);
-        xhr.send();
-        xhr.onload = function() {
-            if (this.status === 200) {
-                const cartCount = JSON.parse(this.responseText).count;
-                const cartCountElement = document.querySelector('.cart-count');
-                cartCountElement.innerHTML = cartCount;
-            } else {
-                console.error('Error fetching cart count');
+
+
+        var modal = document.getElementById("Price_Modal");
+        var btn = document.getElementById("myBtn");
+        var span = document.getElementsByClassName("closeButton_Icon")[0];
+        
+        btn.onclick = function() {
+            modal.style.display = "flex";
+        }
+        
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
             }
         }
 
-        const filterButtons = document.querySelectorAll('.filter-button');
-        filterButtons.forEach(button => {
-            button.addEventListener('click', event => {
-                event.preventDefault(); 
-                const selectedCategory = button.getAttribute('data-value');
-                window.history.pushState(
-                {},
-                '',
-                `${window.location.origin}${window.location.pathname}?category=${selectedCategory}`
-                );
-                
-                filterProducts(selectedCategory);
-            });
-        });
-        //shopping icona
+//shopping icona
+const xhr = new XMLHttpRequest();
+xhr.open('GET', '/cart/count', true);
+xhr.send();
+xhr.onload = function() {
+    if (this.status === 200) {
+        const cartCount = JSON.parse(this.responseText).count;
+        const cartCountElement = document.querySelector('.cart-count');
+        cartCountElement.innerHTML = cartCount;
+    } else {
+        console.error('Error fetching cart count');
+    }
+}
 
-        //NAVBAR
-
-
-        // KATEGORTE
-        const urlParams = new URLSearchParams(window.location.search);
-        const selectedCategory = urlParams.get('category');
-
-        filterProducts(selectedCategory || '');
-
-        function filterProducts(category) {
-            const products = document.querySelectorAll('.card1');
-            products.forEach(product => {
-                const productCategory = product.getAttribute('data-category');
-                if (category === '' || category === productCategory) {
-                    product.style.display = 'block';
-                } else {
-                    product.style.display = 'none';
-                }
-            });
-        }
+const filterButtons = document.querySelectorAll('.filter-button');
+filterButtons.forEach(button => {
+    button.addEventListener('click', event => {
+        event.preventDefault(); 
+        const selectedCategory = button.getAttribute('data-value');
+        window.history.pushState(
+        {},
+        '',
+        `${window.location.origin}${window.location.pathname}?category=${selectedCategory}`
+        );
         
-        const form = document.querySelector('form');
-        const minRange = form.querySelector('#minPrice');
-        const maxRange = form.querySelector('#maxPrice');
-        const minOutput = form.querySelector('#minPriceOutput');
-        const maxOutput = form.querySelector('#maxPriceOutput');
+        filterProducts(selectedCategory);
+    });
+});
+//shopping icona
+// KATEGORTE
+const urlParams = new URLSearchParams(window.location.search);
+const selectedCategory = urlParams.get('category');
 
-        minRange.addEventListener('input', (event) => {
-            minOutput.value = `$ ${event.target.value}`;
-        });
+filterProducts(selectedCategory || '');
 
-        maxRange.addEventListener('input', (event) => {
-            maxOutput.value = `$ ${event.target.value}`;
-        });
+function filterProducts(category) {
+    const products = document.querySelectorAll('.card1');
+    products.forEach(product => {
+        const productCategory = product.getAttribute('data-category');
+        if (category === '' || category === productCategory) {
+            product.style.display = 'block';
+        } else {
+            product.style.display = 'none';
+        }
+    });
+}
+
+const form = document.querySelector('form');
+const target = document.querySelector('#target');
+const minRange = form.querySelector('#minPrice');
+const maxRange = form.querySelector('#maxPrice');
+const minOutput = form.querySelector('#minPriceOutput');
+const maxOutput = form.querySelector('#maxPriceOutput');
+
+minRange.addEventListener('input', (event) => {
+    minOutput.value = `$ ${event.target.value}`;
+    console.log('Min Price:', event.target.value);
+});
+
+maxRange.addEventListener('input', (event) => {
+    maxOutput.value = `$ ${event.target.value}`;
+    console.log('Max Price:', event.target.value);
+});
+
+form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(form);
+    const url = form.getAttribute('data-url');
+
+    fetch(url, {
+        method: 'POST',
+        body: formData
+    })
+    .then((response) => response.text())
+    .then((html) => {
+        target.innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+//KATEGORITE
 
 
 
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
 
-            const formData = new FormData(form);
-            const url = form.getAttribute('data-url');
-
-            fetch(url, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => response.text())
-            .then((html) => {
-            target.innerHTML = html;
-            });
-        });
-        //KATEGORITE

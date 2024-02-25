@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const session = require('express-session')
 const db = require('./databaze')
-const d2 = require('./db2')
+const db2 = require('./db2')
 const bcrypt = require('bcryptjs');
 const cookieParser = require('cookie-parser');
 const { Sequelize, literal } = require('sequelize');
@@ -23,8 +23,6 @@ const { QueryTypes } = require('sequelize');
     const ProduktImages = require('./Models/ProduktImagesModel');
     app.use(bodyParser.json()); 
     app.use(bodyParser.urlencoded({ extended: true }));
-
-    const Footer = require('./Footer')
 
 
 
@@ -95,12 +93,42 @@ app.get('/', [
                 });
                 row.produktimage = images[0] || null;
             }
-            res.render('home', { data: results, isLoggedIn:req.session.isLoggedIn, minPrice, maxPrice,footer: Footer() });
+            res.render('home', { data: results, isLoggedIn:req.session.isLoggedIn, minPrice, maxPrice });
         })
         .catch(err => {
             console.log(err);
         });
     });
+
+app.post('/filter', async (req, res) => {
+    const category = req.body.category;
+    const minPrice = parseFloat(req.body.minPrice); 
+    const maxPrice = parseFloat(req.body.maxPrice); 
+
+
+    try {
+        let whereClause = {
+            cmimi_produktit: {
+                [Sequelize.Op.between]: [minPrice, maxPrice]
+            }
+        };
+
+        if (category) {
+            whereClause.kategoria = category;
+        }
+
+        const results = await Produkti.findAll({
+            where: whereClause,
+            order: Sequelize.literal('RAND()'),
+            limit: 9
+        });
+
+        res.render('home', { data: results, isLoggedIn: req.session.isLoggedIn, minPrice, maxPrice });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 
 
@@ -139,33 +167,7 @@ app.get('/', [
 
 
 
-app.post('/filter', (req, res) => {
-    const category = req.body.category;
-    const minPrice = req.body.minPrice;
-    const maxPrice = req.body.maxPrice;
 
-    let query = `SELECT * FROM produktet WHERE sasia_produktit > 0`;
-    if (category || (minPrice && maxPrice)) {
-        query += ` AND `;
-    }
-    if (category) {
-        query += `kategoria = '${category}'`;
-    }
-    if (minPrice && maxPrice) {
-        if (category) {
-            query += ` AND `;
-        }
-        query += `cmimi_produktit BETWEEN ${minPrice} AND ${maxPrice}`;
-    }
-    query += ` ORDER BY RAND() LIMIT 9`;
-
-    db.query(query, (err, results) => {
-        if (err) {
-        console.log(err);
-        }
-        res.render('home', { data: results, isLoggedIn: req.session.isLoggedIn, minPrice, maxPrice });
-    });
-});
 
 
 app.get('/search', (req, res) => {

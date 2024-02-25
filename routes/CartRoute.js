@@ -3,6 +3,7 @@ const router = express.Router();
 const Footer = require('../Footer');
 const Produkti = require('../Models/ProductIdModel');
 const Cart = require('../Models/CartModel');
+const db = require('../databaze')
 
 router.get('/', async (req, res) => {
     if (!req.session.isLoggedIn) {
@@ -39,7 +40,7 @@ router.post('/',(req, res) => {
     const itemId = req.body.id;
     const quantity = req.body.quantity;
 
-    db2.query(
+    db.query(
         'INSERT INTO cart (user_id, produkt_id, quantity) VALUES (?, ?, ?)',
         [userId, itemId, quantity],
         (err, results) => {
@@ -67,12 +68,12 @@ router.delete('/:itemId', (req, res) => {
     const userId = req.session.userId;
     const itemId = req.params.itemId;
 
-    db2.query('DELETE FROM cart WHERE produkt_id = ? AND user_id = ?', [itemId, userId], (err, results) => {
+    db.query('DELETE FROM cart WHERE produkt_id = ? AND user_id = ?', [itemId, userId], (err, results) => {
         if (err) {
             console.error(err);
             return;
         }
-        db2.query(
+        db.query(
             'SELECT produktet.*, cart.produkt_id, cart.quantity FROM produktet INNER JOIN cart ON produktet.id = cart.produkt_id WHERE cart.user_id = ?',
             [userId],
             (err, results) => {
