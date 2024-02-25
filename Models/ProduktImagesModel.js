@@ -1,6 +1,5 @@
 const { Sequelize } = require('sequelize');
 const db2 = require('../db2');
-const Produkti = require('./ProductIdModel');
 
 const ProduktImages = db2.define('produktimages', {
     produkt_id: {
@@ -29,7 +28,5 @@ const ProduktImages = db2.define('produktimages', {
     ]
 });
 
-
-ProduktImages.belongsTo(Produkti, { foreignKey: 'produkt_id' });
 
 module.exports = ProduktImages;

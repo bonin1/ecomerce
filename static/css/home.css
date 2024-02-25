@@ -239,11 +239,20 @@ nav{
 /* Category */
 .Categories-main{
     width: 100%;
-    height: 50px;
+    height: auto;
     background-color: #05A7BE;
+    display: flex;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 5px 0;
+    flex-wrap: wrap;
+}
+.Form_Categories_Button{
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
+    flex-direction: row;
 }
 .Form_Categories_Button > button , #myBtn,.Clear_Filters{
     background-color: transparent;

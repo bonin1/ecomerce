@@ -1,31 +1,38 @@
 const express = require('express');
 const router = express.Router();
-const Footer = require('../Footer');
 const Produkti = require('../Models/ProductIdModel');
 const Cart = require('../Models/CartModel');
 const db = require('../databaze')
+const ProduktImages = require('../Models/ProduktImagesModel')
 
 router.get('/', async (req, res) => {
     if (!req.session.isLoggedIn) {
         return res.redirect('/login');
     }
-    const userId = req.session.userId;
 
     try {
         const cartItems = await Cart.findAll({
-            include: [
-                {
-                    model: Produkti,
-                    attributes: ['id', 'emri_produktit', 'company_name', 'pershkrimi_produktit', 'cmimi_produktit', 'origjina_produktit', 'sasia_produktit', 'kategoria', 'garancioni', 'serialcode'],
-                    required: true,
-                }
-            ],
-            where: { user_id: userId }
+            where: { user_Id: req.session.userId }
         });
-        res.render('cart', { items: cartItems, isLoggedIn: req.session.isLoggedIn, footer: Footer() });
-        
-    } catch (err) {
-        console.error('Error fetching cart items:', err); 
+
+        const items = [];
+        for (const cartItem of cartItems) {
+            const product = await Produkti.findOne({
+                where: { id: cartItem.produkt_id }
+            });
+            const cart = await Cart.findOne({
+                where: { id: cartItem.id }
+            });
+            const image = await ProduktImages.findOne({
+                where: { produkt_id: cartItem.produkt_id },
+                order: [['id', 'ASC']]
+            });
+            items.push({ product, image, cart });
+        }
+
+        res.render('cart', { items,isLoggedIn:req.session.isLoggedIn });
+    } catch (error) {
+        console.error('Error fetching cart items:', error);
         res.status(500).send('Internal Server Error');
     }
 });
@@ -49,7 +56,7 @@ router.post('/',(req, res) => {
                 res.sendStatus(500);
                 return;
             }   
-            res.render('cart',{isLoggedIn:req.session.isLoggedIn});
+            res.render('cart',{isLoggedIn:req.session.isLoggedIn,items: results});
         }
     );
 });

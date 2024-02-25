@@ -30,6 +30,5 @@ const Cart = db2.define('Cart', {
     timestamps: false 
 });
 
-Cart.belongsTo(Produkti, { foreignKey: 'produkt_id' });
 
 module.exports = Cart;

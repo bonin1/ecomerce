@@ -206,8 +206,8 @@ nav{
     border-bottom: 1px solid #2A5592;
     align-items: center;
 }
-.img{
-    width: 100px;
+.img > img{
+    width: 100px ;
     height: 100px;
 }
 .img-cart{
