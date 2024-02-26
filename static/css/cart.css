@@ -173,141 +173,141 @@ nav{
     display: flex;
     flex-direction: row;
 }
+.skaprod{
+    font-family: "Montserrat",sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: white;
+}
+.cart-card{
+    width: 100%;
+    display: block;
+    padding: 10px;
+}
+.Cart_Title_Div{
+    margin-top: 50px;
+    width: 100%;
+    height: 30px;
+}
+.Cart-text{
+    font-family: 'Montserrat', sans-serif;
+    color: #05A7BE;
+    font-size: 24px;
+    text-align: center;
+}
 .main{
     width: 100%;
-    min-height: 600px;
+    height: auto;
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-bottom: 50px;
 }
 .container1{
     width: 1200px;
     display: flex;
-    flex-direction: row !important;
+    background-color: #05A7BE;
+    min-height:300px;
+    justify-content: space-between;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px gray;
 }
 .first-part{
     width: 70%;
-    background-color: #C6D6EE;
-}
-.second-part{
-    background-color: #4682B4;
-    width: 30%;
     display: flex;
     justify-content: center;
     align-items: center;
-}
-.cart-card{
-    width: 100%;
-    height: 100px;
+    flex-direction: column;
 }
 .item{
     width: 100%;
-    height: 100px;
     display: flex;
-    border-bottom: 1px solid #2A5592;
-    align-items: center;
+}
+.Names{
+    width: 100%;
+    display: flex;
+    padding: 10px;
+}
+.Names > div > h1{
+    font-family: "Montserrat", sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: white;
+    background-color: #087ea23f;
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+
+.Names > div > img{
+    width: 20px;
+    height: 20px;
+}
+.first-part > hr{
+    width: 90%;
+    height: 3px;
+}
+.Produkti_Description{
+    width: 100%;
+    display: flex;
+}
+.Produkti_Presentation{
+    width: 50%;
+}
+.Cmimi_Presentation{
+    width: 30%;
+}
+.Sasia_Presentation{
+    width: 20%;
+}
+.Trash{
+    width: 10%;
+}
+.remove-from-cart{
+    background-color: transparent;
+    padding: 2px;
+    border-radius: 5px;
+}
+.remove-from-cart:hover{
+    border: 1px solid black;
 }
 .img > img{
     width: 100px ;
     height: 100px;
-}
-.img-cart{
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
+    border-radius: 10px;
+    object-fit: contain;
     object-position: center;
 }
 .title-cart{
-    font-size: 30px;
-    text-transform: capitalize;
-    color: #222222;
-}
-.title{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50px;
-}
-.title-inside{
-    border-bottom: 1px solid black;
-}
-.container2{
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: 0px 10px;
-}
-.contenti{
-    width: 100%;
-    height: 50px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.remove-from-cart{
-    background-color: #64BBE4;
-    text-decoration: none;
-    padding: 0px 5px;
-    border-radius: 5px;
-    font-weight: 600;
+    color: white;
+    font-family: "Montserrat",sans-serif;
+    font-weight: 400;
     font-size: 18px;
-    color: #222222;
-}
-.remove-from-cart:hover{
-    color: #64BBE4;
-    transition: .1s;
-    background-color: #2A5592;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    padding: 10px 10px 0px 10px;
 }
 .cmimi-cart{
-    font-size: 20px;
-}
-.skaprod{
-    width: 100%;
-    min-height: 600px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    color: white;
+    font-family: "Montserrat",sans-serif;
     font-weight: 500;
-    text-transform: capitalize;
+    font-size: 18px;
+    padding: 10px 10px 10px 0px;
+    margin: 0;
 }
-.total-card{
-    width: 70%;
-    height: 80%;
-    border: 1px solid black;
-    border-radius: 10px;
+.sasia-cart{
+    color: white;
+    font-family: "Montserrat",sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    padding: 10px;
 }
-.total-text{
-    font-size: 30px;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
+.second-part{
+    width: 30%;
 }
-.empty-cart{
-    font-size: 20px;
-    font-weight: 500;
-    text-align: center;
-}
-.inside-card{
-    height: 80%;
-}
-.button-check{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-#checkout{
-    font-size: 20px;
-    padding: 5px;
-    border-radius: 10px;
-    text-transform: capitalize;
-    text-decoration: none;
-    color: black;
-    background-color: lightgreen;
-}
-#checkout:hover{
-    background-color: rgb(64, 174, 64);
-}
+
 
 /* footer */
 .fund{

@@ -60,41 +60,68 @@
             <% } %>
         </div>
     </nav>
-    
-    <h1 style="text-align: center; text-transform: uppercase;">Page under maintenance</h1>
+    <div class="Cart_Title_Div">
+        <h1 class="Cart-text">Cart</h1>
+    </div>
     <div class="main">
         <div class="container1">
             <div class="first-part">
+                <% if (items.length > 0) { %>
+                    <div class="Names">
+                        <div style="width: 50%;">
+                            <h1 style="width: 85px;">Produkti</h1>
+                        </div>
+                        <div style="width: 30%;">
+                            <h1 style="width: 70px;">Cmimi</h1>
+                        </div>
+                        <div style="width: 20%;">
+                            <h1 style="width: 68px;">Sasia</h1>
+                        </div>
+                        <div style="width: 10%; padding-left: 5px;">
+                            <img src="/static/image/trash.png" alt="">
+                        </div>
+                    </div>
+                <% } %>
                 <% if (items.length === 0) { %>
                     <p class="skaprod">No products in your cart</p>
                 <% } else { %>
                     <% items.forEach(item => { %>
                         <div class="cart-card">
+                            <hr>
                             <div class="item">
-                                <div class="img">
-                                    <% if (item.image) { %>
-                                        <img src="data:image/jpeg;base64,<%= item.image.foto_produktit.toString('base64') %>" alt="Product Image">
-                                    <% } else { %>
-                                        <img src="/static/image/360_F_251955356_FAQH0U1y1TZw3ZcdPGybwUkH90a3VAhb.jpg" alt="">
-                                    <% } %>
-                                </div>
-                                <div class="container2">
-                                    <div class="title">
-                                        <div class="title-inside">
-                                            <h2 class="title-cart"><%= item.product.emri_produktit %></h2>
+                                <div class="Produkti_Presentation">
+                                    <div class="Produkti_Description">
+                                        <div class="img">
+                                            <% if (item.image) { %>
+                                                <img src="data:image/jpeg;base64,<%= item.image.foto_produktit.toString('base64') %>" alt="Product Image">
+                                            <% } else { %>
+                                                <img src="/static/image/360_F_251955356_FAQH0U1y1TZw3ZcdPGybwUkH90a3VAhb.jpg" alt="">
+                                            <% } %>
+                                        </div>
+                                        <div class="title">
+                                            <div class="title-inside">
+                                                <h2 class="title-cart"><%= item.product.emri_produktit %></h2>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="contenti">
-                                        <p class="sasia-cart">Sasia: <%= item.cart.quantity %></p>
-                                        <h2 class="cmimi-cart">Cmimi: <%= item.product.cmimi_produktit %>€</h2>
-                                        <button class="remove-from-cart" data-id="<%= item.product.id %>">Remove</button>
-                                    </div>
+                                </div>
+                                <div class="Cmimi_Presentation">
+                                    <h2 class="cmimi-cart"><%= item.product.cmimi_produktit %>€</h2>
+                                </div>
+                                <div class="Sasia_Presentation">
+                                    <p class="sasia-cart"><%= item.cart.quantity %></p>
+                                </div>
+                                <div class="Trash">
+                                    <button class="remove-from-cart" data-id="<%= item.product.id %>">
+                                        <img style="width: 20px; height: 20px;" src="/static/image/trash.png" alt="">
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     <% }); %>
                 <% } %>
             </div>
+
             <div class="second-part">
                 <div class="total-card">
                     <div class="inside-card">

@@ -196,8 +196,7 @@ app.get('/produkt/:id', async (req, res) => {
         const product = await Produkti.findOne({
             where: { id: productId }
         });
-    
-        // Check if product is not null before accessing its properties
+
         if (product !== null) {
             const images = await ProduktImages.findAll({
                 where: { produkt_id: productId }
