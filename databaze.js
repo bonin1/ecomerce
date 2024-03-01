@@ -6,7 +6,8 @@ const Sequelize = require('sequelize');
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
-    database: process.env.DATABASE_NAME
+    database: process.env.DATABASE_NAME,
+    password: process.env.DATABASE_PASSWORD
 });
 
 
