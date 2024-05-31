@@ -403,7 +403,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 10 * 1024 * 1024 }
+    limits: { fileSize: 20 * 1024 * 1024 }
 });
 
 
@@ -411,7 +411,7 @@ const upload = multer({
 app.post('/upload',function(req,res){
     upload(req,res,function(err){
         if(err){
-            console.log(err)
+            console.log(err)``
         }else if(!req.file){
             console.log('No file uploaded')
         }else{

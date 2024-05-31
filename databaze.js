@@ -3,6 +3,7 @@ require('dotenv').config()
 const bcrypt = require('bcryptjs');
 
 const Sequelize = require('sequelize');
+
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
@@ -78,23 +79,23 @@ db.query(
         }
     }
 );
-db.query(
-    `CREATE TABLE IF NOT EXISTS cart (
-        id INT NOT NULL AUTO_INCREMENT,
-        produkt_id BIGINT NOT NULL,
-        FOREIGN KEY (produkt_id) REFERENCES produktet(id),
-        quantity INT NOT NULL DEFAULT 1,
-        user_id INT DEFAULT NULL,
-        PRIMARY KEY (id)
-    );`,
-    (error, results) => {
-        if (error) {
-            console.error(error);
-        } else {
-            console.log('Table created successfully');
-        }
-    }
-);
+// db.query(
+//     `CREATE TABLE IF NOT EXISTS cart (
+//         id INT NOT NULL AUTO_INCREMENT,
+//         produkt_id BIGINT NOT NULL,
+//         FOREIGN KEY (produkt_id) REFERENCES produktet(id),
+//         quantity INT NOT NULL DEFAULT 1,
+//         user_id INT DEFAULT NULL,
+//         PRIMARY KEY (id)
+//     );`,
+//     (error, results) => {
+//         if (error) {
+//             console.error(error);
+//         } else {
+//             console.log('Table created successfully');
+//         }
+//     }
+// );
 db.query(
     `CREATE TABLE IF NOT EXISTS produktimages (
         id BIGINT NOT NULL AUTO_INCREMENT,
