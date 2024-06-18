@@ -47,7 +47,7 @@
     "sequelize": "^6.28.0",
     "sql-injection": "^0.0.7",
     "validator": "^13.7.0",
-    "ws": "^8.11.0",
+    "ws": "^8.17.1",
     "xss-clean": "^0.1.1"
   }
 }
