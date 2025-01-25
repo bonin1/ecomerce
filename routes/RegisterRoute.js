@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const db = require('../databaze');
+const db = require('../database');
 const bcrypt = require('bcryptjs');
 const router = express.Router();
 require('dotenv').config();

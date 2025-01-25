@@ -1,19 +1,36 @@
-const Sequelize = require('sequelize');
-require('dotenv').config()
+const { Sequelize } = require('sequelize');
+require('dotenv').config();
 
+const db2 = new Sequelize(
+    process.env.DATABASE_NAME,
+    process.env.DATABASE_USER,
+    process.env.DATABASE_PASSWORD,
+    {
+        host: process.env.DATABASE_HOST,
+        dialect: 'mysql',
+        logging: false,
+        pool: {
+            max: 5,
+            min: 0,
+            acquire: 30000,
+            idle: 10000
+        }
+    }
+);
 
-const db2 = new Sequelize(process.env.DATABASE_NAME, process.env.DATABASE_USER, process.env.DATABASE_PASSWORD, {
-    host: process.env.DATABASE_HOST,
-    dialect: 'mysql',
-    dialectModule: require('mysql2'),
-    logging: false
+const initializeDatabase = async () => {
+    try {
+        await db2.authenticate();
+        console.log('Connection has been established successfully.');
+        
+        // Force sync in development only
+        await db2.sync({ alter: true });
+        console.log('Database synchronized');
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
+};
 
-});
+initializeDatabase();
 
-
-db2.authenticate()
-    .then(() => console.log("connection has been established"))
-    .catch(err => console.error("unable to connect to the database:", err));
-
-
-    module.exports = db2
+module.exports = db2;

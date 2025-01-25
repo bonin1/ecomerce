@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router();
 
 
-const Produkti = require('../Models/ProductIdModel');
+const Produkti = require('../model/ProduktModel');
 
 
 router.get('/', (req, res) => {

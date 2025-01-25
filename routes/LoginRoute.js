@@ -1,54 +1,20 @@
 const express = require('express');
-const app = express();
-const session = require('express-session');
-const db = require('../databaze');
 const bcrypt = require('bcryptjs');
-const rateLimit = require('express-rate-limit');
-const csrf = require('csurf');
 const validator = require('validator');
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const helmet = require('helmet');
 const router = express.Router();
 const crypto = require('crypto');
 require('dotenv').config();
 
-const  LoginInformation  = require('../Models/LoginModel');
-
-
-router.use(helmet());
-
-
-router.use(session({ 
-    secret: process.env.SESSION_SECRET, 
-    resave: false, 
-    saveUninitialized: false,
-    cookie: {
-        httpOnly: true,
-        sameSite: 'strict'
-    }
-}));
-router.use(cookieParser());
-
-const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 10,
-    message: 'Too many login attempts, please try again later'
-});
-
-router.use(bodyParser.json({ limit: '50mb' }));
-router.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+const  LoginInformation  = require('../model/UserModel');
 
 
 
+const { GetLoginPath } = require('../controller/Login/Path');
 
-router.get('/', (req, res) => {
-    const csrfToken = crypto.randomBytes(64).toString('hex');
-    req.session.csrfToken = csrfToken;
-    res.render('login', { message: '', csrfToken});
-});
+router.get('/', GetLoginPath);
 
-router.post('/', loginLimiter, async (req, res) => {
+
+router.post('/', async (req, res) => {
     if(req.body._csrf !== req.session.csrfToken) {
         return res.status(401).send('Invalid CSRF token');
     }

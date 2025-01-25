@@ -1,28 +1,23 @@
 const express = require('express')
 const app = express()
 const session = require('express-session')
-const db = require('./databaze')
-const db2 = require('./db2')
+const db = require('./database')
 const bcrypt = require('bcryptjs');
 const cookieParser = require('cookie-parser');
-const { Sequelize, literal } = require('sequelize');
+const { Sequelize } = require('sequelize');
 const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken');
 require('dotenv').config()
 const  {check,validationResult} = require('express-validator')
 const multer = require('multer');
 const fs = require('fs')
-const path = require('path');
-const { QueryTypes } = require('sequelize');
 
+    
+app.use(bodyParser.json()); 
+app.use(bodyParser.urlencoded({ extended: true }));
 
-    const Home = require('./Models/HomeModel')
-    const Search = require('./Models/SearchModel')
-    const Produkti = require('./Models/ProductIdModel')
-    const Review = require('./Models/ReviewsModel')
-    const ProduktImages = require('./Models/ProduktImagesModel');
-    app.use(bodyParser.json()); 
-    app.use(bodyParser.urlencoded({ extended: true }));
+const UserModel = require('./model/UserModel')
+const UserImage = require('./model/UserImageModel')
+const ProductModel = require('./model/ProduktModel')
 
 
 
@@ -41,64 +36,11 @@ app.use(session({
 
 app.use('/register',require('./routes/RegisterRoute'))
 app.use('/login',require('./routes/LoginRoute'))
-app.use('/admin',require('./routes/AdminRoute'))
 app.use('/protected',require('./routes/ProtectedRoute'))
-app.use('/cart',require('./routes/CartRoute'))
 
-app.get('/', [
-    check('category').optional().isString(),
-    check('minPrice').optional().isFloat(),
-    check('maxPrice').optional().isFloat()
-    ], async (req, res) => {
-        const productId = req.params.id;
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(422).json({ errors: errors.array() });
-        }
-        const category = req.query.category ? req.sanitize(req.query.category) : null;
-        const minPrice = req.query.minPrice ? req.sanitize(req.query.minPrice) : null;
-        const maxPrice = req.query.maxPrice ? req.sanitize(req.query.maxPrice) : null;
-
-        const query = {
-            order: [[Sequelize.fn('RAND')]],
-            limit: 12
-        };
-
-        if (category || (minPrice && maxPrice)) {
-            query.where = {};
-        }
-
-        if (category) {
-            query.where.kategoria = { [Sequelize.Op.eq]: category };
-        }
-
-        if (minPrice && maxPrice) {
-            query.where.cmimi_produktit = {
-                [Sequelize.Op.between]: [minPrice, maxPrice]
-            };
-        }
-        
-        Home.findAll({
-            ...query,
-            replacements: query.where,
-            model: Produkti,
-            mapToModel: true
-        })
-        .then(async results => {
-            for (const row of results) {
-                const images = await ProduktImages.findAll({
-                    where: { produkt_id: row.id },
-                    limit: 1,
-                    order: [['id', 'ASC']]
-                });
-                row.produktimage = images[0] || null;
-            }
-            res.render('home', { data: results, isLoggedIn:req.session.isLoggedIn, minPrice, maxPrice });
-        })
-        .catch(err => {
-            console.log(err);
-        });
-    });
+app.get('/', (req, res) => {
+    res.render('home', { isLoggedIn: req.session.isLoggedIn });
+});
 
 app.post('/filter', async (req, res) => {
     const category = req.body.category;

@@ -92,25 +92,7 @@
         </div>
     </div>
 
-    <!-- <form class="form1" action="/">
-        <button type="button" class="filter-button" data-value="">All categories</button>
-        <button type="button" class="filter-button" data-value="studiodevices">Studio Devices</button>
-        <button type="button" class="filter-button" data-value="gaming">Gaming</button>
-        <button type="button" class="filter-button" data-value="phone&headphones">Phones & Headphones</button>
-        <button type="button" class="filter-button" data-value="watches&cameras">Watches & Cameras</button>
-        <input type="hidden" name="category" id="selected-category" value="">
-    </form>
-    <form action="/filter" class="rangat" data-url="/filter" method="POST">
-        <label class="min-output" for="minPrice">Minimum price:</label><br>
-        <input class="min-max" type="range" id="minPrice" name="minPrice" min="0" max="1000" value="<%= minPrice %>" oninput="minPriceOutput.value = '$' + minPrice.value">
-        <output for="minPrice" id="minPriceOutput">$<%= minPrice %></output><br>
-        
-        <label class="max-output" for="maxPrice">Maximum price:</label><br>
-        <input class="min-max" type="range" id="maxPrice" name="maxPrice" min="0" max="1000" value="<%= maxPrice %>" oninput="maxPriceOutput.value = '$' + maxPrice.value">
-        <output for="maxPrice" id="maxPriceOutput">$<%= maxPrice %></output><br>
-        
-        <button class="filteri" type="submit">Search</button>
-    </form> -->
+
 
     <div class="Categories-main">
         <form class="Form_Categories_Button" action="/">
@@ -127,17 +109,7 @@
                     <h1>Price Range</h1>
                     <span class="closeButton_Icon">&times;</span>
                 </div>
-                <form action="/filter" class="rangat" data-url="/filter" method="POST">
-                    <label class="min-output" for="minPrice">Minimum price:</label><br>
-                    <input class="min-max" type="range" id="minPrice" name="minPrice" min="0" max="1000" value="<%= minPrice %>" oninput="minPriceOutput.value = '$' + minPrice.value">
-                    <output for="minPrice" id="minPriceOutput">$<%= minPrice %></output><br>
-                    
-                    <label class="max-output" for="maxPrice">Maximum price:</label><br>
-                    <input class="min-max" type="range" id="maxPrice" name="maxPrice" min="0" max="1000" value="<%= maxPrice %>" oninput="maxPriceOutput.value = '$' + maxPrice.value">
-                    <output for="maxPrice" id="maxPriceOutput">$<%= maxPrice %></output><br>
-                    
-                    <button class="filteri" type="submit">Search</button>
-                </form>
+
             </div>
         </div>
         <button id="myBtn">Open Modal</button>
@@ -147,30 +119,7 @@
     <div class="main">
         <div class="second-part">
             <div class="card-container">
-                <% data.forEach(row=>{ %>
-                        <div class="card1" data-category="<%= row.kategoria %>">
-                            <figure class="card1__thumb">
-                                <% if (row.produktimage) { %>
-                                    <img src="/image/<%= row.id %>" class="card1__image">
-                                <% } else { %>
-                                    <img src="/static/image/360_F_251955356_FAQH0U1y1TZw3ZcdPGybwUkH90a3VAhb.jpg" class="card1__image">
-                                <% } %>
-                                <figcaption class="card1__caption">
-                                <h2 class="card1__title"><%= row.emri_produktit %></h2>
-                                <% if (row.sasia_produktit > 0) { %>
-                                    <h2 class="card1__snippet">Sasia: <%= row.sasia_produktit %></h2>
-                                    <button class="add-to-cart" data-id="<%= row.id %>" data-is-logged-in="<%= isLoggedIn %>">Add to cart</button>
-                                    <h2 style="font-family: 'Lilita One';">Cmimi: <span style="color: #18C4B8;"><%=row.cmimi_produktit %>€</span></h2>
-                                    <form class="learnmore-form" action="/produkt/<%= row.id %>" method="get">
-                                        <input class="add-to-cart" type="submit" value="Learn more">
-                                    </form>
-                                <% } else { %>
-                                    <p class="card1__button">Out of stock</p>
-                                <% } %>
-                                </figcaption>
-                            </figure>
-                        </div>
-                <% }) %>
+
             </div>
         </div>
     </div>
