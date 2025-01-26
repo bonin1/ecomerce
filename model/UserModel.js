@@ -90,6 +90,14 @@ const User = db.define('users', {
         type: DataTypes.DATE,
         allowNull: true,
     },
+    verificationToken: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    verificationExpires: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
 }, {
     timestamps: true,
     freezeTableName: true,

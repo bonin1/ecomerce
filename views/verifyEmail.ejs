@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification - StrikeTech</title>
+    <link rel="icon" href="/static/image/STRIKETECH-1.png">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .verification-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .verification-box {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .logo {
+            width: 150px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .verification-message {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #05A7BE;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        .resend-button {
+            background-color: #05A7BE;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .resend-button:hover {
+            background-color: #048399;
+        }
+
+        .resend-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .timer {
+            color: #666;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="verification-container">
+        <div class="verification-box">
+            <img src="/static/image/STRIKETECH-1.png" alt="StrikeTech Logo" class="logo">
+            
+            <% if (typeof error !== 'undefined') { %>
+                <div class="alert alert-error">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <% if (typeof email !== 'undefined' && !error) { %>
+                <h1>Verifying Your Email</h1>
+                <div class="loading-spinner"></div>
+                <p class="verification-message">
+                    Please wait while we verify your email address...
+                </p>
+                <script>
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const token = urlParams.get('token');
+                    if (token) {
+                        window.location.href = '/auth/verify-email?token=' + token;
+                    }
+                </script>
+            <% } else if (!error) { %>
+                <h1>Verify Your Email</h1>
+                <p class="verification-message">
+                    We've sent a verification link to your email address. 
+                    Please check your inbox and click the link to verify your account.
+                </p>
+            <% } %>
+
+            <% if (typeof email !== 'undefined' && error) { %>
+                <button id="resendButton" class="resend-button" onclick="resendVerification()">
+                    Resend Verification Email
+                </button>
+                <div id="timer" class="timer"></div>
+            <% } %>
+            <div id="alert" style="display: none;" class="alert"></div>
+        </div>
+    </div>
+
+    <script>
+        let timeLeft = 300;
+        const resendButton = document.getElementById('resendButton');
+        const timerDisplay = document.getElementById('timer');
+        const alertDiv = document.getElementById('alert');
+
+        function updateTimer() {
+            if (timeLeft > 0) {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.textContent = `You can request a new verification email in ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                timeLeft--;
+                resendButton.disabled = true;
+            } else {
+                timerDisplay.textContent = '';
+                resendButton.disabled = false;
+            }
+        }
+
+        function showAlert(message, type) {
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            alertDiv.style.display = 'block';
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        async function resendVerification() {
+            try {
+                const response = await fetch('/auth/resend-verification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: '<%= email %>' 
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert(data.message, 'success');
+                    timeLeft = 300;
+                    updateTimer();
+                    const timerInterval = setInterval(() => {
+                        updateTimer();
+                        if (timeLeft <= 0) {
+                            clearInterval(timerInterval);
+                        }
+                    }, 1000);
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('An error occurred. Please try again later.', 'error');
+            }
+        }
+
+        updateTimer();
+        const timerInterval = setInterval(() => {
+            updateTimer();
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

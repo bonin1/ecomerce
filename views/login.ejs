@@ -11,23 +11,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@500&display=swap" rel="stylesheet">
-    <!-- <link rel="icon" href="https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-webinar-optimizing-for-success-google-business-webinar-13.png"> -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
-    <!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script> -->
-    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script> -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js"></script> -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
 
 
 <div class="main">
-    <form class="form" action="/login" method="POST">
+    <form class="form" action="/auth/login" method="POST">
         <div class="Logo-container">
             <a href="/"><img src="/static/image/STRIKETECH-1.png" alt=""></a>
         </div>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div class="flex-column">
             <label>Email </label>
         </div>
@@ -52,8 +47,8 @@
         
         <div class="flex-row">
             <div>
-                <input type="checkbox" name="rememberMe">
-                <label>Remember me </label>
+                <input type="checkbox" id="rememberMe" name="rememberMe" value="true">
+                <label for="rememberMe">Remember Me</label>
             </div>
             <a href="/changepassword"><span class="span" >Forgot password?</span></a>
         </div>

@@ -204,6 +204,23 @@ body{
     border: 1px solid #2d79f3;
     ;
 }
+.text-success {
+    color: #28a745;
+    font-size: 0.875em;
+    margin-top: 4px;
+}
+
+.text-danger {
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 4px;
+}
+
+.text-muted {
+    color: #6c757d;
+    font-size: 0.875em;
+    margin-top: 4px;
+}
 
 
 

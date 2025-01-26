@@ -7,7 +7,6 @@ const cookieParser = require('cookie-parser');
 const { Sequelize } = require('sequelize');
 const bodyParser = require('body-parser');
 require('dotenv').config()
-const  {check,validationResult} = require('express-validator')
 const multer = require('multer');
 const fs = require('fs')
 
@@ -18,7 +17,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const UserModel = require('./model/UserModel')
 const UserImage = require('./model/UserImageModel')
 const ProductModel = require('./model/ProduktModel')
-
 
 
 app.use(cookieParser());
@@ -34,9 +32,13 @@ app.use(session({
     cookie:{maxAge: 30 * 60 * 1000} 
 }))
 
-app.use('/register',require('./routes/RegisterRoute'))
-app.use('/login',require('./routes/LoginRoute'))
 app.use('/protected',require('./routes/ProtectedRoute'))
+
+app.use('/auth', require('./routes/AuthRoute'));
+
+const routes = require('./routes/StaticRoutes');
+routes.setupStaticRoutes(app);
+
 
 app.get('/', (req, res) => {
     res.render('home', { isLoggedIn: req.session.isLoggedIn });
