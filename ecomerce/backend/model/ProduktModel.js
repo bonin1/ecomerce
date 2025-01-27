@@ -73,10 +73,4 @@ const Produkt = db.define('produkt', {
     freezeTableName: true,
 });
 
-Produkt.sync({ force: false }).then(() => {
-    console.log('Produkt table synchronized');
-}).catch(error => {
-    console.error('Error synchronizing Produkt table:', error);
-});
-
 module.exports = Produkt;

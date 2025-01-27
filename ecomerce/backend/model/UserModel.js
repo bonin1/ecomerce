@@ -103,10 +103,4 @@ const User = db.define('users', {
     freezeTableName: true,
 });
 
-User.sync({ force: false}).then(() => {
-    console.log('User table synchronized');
-}).catch(error => {
-    console.error('Error synchronizing User table:', error);
-});
-
 module.exports = User;

@@ -1,4 +1,4 @@
-const transporter = require('../ecomerce/backend/config/EmailConfig');
+const transporter = require('../config/EmailConfig');
 const fs = require('fs').promises;
 const path = require('path');
 

@@ -20,10 +20,5 @@ const UserImage = db.define('user_images', {
     freezeTableName: true,
 });
 
-UserImage.sync({ force: false }).then(() => {
-    console.log('UserImage table synchronized');
-}).catch(error => {
-    console.error('Error synchronizing UserImage table:', error);
-});
 
 module.exports = UserImage;
