@@ -22,13 +22,18 @@
         justify-content: space-between;
         align-items: center;
         z-index: 999;
+        margin: 0 1rem;
 
-        img {
-            height: 80px;
+        .logo{
+            width: 33.333%;
+            img {
+                height: 80px;
+            }
         }
 
         .search-container {
             flex: 0 1 40%;
+            margin: 0 auto;
             display: flex;
             align-items: center;
             
@@ -58,8 +63,10 @@
 
         .nav-actions {
             display: flex;
+            justify-content: flex-end;
             align-items: center;
             gap: 20px;
+            width: 33.333%;
 
             .auth-buttons {
                 display: flex;
@@ -131,7 +138,7 @@
 }
 
 .navbar .container-navbar .burger-menu {
-    display: none;  // Increased specificity
+    display: none;  
     background: none;
     border: none;
     font-size: 1.5rem;
@@ -144,11 +151,10 @@
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-    // ...rest of burger-menu styles...
 }
 
 .mobile-menu {
-    display: none;  // This ensures it's hidden by default
+    display: none; 
     position: fixed;
     top: 150px;
     left: 0;
@@ -167,6 +173,7 @@
 
     .search-container {
         margin-bottom: 1.5rem;
+        display: flex;
         
         input {
             width: 100%;
@@ -265,6 +272,7 @@
             border-radius: 8px;
             background: #f8f9fa;
             transition: all 0.3s ease;
+            list-style: none;
 
             &.open {
                 display: block;
@@ -305,7 +313,7 @@
 }
 
 @media (max-width: 1024px) {
-    .navbar .container-navbar .burger-menu {  // Increased specificity
+    .navbar .container-navbar .burger-menu {  
         display: flex;
     }
 
@@ -315,6 +323,8 @@
 
     .mobile-menu {
         display: block;
+        position: absolute;
+        top: 100px;
     }
 
     .navbar {
@@ -332,17 +342,19 @@
 
 @media (max-width: 768px) {
     .navbar {
-        height: 80px;
+        height: 130px;
 
         .container-navbar {
-            img {
-                height: 50px;
+            .logo{
+                img {
+                    height: 80px;
+                }
             }
         }
     }
 
     .mobile-menu {
-        top: 80px;
+        top: 130px;
         padding: 1rem;
     }
 }

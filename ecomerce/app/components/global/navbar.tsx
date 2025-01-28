@@ -21,9 +21,11 @@ const Navbar = () => {
         <header>
             <nav className='navbar'>
                 <div className="container-navbar">
-                    <Link href='/'>
-                        <img src="/logo/STRIKETECH-1.png" alt="logo" />
-                    </Link>
+                    <div className="logo">
+                        <Link href='/'>
+                            <img src="/logo/STRIKETECH-1.png" alt="logo" />
+                        </Link>
+                    </div>
                     
                     <div className="search-container desktop-only">
                         <input type="text" placeholder="Search products..." />
@@ -34,8 +36,12 @@ const Navbar = () => {
 
                     <div className="nav-actions desktop-only">
                         <div className="auth-buttons">
-                            <button className="login">Login</button>
-                            <button className="register">Register</button>
+                            <Link href="/login">
+                                <button className="login">Login</button>
+                            </Link>
+                            <Link href="/register">
+                                <button className="register">Register</button>
+                            </Link>
                         </div>
                         <div className="cart">
                             <i className="bi bi-cart3"></i>
@@ -58,13 +64,17 @@ const Navbar = () => {
                 </div>
 
                 <div className="auth-buttons">
-                    <button className="login">Login</button>
-                    <button className="register">Register</button>
+                    <Link href="/login">
+                        <button className="login">Login</button>
+                    </Link>
+                    <Link href="/register">
+                        <button className="register">Register</button>
+                    </Link>
                 </div>
 
                 <div className="mobile-categories">
                     <button className="categories-toggle" onClick={toggleCategories}>
-                        Categories {isCategoriesOpen ? '▼' : '▶'}
+                        Categories {isCategoriesOpen}
                     </button>
                     <ul className={`categories ${isCategoriesOpen ? 'open' : ''}`}>
                         <li><Link href="/category/electronics">Electronics</Link></li>
