@@ -1,40 +1,25 @@
 'use client';
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { RegisterData } from '../types';
 import { registerUser } from '../API/auth/register';
-import Navbar from '../components/global/navbar';
+import RegisterForm from '../components/register/register';
+import './MainRegister.scss';
 
 const Register = () => {
     const router = useRouter();
-    const [formData, setFormData] = useState<RegisterData>({
-        name: '',
-        lastname: '',
-        email: '',
-        password: '',
-    });
     const [error, setError] = useState<string>('');
     const [loading, setLoading] = useState(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData(prev => ({
-            ...prev,
-            [e.target.name]: e.target.value
-        }));
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async (formData: RegisterData) => {
         setError('');
         setLoading(true);
 
         try {
-            console.log('Submitting registration data:', formData);
             const response = await registerUser(formData);
-            console.log('Registration response:', response);
-
             if (response.success) {
-                router.push('/login?registered=true');
+                router.push(`/verify-email/pending?email=${encodeURIComponent(formData.email)}`);
             } else {
                 setError(response.message || 'Registration failed. Please try again.');
             }
@@ -47,91 +32,36 @@ const Register = () => {
     };
 
     return (
-        <>
-            <Navbar />
-            <div className="container mt-5">
+        <div className="min-vh-100 bg-light bg-gradient register-page">
+            <div className="container">
+                <div className="text-start">
+                    <Link href="/" className="text-decoration-none">
+                        <img 
+                            src="/logo/STRIKETECH-1.png" 
+                            alt="Logo" 
+                            className="logo"
+                        />
+                    </Link>
+                </div>
                 <div className="row justify-content-center">
-                    <div className="col-md-6">
-                        <div className="card">
-                            <div className="card-body">
-                                <h2 className="text-center mb-4">Create your account</h2>
-                                
-                                <form onSubmit={handleSubmit}>
-                                    {error && (
-                                        <div className="alert alert-danger" role="alert">
-                                            {error}
-                                        </div>
-                                    )}
-
-                                    <div className="mb-3">
-                                        <input
-                                            name="name"
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="First Name"
-                                            value={formData.name}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </div>
-
-                                    <div className="mb-3">
-                                        <input
-                                            name="lastname"
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Last Name"
-                                            value={formData.lastname}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </div>
-
-                                    <div className="mb-3">
-                                        <input
-                                            name="email"
-                                            type="email"
-                                            className="form-control"
-                                            placeholder="Email address"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </div>
-
-                                    <div className="mb-3">
-                                        <input
-                                            name="password"
-                                            type="password"
-                                            className="form-control"
-                                            placeholder="Password"
-                                            value={formData.password}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </div>
-
-                                    <div className="d-grid">
-                                        <button
-                                            type="submit"
-                                            className="btn btn-primary"
-                                            disabled={loading}
-                                        >
-                                            {loading ? (
-                                                <>
-                                                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                                    Registering...
-                                                </>
-                                            ) : 'Register'}
-                                        </button>
-                                    </div>
-                                </form>
+                    <div className="col-12 col-md-8 col-lg-6">
+                        <div className="card border-0 shadow-lg">
+                            <div className="card-body p-4 p-md-5">
+                                <div className="text-center mb-4">
+                                    <h2 className="h3 fw-bold text-primary mb-2">Create Your Account</h2>
+                                    <p className="text-muted">Join our community and start shopping</p>
+                                </div>
+                                <RegisterForm 
+                                    onSubmit={handleSubmit}
+                                    error={error}
+                                    loading={loading}
+                                />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 

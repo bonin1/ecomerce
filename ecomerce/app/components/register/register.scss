@@ -1,0 +1,165 @@
+.register-form-container {
+    .form-control, 
+    .btn {
+        transition: all 0.3s ease;
+    }
+
+    .input-group {
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+
+        &:focus-within {
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+
+            .input-group-text {
+                border-color: #86b7fe;
+                background-color: #f8f9fa;
+                color: #0d6efd;
+            }
+
+            .form-control {
+                border-color: #86b7fe;
+                box-shadow: none;
+            }
+
+            .btn {
+                border-color: #86b7fe;
+            }
+        }
+
+        .input-group-text {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+            padding: 0.6rem 1rem;
+            color: #6c757d;
+
+            i {
+                font-size: 1.1rem;
+            }
+        }
+
+        .form-control {
+            border: 1px solid #dee2e6;
+            padding: 0.6rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+
+            &:focus {
+                box-shadow: none;
+            }
+
+            &::placeholder {
+                color: #adb5bd;
+                font-size: 0.9rem;
+            }
+
+            &.is-invalid {
+                border-color: #dc3545;
+                padding-right: calc(1.5em + 0.75rem);
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right calc(0.375em + 0.1875rem) center;
+                background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+
+                & + .btn {
+                    border-color: #dc3545;
+                }
+            }
+        }
+
+        .btn {
+            border: 1px solid #dee2e6;
+            padding: 0.6rem 1rem;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background-color: #e9ecef;
+                border-color: #dee2e6;
+            }
+
+            i {
+                font-size: 1.1rem;
+                color: #6c757d;
+            }
+        }
+    }
+
+    .submit-button {
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+
+        &:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        &:not(:disabled) {
+            background: linear-gradient(145deg, #0d6efd, #0b5ed7);
+            border: none;
+
+            &:hover {
+                background: linear-gradient(145deg, #0b5ed7, #0a58ca);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+            }
+        }
+
+        &:disabled {
+            opacity: 0.7;
+        }
+    }
+
+    .alert {
+        animation: fadeInDown 0.3s ease-out;
+    }
+
+    .password-mismatch-text {
+        font-size: 0.85rem;
+        color: #dc3545;
+        margin-top: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        opacity: 0;
+        animation: fadeIn 0.2s ease-out forwards;
+
+        i {
+            font-size: 0.9rem;
+        }
+    }
+
+    .form-label {
+        margin-bottom: 0.5rem;
+        color: #495057;
+        font-size: 0.9rem;
+    }
+
+    .form-text {
+        color: #6c757d;
+        font-size: 0.85rem;
+        margin-top: 0.4rem;
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

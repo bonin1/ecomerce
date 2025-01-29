@@ -4,7 +4,8 @@ const path = require('path');
 
 exports.sendVerificationEmail = async (email, verificationToken) => {
     try {
-        const verificationUrl = `${process.env.BASE_URL}/auth/verify-email?token=${verificationToken}`;
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+        const verificationUrl = `${frontendUrl}/verify-email/verify?token=${verificationToken}`;
         
         let template = await fs.readFile(
             path.join(__dirname, '../template/VerificationEmailTemplate.html'),

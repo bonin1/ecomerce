@@ -30,3 +30,31 @@ export const registerUser = async (data: RegisterData): Promise<ApiResponse> => 
         };
     }
 };
+
+export const resendVerification = async (email: string): Promise<ApiResponse> => {
+    try {
+        const response = await fetch(`${API_URL}/auth/resend-verification`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ email }),
+            credentials: 'include',
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to resend verification email');
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Resend verification error:', error);
+        return {
+            success: false,
+            message: error instanceof Error ? error.message : 'Failed to resend verification email',
+        };
+    }
+};

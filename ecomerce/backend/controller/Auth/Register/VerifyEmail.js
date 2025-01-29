@@ -7,9 +7,9 @@ exports.verifyEmail = async (req, res) => {
         const { token } = req.query;
 
         if (!token) {
-            return res.render('verifyEmail', { 
-                error: 'Verification token is required',
-                email: req.query.email
+            return res.status(400).json({
+                success: false,
+                message: 'Token is required'
             });
         }
 
@@ -21,9 +21,9 @@ exports.verifyEmail = async (req, res) => {
         });
 
         if (!user) {
-            return res.render('verifyEmail', { 
-                error: 'Invalid verification token or account already verified',
-                email: req.query.email
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid token or account already verified'
             });
         }
 
@@ -33,16 +33,16 @@ exports.verifyEmail = async (req, res) => {
             verificationExpires: null
         });
 
-        req.session.verificationSuccess = true;
-        req.session.verifiedEmail = user.email;
-
-        return res.redirect('/verification-success');
+        return res.status(200).json({
+            success: true,
+            message: 'Email verified successfully'
+        });
 
     } catch (error) {
         console.error('Email verification error:', error);
-        return res.render('verifyEmail', { 
-            error: 'An error occurred during verification',
-            email: req.query.email
+        return res.status(500).json({
+            success: false,
+            message: 'An error occurred during verification'
         });
     }
 };
