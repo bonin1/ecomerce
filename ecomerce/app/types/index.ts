@@ -35,3 +35,13 @@ export interface User {
     role: string;
     profilePic?: string;
 }
+
+export interface PasswordChangeData {
+    currentPassword: string;
+    newPassword: string;
+}
+
+export interface PasswordChangeResponse {
+    success: boolean;
+    message: string;
+}

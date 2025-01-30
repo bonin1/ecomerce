@@ -39,3 +39,65 @@ exports.sendVerificationEmail = async (email, verificationToken) => {
         return false;
     }
 };
+
+exports.sendPasswordResetEmail = async (email, resetToken) => {
+    try {
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+        const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;
+        
+        let template = await fs.readFile(
+            path.join(__dirname, '../template/PasswordResetTemplate.html'),
+            'utf8'
+        );
+
+        template = template
+            .replace('#{RESET_URL}#', resetUrl)
+            .replace('#{LOGO_URL}#', `${process.env.BASE_URL}/static/image/STRIKETECH-1.png`);
+
+        const mailOptions = {
+            from: {
+                name: 'StrikeTech',
+                address: process.env.EMAIL_USER
+            },
+            to: email,
+            subject: 'Password Reset Request - StrikeTech',
+            html: template
+        };
+
+        await transporter.sendMail(mailOptions);
+        return true;
+    } catch (error) {
+        console.error('Email sending error:', error);
+        return false;
+    }
+};
+
+exports.sendNewDeviceLoginAlert = async (email, deviceInfo) => {
+    try {
+        let template = await fs.readFile(
+            path.join(__dirname, '../template/NewDeviceLoginTemplate.html'),
+            'utf8'
+        );
+
+        template = template
+            .replace('#{DEVICE_INFO}#', `${deviceInfo.browser} on ${deviceInfo.os}`)
+            .replace('#{IP_ADDRESS}#', deviceInfo.ip)
+            .replace('#{LOGIN_TIME}#', new Date().toLocaleString());
+
+        const mailOptions = {
+            from: {
+                name: 'StrikeTech',
+                address: process.env.EMAIL_USER
+            },
+            to: email,
+            subject: 'New Device Login Detected - StrikeTech',
+            html: template
+        };
+
+        await transporter.sendMail(mailOptions);
+        return true;
+    } catch (error) {
+        console.error('Email sending error:', error);
+        return false;
+    }
+};

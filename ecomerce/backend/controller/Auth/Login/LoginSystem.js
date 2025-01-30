@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const User = require('../../../model/UserModel');
 const jwt = require('jsonwebtoken');
 const UAParser = require('ua-parser-js');
+const { sendNewDeviceLoginAlert } = require('../../../services/emailServices');
 
 const generateToken = (userId) => {
     return jwt.sign(
@@ -36,6 +37,17 @@ exports.login = async (req, res) => {
         }
 
         const deviceInfo = getDeviceFingerprint(req);
+        const lastLoginDevice = user.last_login_device ? JSON.parse(user.last_login_device) : null;
+
+        // Check if this is a new device
+        if (lastLoginDevice &&
+            (lastLoginDevice.browser !== deviceInfo.browser ||
+             lastLoginDevice.os !== deviceInfo.os ||
+             lastLoginDevice.device !== deviceInfo.device)) {
+            // Send new device login alert
+            await sendNewDeviceLoginAlert(user.email, deviceInfo);
+        }
+
         const accessToken = generateToken(user.id);
 
         await User.update({

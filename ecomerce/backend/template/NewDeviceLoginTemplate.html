@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Device Login Alert</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td align="center" style="padding: 40px 0;">
+                <table role="presentation" style="width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <tr>
+                        <td align="center" style="padding: 40px 0; background-color: #05A7BE; border-radius: 8px 8px 0 0;">
+                            <img src="#{LOGO_URL}#" alt="StrikeTech Logo" style="width: 200px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <h1 style="color: #333333; margin-bottom: 20px;">New Device Login Detected</h1>
+                            <p style="color: #666666; font-size: 16px; line-height: 24px; margin-bottom: 30px;">
+                                We noticed a new device was used to access your account. Here are the details:
+                            </p>
+                            <table style="width: 100%; margin: 20px 0; border-collapse: collapse;">
+                                <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #eee;">
+                                        <strong>Device:</strong> #{DEVICE_INFO}#
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #eee;">
+                                        <strong>IP Address:</strong> #{IP_ADDRESS}#
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #eee;">
+                                        <strong>Time:</strong> #{LOGIN_TIME}#
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="color: #666666; font-size: 14px; line-height: 24px;">
+                                If this was you, you can ignore this email. If you didn't log in from this device, please change your password immediately.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 30px; background-color: #f8f8f8; border-radius: 0 0 8px 8px; text-align: center;">
+                            <p style="color: #888888; font-size: 14px; margin: 0;">
+                                © 2023 StrikeTech. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
