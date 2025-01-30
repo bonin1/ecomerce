@@ -1,7 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../database');
 
-
 const User = db.define('users', {
     id: {
         type: DataTypes.BIGINT,
@@ -98,6 +97,25 @@ const User = db.define('users', {
         type: DataTypes.DATE,
         allowNull: true
     },
+    otp: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    otpExpires: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+    trustedDevices: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        get() {
+            const value = this.getDataValue('trustedDevices');
+            return value ? JSON.parse(value) : [];
+        },
+        set(value) {
+            this.setDataValue('trustedDevices', JSON.stringify(value));
+        }
+    }
 }, {
     timestamps: true,
     freezeTableName: true,

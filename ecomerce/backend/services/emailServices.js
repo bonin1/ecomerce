@@ -101,3 +101,32 @@ exports.sendNewDeviceLoginAlert = async (email, deviceInfo) => {
         return false;
     }
 };
+
+exports.sendOTPEmail = async (email, otp) => {
+    try {
+        let template = await fs.readFile(
+            path.join(__dirname, '../template/OTPEmailTemplate.html'),
+            'utf8'
+        );
+
+        template = template
+            .replace('#{OTP_CODE}#', otp)
+            .replace('#{LOGO_URL}#', `${process.env.BASE_URL}/static/image/STRIKETECH-1.png`);
+
+        const mailOptions = {
+            from: {
+                name: 'StrikeTech',
+                address: process.env.EMAIL_USER
+            },
+            to: email,
+            subject: 'Your Login OTP Code - StrikeTech',
+            html: template
+        };
+
+        await transporter.sendMail(mailOptions);
+        return true;
+    } catch (error) {
+        console.error('OTP Email sending error:', error);
+        return false;
+    }
+};

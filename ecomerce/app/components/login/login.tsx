@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import ForgotPasswordModal from '../auth/ForgotPasswordModal';
 import './login.scss';
 
 interface LoginData {
@@ -22,6 +23,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, error, loading }) => {
         rememberMe: false
     });
     const [showPassword, setShowPassword] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
@@ -111,9 +113,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, error, loading }) => {
                                 Remember me
                             </label>
                         </div>
-                        <Link href="/forgot-password" className="text-primary small text-decoration-none">
+                        <button
+                            type="button"
+                            onClick={() => setIsModalOpen(true)}
+                            className="text-primary small text-decoration-none border-0 bg-transparent"
+                        >
                             Forgot password?
-                        </Link>
+                        </button>
                     </div>
                 </div>
 
@@ -142,6 +148,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, error, loading }) => {
                 <img src="/icons/google.svg" alt="Google" className="google-icon me-2" />
                 Sign in with Google
             </button>
+
+            <ForgotPasswordModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
         </div>
     );
 };

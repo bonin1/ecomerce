@@ -5,6 +5,7 @@ import LoginForm from '../components/login/login';
 import { login } from '../API/auth/login';
 import { LoginData } from '../types';
 import Link from 'next/link';
+import { Toaster } from 'react-hot-toast';
 import './MainLogin.scss';
 
 const LoginPage = () => {
@@ -24,12 +25,14 @@ const LoginPage = () => {
                 return;
             }
 
+            if (response.requireOTP) {
+                router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
+                return;
+            }
+
             if (response.data) {
                 localStorage.setItem('user', JSON.stringify(response.data.user));
-                
-                setTimeout(() => {
-                    router.push('/dashboard');
-                }, 100);
+                router.push('/dashboard');
             }
         } catch (err) {
             console.error('Login error:', err);
@@ -65,6 +68,7 @@ const LoginPage = () => {
                     </div>
                 </div>
             </div>
+            <Toaster position="top-right" />
         </div>
     );
 };

@@ -13,6 +13,8 @@ router.post('/logout', LoginSystem.logout);
 router.get('/verify-email', verifyEmail);
 router.post('/resend-verification', resendVerification);
 
+router.post('/verify-otp', LoginSystem.verifyOTP);
+
 router.post('/change-password', authenticate, changePassword);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);

@@ -8,6 +8,7 @@ export interface RegisterData {
 export interface ApiResponse<T = any> {
     success: boolean;
     message: string;
+    requireOTP?: boolean;
     data?: T;
     error?: string;
 }
@@ -18,7 +19,7 @@ export interface LoginData {
     rememberMe?: boolean;
 }
 
-export interface LoginResponse {
+export interface LoginResponse extends ApiResponse {
     accessToken: string;
     user: {
         id: string;
@@ -26,14 +27,25 @@ export interface LoginResponse {
         email: string;
         role: string;
     };
+    requireOTP?: boolean;
+    data?: {
+        accessToken: string;
+        user: User;
+    };
 }
 
 export interface User {
-    id: string;
+    id: number;
     name: string;
+    lastname: string;
     email: string;
     role: string;
     profilePic?: string;
+    device?: string;
+    phone_number?: string;
+    address?: string;
+    city?: string;
+    verified?: boolean;
 }
 
 export interface PasswordChangeData {
