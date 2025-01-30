@@ -54,6 +54,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, error, loading })
 
     return (
         <div className="register-form-container">
+            <div className="position-relative mb-4">
+                <hr className="divider" />
+                <span className="divider-text">or</span>
+            </div>
+
             <form onSubmit={handleSubmit}>
                 {error && (
                     <div className="alert alert-danger alert-dismissible fade show" role="alert">
@@ -188,14 +193,17 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, error, loading })
                         </>
                     ) : 'Create Account'}
                 </button>
-
-                <div className="text-center">
+            </form>
+            <div className="text-center">
                     <span className="text-muted">Already have an account? </span>
                     <Link href="/login" className="text-primary fw-bold text-decoration-none">
                         Sign in
                     </Link>
                 </div>
-            </form>
+            <button className="btn btn-outline-dark w-100 google-btn">
+                <img src="/icons/google.svg" alt="Google" className="google-icon me-2" />
+                Sign up with Google
+            </button>
         </div>
     );
 };

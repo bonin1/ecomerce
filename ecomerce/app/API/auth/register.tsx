@@ -37,24 +37,22 @@ export const resendVerification = async (email: string): Promise<ApiResponse> =>
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json',
             },
             body: JSON.stringify({ email }),
-            credentials: 'include',
         });
 
         const data = await response.json();
-
+        
         if (!response.ok) {
             throw new Error(data.message || 'Failed to resend verification email');
         }
 
-        return data;
+        return {
+            success: true,
+            message: data.message
+        };
     } catch (error) {
         console.error('Resend verification error:', error);
-        return {
-            success: false,
-            message: error instanceof Error ? error.message : 'Failed to resend verification email',
-        };
+        throw error;
     }
 };

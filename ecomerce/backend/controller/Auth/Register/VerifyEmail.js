@@ -72,11 +72,12 @@ exports.resendVerification = async (req, res) => {
             });
         }
 
+        // Change cooldown period to 30 seconds
         if (user.lastEmailSentAt && 
-            (new Date() - new Date(user.lastEmailSentAt)) < 5 * 60 * 1000) {
+            (new Date() - new Date(user.lastEmailSentAt)) < 30 * 1000) {
             return res.status(429).json({
                 success: false,
-                message: 'Please wait 5 minutes before requesting another verification email'
+                message: 'Please wait 30 seconds before requesting another verification email'
             });
         }
 

@@ -1,12 +1,27 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './navbar.scss'
 import Link from 'next/link'
+import { User } from '@/app/types'
 
 const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
+    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem('user');
+        setUser(null);
+    };
 
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -15,6 +30,53 @@ const Navbar = () => {
 
     const toggleCategories = () => {
         setIsCategoriesOpen(!isCategoriesOpen);
+    };
+
+    const renderAuthButtons = () => {
+        if (user) {
+            return (
+                <div className="profile-section">
+                    <div className="profile-trigger" onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}>
+                        {user.profilePic ? (
+                            <img src={user.profilePic} alt="Profile" className="profile-pic" />
+                        ) : (
+                            <div className="default-profile">
+                                {user.name.charAt(0).toUpperCase()}
+                            </div>
+                        )}
+                        <span className="profile-name">{user.name}</span>
+                    </div>
+                    {isProfileMenuOpen && (
+                        <div className="profile-dropdown">
+                            <Link href="/profile" className="dropdown-item">
+                                <i className="bi bi-person"></i> Profile
+                            </Link>
+                            <Link href="/orders" className="dropdown-item">
+                                <i className="bi bi-box"></i> Orders
+                            </Link>
+                            <Link href="/settings" className="dropdown-item">
+                                <i className="bi bi-gear"></i> Settings
+                            </Link>
+                            <hr className="dropdown-divider" />
+                            <button onClick={handleLogout} className="dropdown-item text-danger">
+                                <i className="bi bi-box-arrow-right"></i> Logout
+                            </button>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        return (
+            <div className="auth-buttons">
+                <Link href="/login">
+                    <button className="login">Login</button>
+                </Link>
+                <Link href="/register">
+                    <button className="register">Register</button>
+                </Link>
+            </div>
+        );
     };
 
     return (
@@ -35,14 +97,7 @@ const Navbar = () => {
                     </div>
 
                     <div className="nav-actions desktop-only">
-                        <div className="auth-buttons">
-                            <Link href="/login">
-                                <button className="login">Login</button>
-                            </Link>
-                            <Link href="/register">
-                                <button className="register">Register</button>
-                            </Link>
-                        </div>
+                        {renderAuthButtons()}
                         <div className="cart">
                             <i className="bi bi-cart3"></i>
                             <span className="cart-count">0</span>
@@ -54,7 +109,6 @@ const Navbar = () => {
                     </button>
                 </div>
             </nav>
-
             <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
                 <div className="search-container">
                     <input type="text" placeholder="Search products..." />
@@ -63,13 +117,8 @@ const Navbar = () => {
                     </button>
                 </div>
 
-                <div className="auth-buttons">
-                    <Link href="/login">
-                        <button className="login">Login</button>
-                    </Link>
-                    <Link href="/register">
-                        <button className="register">Register</button>
-                    </Link>
+                <div className="mobile-auth">
+                    {renderAuthButtons()}
                 </div>
 
                 <div className="mobile-categories">
@@ -97,6 +146,7 @@ const Navbar = () => {
                     </ul>
                 </div>
             </div>
+            
         </header>
     )
 }

@@ -1,0 +1,12 @@
+.container{
+    padding: 30px 0;
+}
+
+.logo {
+    height: 80px;
+    transition: transform 0.3s ease;
+    
+    &:hover {
+        transform: scale(1.05);
+    }
+}
