@@ -1,8 +1,10 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ForgotPasswordModal from '../auth/ForgotPasswordModal';
 import './login.scss';
+import { googleLogin } from '@/app/API/auth/GoogleLogin';
 
 interface LoginData {
     email: string;
@@ -16,7 +18,8 @@ interface LoginFormProps {
     loading?: boolean;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, error, loading }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading }) => {
+    const router = useRouter();
     const [formData, setFormData] = useState<LoginData>({
         email: '',
         password: '',
@@ -24,6 +27,56 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, error, loading }) => {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [googleLoading, setGoogleLoading] = useState(false);
+
+    useEffect(() => {
+        const initializeGoogleSignIn = () => {
+            if (typeof window !== 'undefined' && window.google?.accounts?.id) {
+                google.accounts.id.initialize({
+                    client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? '',
+                    callback: handleGoogleResponse,
+                    context: 'signin'
+                });
+                
+                const buttonElement = document.getElementById("googleSignInButton");
+                if (buttonElement) {
+                    google.accounts.id.renderButton(
+                        buttonElement,
+                        { 
+                            theme: "filled_blue",
+                            size: "large",
+                            width: "100%",
+                            type: "standard",
+                            text: "signin_with",
+                            shape: "rectangular",
+                            logo_alignment: "left"
+                        }
+                    );
+                }
+            }
+        };
+
+        initializeGoogleSignIn();
+    }, []);
+
+    const handleGoogleResponse = async (response: google.accounts.id.CredentialResponse) => {
+        setGoogleLoading(true);
+        try {
+            const result = await googleLogin(response.credential);
+            if (result.success && result.data) {
+                localStorage.setItem('user', JSON.stringify(result.data.user));
+                router.push('/dashboard');
+            } else {
+                setError(result.message || 'Google authentication failed');
+            }
+        } catch (err) {
+            console.error('Google auth error:', err);
+            setError('Google authentication failed');
+        } finally {
+            setGoogleLoading(false);
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
@@ -40,7 +93,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, error, loading }) => {
 
     return (
         <div className="login-form-container">
-
+            
             <div className="position-relative mb-4">
                 <hr className="divider" />
                 <span className="divider-text">or</span>
@@ -136,18 +189,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, error, loading }) => {
                     ) : 'Sign In'}
                 </button>
             </form>
-
+            <div id="googleSignInButton" className="w-100 mb-3"></div>
             <div className="text-center">
                 <span className="text-muted">Don't have an account? </span>
                 <Link href="/register" className="text-primary fw-bold text-decoration-none">
                     Sign up
                 </Link>
             </div>
-
-            <button className="btn btn-outline-dark w-100 google-btn">
-                <img src="/icons/google.svg" alt="Google" className="google-icon me-2" />
-                Sign in with Google
-            </button>
 
             <ForgotPasswordModal
                 isOpen={isModalOpen}

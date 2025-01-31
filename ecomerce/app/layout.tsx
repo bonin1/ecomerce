@@ -12,6 +12,7 @@ export default function RootLayout({
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
       </head>
       <body>
         {children}

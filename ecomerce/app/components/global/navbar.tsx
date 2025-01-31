@@ -20,7 +20,9 @@ const Navbar = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('user');
+        localStorage.removeItem('accessToken');
         setUser(null);
+        window.location.href = '/'; 
     };
 
     const toggleMobileMenu = () => {

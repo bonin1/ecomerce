@@ -22,7 +22,7 @@ const User = db.define('users', {
     },
     password: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     device:{
         type: DataTypes.STRING,
@@ -30,6 +30,10 @@ const User = db.define('users', {
     },
     role:{
         type: DataTypes.ENUM('admin', 'user', 'staff', 'superadmin', 'moderator', 'guest', 'banned'),
+        allowNull: true
+    },
+    profile_picture:{
+        type: DataTypes.BLOB('long'),
         allowNull: true
     },
     phone_number:{

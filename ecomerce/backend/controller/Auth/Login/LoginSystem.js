@@ -205,9 +205,31 @@ exports.verifyOTP = async (req, res) => {
 };
 
 exports.logout = async (req, res) => {
-    res.clearCookie('rememberMeToken');
-    return res.status(200).json({
-        success: true,
-        message: 'Logged out successfully'
-    });
+    try {
+        res.clearCookie('rememberMeToken', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+            path: '/'
+        });
+        
+        res.clearCookie('accessToken', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+            path: '/'
+        });
+
+        
+        return res.status(200).json({
+            success: true,
+            message: 'Logged out successfully'
+        });
+    } catch (error) {
+        console.error('Logout error:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error during logout'
+        });
+    }
 };

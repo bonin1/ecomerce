@@ -57,3 +57,23 @@ export interface PasswordChangeResponse {
     success: boolean;
     message: string;
 }
+
+declare global {
+    interface Window {
+        google?: {
+            accounts?: {
+                id?: {
+                    initialize: (config: any) => void;
+                    renderButton: (element: HTMLElement, options: any) => void;
+                    prompt: () => void;
+                    revoke: (email: string, callback: () => void) => void;
+                };
+            };
+        };
+    }
+}
+
+export interface GoogleResponse {
+    credential: string;
+    select_by: string;
+}

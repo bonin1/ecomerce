@@ -38,6 +38,9 @@ routes.setupStaticRoutes(app);
 
 app.use('/auth', require('./routes/AuthRoute'));
 
+const profileRoutes = require('./routes/ProfileManagementRoute');
+app.use('/api', profileRoutes);
+
 // ---------------------------------------------------
 
 app.listen(PORT,()=>{

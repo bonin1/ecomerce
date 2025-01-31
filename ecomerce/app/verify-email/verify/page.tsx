@@ -25,7 +25,6 @@ const VerifyEmail = () => {
                 if (response.ok) {
                     setStatus('success');
                     setMessage('Email verified successfully!');
-                    // Optionally redirect to login page after a delay
                     setTimeout(() => router.push('/login'), 3000);
                 } else {
                     const data = await response.json();

@@ -1,7 +1,9 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { RegisterData } from '@/app/types';
+import { googleLogin } from '@/app/API/auth/GoogleLogin';
 import './register.scss';
 
 interface RegisterFormProps {
@@ -11,6 +13,7 @@ interface RegisterFormProps {
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, error, loading }) => {
+    const router = useRouter();
     const [formData, setFormData] = useState<RegisterData & { confirmPassword: string }>({
         name: '',
         lastname: '',
@@ -23,6 +26,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, error, loading })
         confirmPassword: false
     });
     const [passwordError, setPasswordError] = useState('');
+    const [googleLoading, setGoogleLoading] = useState(false);
+    const [googleError, setGoogleError] = useState<string | null>(null);
 
     useEffect(() => {
         if (formData.confirmPassword && formData.password !== formData.confirmPassword) {
@@ -31,6 +36,61 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, error, loading })
             setPasswordError('');
         }
     }, [formData.password, formData.confirmPassword]);
+
+    useEffect(() => {
+        const initializeGoogleSignIn = () => {
+            if (typeof window !== 'undefined' && window.google?.accounts?.id) {
+                google.accounts.id.initialize({
+                    client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? '',
+                    callback: handleGoogleResponse,
+                    context: 'signup'
+                });
+                
+                const buttonElement = document.getElementById("googleSignInButton");
+                if (buttonElement) {
+                    google.accounts.id.renderButton(
+                        buttonElement,
+                        { 
+                            theme: "filled_blue",
+                            size: "large",
+                            width: "100%",
+                            type: "standard",
+                            text: "signup_with",
+                            shape: "rectangular",
+                            logo_alignment: "left"
+                        }
+                    );
+                }
+            }
+        };
+
+        initializeGoogleSignIn();
+        
+        return () => {
+            const buttonElement = document.getElementById("googleSignInButton");
+            if (buttonElement) {
+                buttonElement.innerHTML = '';
+            }
+        };
+    }, []);
+
+    const handleGoogleResponse = async (response: google.accounts.id.CredentialResponse) => {
+        setGoogleLoading(true);
+        try {
+            const result = await googleLogin(response.credential);
+            if (result.success && result.data) {
+                localStorage.setItem('user', JSON.stringify(result.data.user));
+                router.push('/dashboard');
+            } else {
+                setGoogleError(result.message || 'Google authentication failed');
+            }
+        } catch (err) {
+            console.error('Google auth error:', err);
+            setGoogleError('Google authentication failed');
+        } finally {
+            setGoogleLoading(false);
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData(prev => ({
@@ -194,16 +254,20 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, error, loading })
                     ) : 'Create Account'}
                 </button>
             </form>
-            <div className="text-center">
-                    <span className="text-muted">Already have an account? </span>
-                    <Link href="/login" className="text-primary fw-bold text-decoration-none">
-                        Sign in
-                    </Link>
+            {googleError && (
+                <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i className="bi bi-exclamation-circle me-2"></i>
+                    {googleError}
+                    <button type="button" className="btn-close" data-bs-dismiss="alert" onClick={() => setGoogleError(null)}></button>
                 </div>
-            <button className="btn btn-outline-dark w-100 google-btn">
-                <img src="/icons/google.svg" alt="Google" className="google-icon me-2" />
-                Sign up with Google
-            </button>
+            )}
+            <div id="googleSignInButton" className="w-100 mb-3"></div>
+            <div className="text-center">
+                <span className="text-muted">Already have an account? </span>
+                <Link href="/login" className="text-primary fw-bold text-decoration-none">
+                    Sign in
+                </Link>
+            </div>
         </div>
     );
 };
