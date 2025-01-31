@@ -112,12 +112,24 @@ const User = db.define('users', {
     trustedDevices: {
         type: DataTypes.TEXT,
         allowNull: true,
+        defaultValue: '[]',
         get() {
             const value = this.getDataValue('trustedDevices');
-            return value ? JSON.parse(value) : [];
+            try {
+                return value ? JSON.parse(value) : [];
+            } catch (e) {
+                console.error('Error parsing trustedDevices:', e);
+                return [];
+            }
         },
         set(value) {
-            this.setDataValue('trustedDevices', JSON.stringify(value));
+            try {
+                const stringValue = Array.isArray(value) ? JSON.stringify(value) : '[]';
+                this.setDataValue('trustedDevices', stringValue);
+            } catch (e) {
+                console.error('Error setting trustedDevices:', e);
+                this.setDataValue('trustedDevices', '[]');
+            }
         }
     }
 }, {

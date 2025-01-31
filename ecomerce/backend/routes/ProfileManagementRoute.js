@@ -7,7 +7,7 @@ const upload = require('../config/UploadConfig');
 const {authenticate} = require('../middleware/AuthMiddleware');
 
 // Profile routes
-router.get('/profile', authenticate, GetProfile);
+router.get('/profile/:username', authenticate, GetProfile);
 router.put('/profile/update', authenticate, updateProfile);
 router.delete('/profile/delete', authenticate, deleteProfile);
 router.post('/profile/reactivate', authenticate, reactivateProfile);

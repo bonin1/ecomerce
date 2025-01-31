@@ -2,9 +2,9 @@ const User = require('../../../model/UserModel');
 
 exports.GetProfile = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const username = req.params.username;
 
-        const user = await User.findByPk(userId, {
+        const user = await User.findByPk(username, {
             attributes: { 
                 exclude: ['password', 'two_factor_secret', 'passwordResetToken', 'passwordResetExpires', 'verificationToken', 'otp']
             }

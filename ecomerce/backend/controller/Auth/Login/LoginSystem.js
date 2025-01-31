@@ -41,10 +41,25 @@ exports.login = async (req, res) => {
         }
 
         const deviceInfo = getDeviceFingerprint(req);
-        const trustedDevices = user.trustedDevices || [];
+        let trustedDevices = [];
+        
+        try {
+            if (typeof user.trustedDevices === 'string') {
+                trustedDevices = JSON.parse(user.trustedDevices);
+            } else if (Array.isArray(user.trustedDevices)) {
+                trustedDevices = user.trustedDevices;
+            }
+        } catch (e) {
+            console.error('Error parsing trustedDevices:', e);
+            trustedDevices = [];
+        }
+
+        if (!Array.isArray(trustedDevices)) {
+            trustedDevices = [];
+        }
         
         const isTrustedDevice = trustedDevices.some(device => 
-            device.browser === deviceInfo.browser && 
+            device && device.browser === deviceInfo.browser && 
             device.os === deviceInfo.os && 
             device.device === deviceInfo.device &&
             device.addedAt 
