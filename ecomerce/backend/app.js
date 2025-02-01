@@ -1,5 +1,6 @@
 const express = require('express')
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 const app = express()
 require('dotenv').config()
 const path = require('path')
@@ -7,13 +8,14 @@ const path = require('path')
 const PORT = process.env.PORT || 8080
 
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }))
 
 app.use(express.json())
+app.use(cookieParser())
 
 app.use('/static',express.static('static'))
 app.set('view engine','ejs')
@@ -40,6 +42,10 @@ app.use('/auth', require('./routes/AuthRoute'));
 
 const profileRoutes = require('./routes/ProfileManagementRoute');
 app.use('/api', profileRoutes);
+
+app.use('/admin', require('./routes/AdminRoute'));
+
+app.use('/product', require('./routes/ProduktManagementRoute'));
 
 // ---------------------------------------------------
 

@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../database');
+const ProduktCategory = require('./ProductCategoryModel');
 
 
 const Produkt = db.define('produkt', {
@@ -10,6 +11,10 @@ const Produkt = db.define('produkt', {
     },
     product_name: {
         type: DataTypes.STRING,
+        allowNull: false
+    },
+    product_primary_image: {
+        type: DataTypes.BLOB('long'),
         allowNull: false
     },
     product_description: {
@@ -24,10 +29,6 @@ const Produkt = db.define('produkt', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    product_category: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
     product_brand: {
         type: DataTypes.STRING,
         allowNull: false
@@ -37,10 +38,6 @@ const Produkt = db.define('produkt', {
         allowNull: false
     },
     product_rating: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    product_reviews: {
         type: DataTypes.STRING,
         allowNull: false
     },
@@ -67,6 +64,23 @@ const Produkt = db.define('produkt', {
     product_discount_percentage: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    product_discount_code: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    warranty: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    product_category_id: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+        references: {
+            model: ProduktCategory,
+            key: 'id'
+        },
+        onDelete: 'CASCADE'
     },
 }, {
     timestamps: true,

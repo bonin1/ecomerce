@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 import LoginForm from '../components/login/login';
 import { login } from '../API/auth/login';
 import { LoginData } from '../types';
@@ -10,18 +11,16 @@ import './MainLogin.scss';
 
 const LoginPage = () => {
     const router = useRouter();
-    const [error, setError] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
 
     const handleLogin = async (data: LoginData) => {
         try {
             setLoading(true);
-            setError('');
             
             const response = await login(data);
             
             if (!response.success) {
-                setError(response.message || 'Login failed. Please try again.');
+                toast.error(response.message || 'Login failed. Please try again.');
                 return;
             }
 
@@ -31,12 +30,13 @@ const LoginPage = () => {
             }
 
             if (response.data) {
+                toast.success('Login successful!');
                 localStorage.setItem('user', JSON.stringify(response.data.user));
-                router.push('/dashboard');
+                router.push('/profile');
             }
         } catch (err) {
             console.error('Login error:', err);
-            setError('Unable to connect to the server. Please try again later.');
+            toast.error('Unable to connect to the server. Please try again later.');
         } finally {
             setLoading(false);
         }
@@ -62,7 +62,6 @@ const LoginPage = () => {
                         </div>
                         <LoginForm 
                             onSubmit={handleLogin}
-                            error={error}
                             loading={loading}
                         />
                     </div>

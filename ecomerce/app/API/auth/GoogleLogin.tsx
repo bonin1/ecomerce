@@ -17,7 +17,13 @@ export const googleLogin = async (token: string): Promise<ApiResponse<LoginRespo
             throw new Error(errorData.message || 'Google authentication failed');
         }
 
-        return await response.json();
+        const data = await response.json();
+        
+        if (data.success && data.data?.accessToken) {
+            localStorage.setItem('accessToken', data.data.accessToken);
+        }
+
+        return data;
     } catch (error) {
         return {
             success: false,

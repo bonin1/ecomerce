@@ -3,6 +3,7 @@ const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const UAParser = require('ua-parser-js');
+const { updateTrustedDevices } = require('../utils/deviceUtils');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -62,39 +63,10 @@ exports.googleAuth = async (req, res) => {
                 }])
             });
         } else {
-            const updates = {
-                last_login_ip: deviceInfo.ip,
-                last_login_device: JSON.stringify(deviceInfo)
-            };
-
+            const { updates } = await updateTrustedDevices(user, deviceInfo);
+            
             if (!user.profile_picture && profilePictureBlob) {
                 updates.profile_picture = profilePictureBlob;
-            }
-
-            let trustedDevices = [];
-            try {
-                trustedDevices = JSON.parse(user.trustedDevices || '[]');
-            } catch (e) {
-                console.error('Error parsing trustedDevices:', e);
-                trustedDevices = [];
-            }
-
-            if (!Array.isArray(trustedDevices)) {
-                trustedDevices = [];
-            }
-
-            const deviceExists = trustedDevices.some(device => 
-                device.browser === deviceInfo.browser && 
-                device.os === deviceInfo.os && 
-                device.device === deviceInfo.device
-            );
-
-            if (!deviceExists) {
-                trustedDevices.push({
-                    ...deviceInfo,
-                    addedAt: new Date()
-                });
-                updates.trustedDevices = JSON.stringify(trustedDevices);
             }
 
             await user.update(updates);

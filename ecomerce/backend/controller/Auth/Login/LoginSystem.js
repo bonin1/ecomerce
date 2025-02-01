@@ -4,6 +4,9 @@ const jwt = require('jsonwebtoken');
 const UAParser = require('ua-parser-js');
 const { sendNewDeviceLoginAlert, sendOTPEmail } = require('../../../services/emailServices');
 const { Op } = require('sequelize');
+const { updateTrustedDevices } = require('../utils/deviceUtils');
+
+const blacklistedTokens = new Set();
 
 const generateToken = (userId) => {
     return jwt.sign(
@@ -30,10 +33,25 @@ exports.login = async (req, res) => {
         const { email, password, rememberMe } = req.body;
         const user = await User.findOne({ 
             where: { email },
-            attributes: { include: ['trustedDevices'] }
+            attributes: { include: ['trustedDevices', 'password'] }
         });
 
-        if (!user || !(await bcrypt.compare(password, user.password))) {
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid credentials'
+            });
+        }
+
+        if (!user.password) {
+            return res.status(401).json({
+                success: false,
+                message: 'Please sign in with Google'
+            });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
             return res.status(401).json({
                 success: false,
                 message: 'Invalid credentials'
@@ -41,31 +59,9 @@ exports.login = async (req, res) => {
         }
 
         const deviceInfo = getDeviceFingerprint(req);
-        let trustedDevices = [];
-        
-        try {
-            if (typeof user.trustedDevices === 'string') {
-                trustedDevices = JSON.parse(user.trustedDevices);
-            } else if (Array.isArray(user.trustedDevices)) {
-                trustedDevices = user.trustedDevices;
-            }
-        } catch (e) {
-            console.error('Error parsing trustedDevices:', e);
-            trustedDevices = [];
-        }
+        const { updates, deviceExists } = await updateTrustedDevices(user, deviceInfo);
 
-        if (!Array.isArray(trustedDevices)) {
-            trustedDevices = [];
-        }
-        
-        const isTrustedDevice = trustedDevices.some(device => 
-            device && device.browser === deviceInfo.browser && 
-            device.os === deviceInfo.os && 
-            device.device === deviceInfo.device &&
-            device.addedAt 
-        );
-
-        if (!isTrustedDevice) {
+        if (!deviceExists) {
             const otp = Math.floor(100000 + Math.random() * 900000).toString();
             const otpExpires = new Date(Date.now() + 10 * 60 * 1000); 
 
@@ -85,7 +81,14 @@ exports.login = async (req, res) => {
             });
         }
 
-        const lastLoginDevice = user.last_login_device ? JSON.parse(user.last_login_device) : null;
+        const lastLoginDevice = (() => {
+            try {
+                return user.last_login_device ? JSON.parse(user.last_login_device) : null;
+            } catch (e) {
+                console.error('Error parsing last_login_device:', e);
+                return null;
+            }
+        })();
 
         if (lastLoginDevice &&
             (lastLoginDevice.browser !== deviceInfo.browser ||
@@ -97,27 +100,34 @@ exports.login = async (req, res) => {
         const accessToken = generateToken(user.id);
 
         await User.update({
+            ...updates,
             last_login_ip: deviceInfo.ip,
             last_login_device: JSON.stringify(deviceInfo)
         }, {
             where: { id: user.id }
         });
 
+        const cookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+            path: '/'
+        };
+
         if (rememberMe) {
             const rememberMeToken = jwt.sign(
-                { id: user.id, email: user.email, role: user.role },
+                { userId: user.id, email: user.email, role: user.role },
                 process.env.JWT_SECRET,
                 { expiresIn: '30d' }
             );
 
             res.cookie('rememberMeToken', rememberMeToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'Strict',
-                maxAge: 30 * 24 * 3600000,
-                path: '/'
+                ...cookieOptions,
+                maxAge: 30 * 24 * 3600000
             });
         }
+
+        res.cookie('sessionToken', accessToken, cookieOptions);
 
         return res.status(200).json({
             success: true,
@@ -169,30 +179,15 @@ exports.verifyOTP = async (req, res) => {
             });
         }
 
-        const trustedDevices = user.trustedDevices || [];
-        const deviceExists = trustedDevices.some(device => 
-            device.browser === deviceInfo.browser && 
-            device.os === deviceInfo.os && 
-            device.device === deviceInfo.device
-        );
+        const { updates } = await updateTrustedDevices(user, deviceInfo);
 
-        if (!deviceExists) {
-            trustedDevices.push({
-                browser: deviceInfo.browser,
-                os: deviceInfo.os,
-                device: deviceInfo.device,
-                ip: deviceInfo.ip,
-                addedAt: new Date()
-            });
-
-            await User.update({
-                trustedDevices,
-                otp: null,
-                otpExpires: null
-            }, {
-                where: { id: user.id }
-            });
-        }
+        await User.update({
+            ...updates,
+            otp: null,
+            otpExpires: null
+        }, {
+            where: { id: user.id }
+        });
 
         const accessToken = generateToken(user.id);
 
@@ -221,20 +216,20 @@ exports.verifyOTP = async (req, res) => {
 
 exports.logout = async (req, res) => {
     try {
-        res.clearCookie('rememberMeToken', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
-            path: '/'
-        });
-        
-        res.clearCookie('accessToken', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
-            path: '/'
-        });
+        const token = req.cookies.sessionToken;
+        if (token) {
+            blacklistedTokens.add(token);
+        }
 
+        const cookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+            path: '/'
+        };
+
+        res.clearCookie('rememberMeToken', cookieOptions);
+        res.clearCookie('sessionToken', cookieOptions);
         
         return res.status(200).json({
             success: true,
@@ -247,4 +242,8 @@ exports.logout = async (req, res) => {
             message: 'Internal server error during logout'
         });
     }
+};
+
+exports.isTokenBlacklisted = (token) => {
+    return blacklistedTokens.has(token);
 };

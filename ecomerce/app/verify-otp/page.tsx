@@ -44,7 +44,7 @@ export default function OTPVerification() {
             if (response.success && response.data) {
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 toast.success('Successfully verified!');
-                router.push('/dashboard');
+                router.push('/profile');
             } else {
                 toast.error(response.message || 'Verification failed');
             }

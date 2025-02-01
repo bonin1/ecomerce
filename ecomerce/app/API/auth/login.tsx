@@ -6,31 +6,30 @@ export const login = async (loginData: LoginData): Promise<ApiResponse<LoginResp
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json' 
+                'Accept': 'application/json'
             },
             body: JSON.stringify(loginData),
             credentials: 'include',
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            try {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Login failed');
-            } catch {
-                throw new Error(`Login failed: ${response.statusText}`);
+            throw new Error(data.message || 'Login failed');
+        }
+
+        if (data.success && data.data?.accessToken) {
+            if (loginData.rememberMe) {
+                localStorage.setItem('accessToken', data.data.accessToken);
+                localStorage.setItem('user', JSON.stringify(data.data.user));
+            } else {
+                sessionStorage.setItem('accessToken', data.data.accessToken);
+                sessionStorage.setItem('user', JSON.stringify(data.data.user));
             }
         }
 
-        try {
-            const data = await response.json();
-            return data;
-        } catch (parseError) {
-            throw new Error('Invalid response from server');
-        }
+        return data;
     } catch (error) {
-        return {
-            success: false,
-            message: error instanceof Error ? error.message : 'Login failed',
-        };
+        throw error;
     }
 };

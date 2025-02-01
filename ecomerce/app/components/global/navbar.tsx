@@ -18,11 +18,26 @@ const Navbar = () => {
         }
     }, []);
 
-    const handleLogout = () => {
-        localStorage.removeItem('user');
-        localStorage.removeItem('accessToken');
-        setUser(null);
-        window.location.href = '/'; 
+    const handleLogout = async () => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
+                method: 'POST',
+                credentials: 'include',
+            });
+
+            if (response.ok) {
+                localStorage.removeItem('user');
+                localStorage.removeItem('accessToken');
+                sessionStorage.removeItem('user');
+                sessionStorage.removeItem('accessToken');
+                setUser(null);
+                window.location.href = '/';
+            } else {
+                console.error('Logout failed');
+            }
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
     };
 
     const toggleMobileMenu = () => {

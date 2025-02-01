@@ -1,14 +1,12 @@
 'use client';
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import Navbar from '@/app/components/global/navbar';
 
 const VerificationSuccess = () => {
     const router = useRouter();
 
     return (
         <>
-            <Navbar />
             <div className="container mt-5">
                 <div className="row justify-content-center">
                     <div className="col-md-6">

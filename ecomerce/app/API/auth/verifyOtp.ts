@@ -12,12 +12,17 @@ export const verifyOTP = async (email: string, otp: string): Promise<ApiResponse
             credentials: 'include',
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'OTP verification failed');
+            throw new Error(data.message || 'OTP verification failed');
         }
 
-        const data = await response.json();
+        if (data.success && data.data?.accessToken) {
+            localStorage.setItem('accessToken', data.data.accessToken);
+            localStorage.setItem('user', JSON.stringify(data.data.user));
+        }
+
         return data;
     } catch (error) {
         return {

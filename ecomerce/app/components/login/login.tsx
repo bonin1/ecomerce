@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 import ForgotPasswordModal from '../auth/ForgotPasswordModal';
 import './login.scss';
 import { googleLogin } from '@/app/API/auth/GoogleLogin';
@@ -14,7 +15,6 @@ interface LoginData {
 
 interface LoginFormProps {
     onSubmit: (data: LoginData) => Promise<void>;
-    error?: string;
     loading?: boolean;
 }
 
@@ -27,7 +27,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading }) => {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const [googleLoading, setGoogleLoading] = useState(false);
 
     useEffect(() => {
@@ -66,13 +65,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading }) => {
             const result = await googleLogin(response.credential);
             if (result.success && result.data) {
                 localStorage.setItem('user', JSON.stringify(result.data.user));
-                router.push('/dashboard');
+                router.push('/profile');
             } else {
-                setError(result.message || 'Google authentication failed');
+                toast.error(result.message || 'Google authentication failed');
             }
         } catch (err) {
             console.error('Google auth error:', err);
-            setError('Google authentication failed');
+            toast.error('Google authentication failed');
         } finally {
             setGoogleLoading(false);
         }
@@ -88,7 +87,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading }) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        await onSubmit(formData);
+        try {
+            await onSubmit(formData);
+        } catch (err) {
+            const message = err instanceof Error ? err.message : 'Login failed';
+            if (message.includes('Please sign in with Google')) {
+                toast.error('This email is registered with Google. Please use Google Sign-In.');
+            } else {
+                toast.error(message);
+            }
+        }
     };
 
     return (
@@ -100,14 +108,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading }) => {
             </div>
 
             <form onSubmit={handleSubmit}>
-                {error && (
-                    <div className="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i className="bi bi-exclamation-circle me-2"></i>
-                        {error}
-                        <button type="button" className="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                )}
-
                 <div className="mb-3">
                     <label className="form-label small fw-bold">Email Address</label>
                     <div className="input-group">
