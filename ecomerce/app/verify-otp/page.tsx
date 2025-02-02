@@ -8,7 +8,7 @@ import { verifyOTP } from '../API/auth/verifyOtp';
 export default function OTPVerification() {
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [loading, setLoading] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(600); // 10 minutes
+    const [timeLeft, setTimeLeft] = useState(600); 
     const router = useRouter();
     const searchParams = useSearchParams();
     const email = searchParams.get('email');
@@ -26,11 +26,24 @@ export default function OTPVerification() {
             newOtp[index] = value;
             setOtp(newOtp);
 
-            // Auto-focus next input
             if (value && index < 5) {
                 const nextInput = document.getElementById(`otp-${index + 1}`);
                 nextInput?.focus();
             }
+        }
+    };
+
+    const handlePaste = (e: React.ClipboardEvent) => {
+        e.preventDefault();
+        const pastedData = e.clipboardData.getData('text');
+        const cleanedData = pastedData.replace(/\D/g, '').slice(0, 6);
+        
+        if (cleanedData.length > 0) {
+            const newOtp = Array(6).fill('');
+            for (let i = 0; i < cleanedData.length && i < 6; i++) {
+                newOtp[i] = cleanedData[i];
+            }
+            setOtp(newOtp);
         }
     };
 
@@ -83,6 +96,7 @@ export default function OTPVerification() {
                                         className="form-control text-center"
                                         value={digit}
                                         onChange={(e) => handleChange(index, e.target.value)}
+                                        onPaste={handlePaste}
                                         maxLength={1}
                                         style={{ width: '45px' }}
                                         autoFocus={index === 0}

@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+const transporter = require('../../../config/EmailConfig');
 const User = require('../../../model/UserModel');
 const { validateEmail, validatePhone } = require('../../../utils/validation');
 

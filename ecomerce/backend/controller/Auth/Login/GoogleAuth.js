@@ -42,11 +42,15 @@ exports.googleAuth = async (req, res) => {
         }
 
         let user = await User.findOne({ 
-            where: { email },
-            attributes: { include: ['trustedDevices'] }
+            where: { email }
         });
 
         if (!user) {
+            const initialTrustedDevice = [{
+                ...deviceInfo,
+                addedAt: new Date().toISOString()
+            }];
+
             user = await User.create({
                 email,
                 name: given_name || 'User',
@@ -57,19 +61,22 @@ exports.googleAuth = async (req, res) => {
                 profile_picture: profilePictureBlob,
                 last_login_ip: deviceInfo.ip,
                 last_login_device: JSON.stringify(deviceInfo),
-                trustedDevices: JSON.stringify([{
-                    ...deviceInfo,
-                    addedAt: new Date()
-                }])
+                trustedDevices: JSON.stringify(initialTrustedDevice)
             });
         } else {
+            await user.reload();
+            
             const { updates } = await updateTrustedDevices(user, deviceInfo);
             
             if (!user.profile_picture && profilePictureBlob) {
                 updates.profile_picture = profilePictureBlob;
             }
 
-            await user.update(updates);
+            await User.update(updates, {
+                where: { id: user.id }
+            });
+
+            await user.reload();
         }
 
         const accessToken = jwt.sign(
@@ -96,7 +103,8 @@ exports.googleAuth = async (req, res) => {
         console.error('Google auth error:', error);
         return res.status(500).json({
             success: false,
-            message: 'Google authentication failed'
+            message: 'Google authentication failed',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
     }
 };

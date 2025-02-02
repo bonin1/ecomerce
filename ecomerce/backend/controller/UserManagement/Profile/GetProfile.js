@@ -19,7 +19,8 @@ exports.GetProfile = async (req, res) => {
         }
 
         const userData = user.toJSON();
-        if (userData.profile_picture) {
+        
+        if (userData.profile_picture && Buffer.isBuffer(userData.profile_picture)) {
             userData.profile_picture = `data:image/jpeg;base64,${userData.profile_picture.toString('base64')}`;
         }
 

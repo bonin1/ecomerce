@@ -68,9 +68,17 @@ const ProfilePage = () => {
                     <div className="profile-avatar">
                         {profile?.profile_picture ? (
                             <img 
-                                src={profile.profile_picture} 
-                                alt="Profile" 
+                                src={profile.profile_picture}
+                                alt="Profile"
                                 className="avatar-image"
+                                onError={(e) => {
+                                    console.error('Image load error');
+                                    e.currentTarget.style.display = 'none';
+                                    const placeholder = document.createElement('div');
+                                    placeholder.className = 'avatar-placeholder';
+                                    placeholder.innerText = profile?.name?.[0]?.toUpperCase() || 'U';
+                                    e.currentTarget.parentNode?.appendChild(placeholder);
+                                }}
                             />
                         ) : (
                             <div className="avatar-placeholder">

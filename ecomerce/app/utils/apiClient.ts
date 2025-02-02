@@ -9,8 +9,9 @@ export const apiClient = async (endpoint: string, options: RequestOptions = {}) 
 
         const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
 
+        const isFormData = options.body instanceof FormData;
         const defaultHeaders: HeadersInit = {
-            'Content-Type': 'application/json',
+            ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
             ...(token && !skipAuth && { 'Authorization': `Bearer ${token}` }),
             ...headers,
         };
@@ -22,17 +23,19 @@ export const apiClient = async (endpoint: string, options: RequestOptions = {}) 
         });
 
         const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            throw new Error(`Expected JSON response but received ${contentType}`);
+        if (contentType && contentType.includes('application/json')) {
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.message || `HTTP error! status: ${response.status}`);
+            }
+            return data;
         }
-
-        const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.message || `HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        return data;
+        return { success: true };
     } catch (error) {
         console.error('API Client Error:', {
             error,

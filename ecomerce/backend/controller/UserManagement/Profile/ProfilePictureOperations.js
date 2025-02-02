@@ -17,11 +17,15 @@ exports.updateProfilePicture = async (req, res) => {
             where: { id: userId }
         });
 
+        const profilePictureBase64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+
         res.status(200).json({
             status: 'success',
-            message: 'Profile picture updated successfully'
+            message: 'Profile picture updated successfully',
+            data: { profile_picture: profilePictureBase64 }
         });
     } catch (error) {
+        console.error('Profile picture update error:', error);
         res.status(500).json({
             status: 'error',
             message: 'Error updating profile picture',
