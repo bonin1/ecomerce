@@ -18,34 +18,36 @@ const ProduktAdditionalDetails = db.define('produkt_additional_details', {
         onDelete: 'CASCADE'
     },
     product_color: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.STRING(50),
+        allowNull: true
     },
     product_size: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.STRING(50),
+        allowNull: true
     },
     product_weight: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true
     },
     product_dimensions: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.STRING(100),
+        allowNull: true
     },
     product_material: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.STRING(100),
+        allowNull: true
     },
     product_manufacturer: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.STRING(100),
+        allowNull: true
     },
     product_origin: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-
+        type: DataTypes.STRING(100),
+        allowNull: true
+    }
+}, {
+    timestamps: true,
+    freezeTableName: true
 });
 
 module.exports = ProduktAdditionalDetails;

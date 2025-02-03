@@ -2,22 +2,34 @@ const Produkt = require('../../../model/ProduktModel');
 const ProduktMedia = require('../../../model/ProduktMediaModel');
 const ProduktAdditionalDetails = require('../../../model/ProduktAdditionalDetails');
 const db = require('../../../database');
+const ProductCategory = require('../../../model/ProductCategoryModel');
 
 const createProduct = async (req, res) => {
     const t = await db.transaction();
     try {
-        const { product, media, additionalDetails } = req.body;
+        const { product, additionalDetails } = req.body;
         
-        const newProduct = await Produkt.create(product, { transaction: t });
-        
-        if (media && Array.isArray(media)) {
-            for (const mediaItem of media) {
-                await ProduktMedia.create({
-                    ...mediaItem,
-                    product_id: newProduct.id
-                }, { transaction: t });
-            }
+        if (!product.product_name || !product.product_description || 
+            !product.product_price || !product.product_brand || 
+            !product.product_category_id) {
+            return res.status(400).json({ 
+                message: 'Missing required fields' 
+            });
         }
+
+        const category = await ProductCategory.findByPk(product.product_category_id);
+        if (!category) {
+            return res.status(400).json({
+                message: 'Invalid category ID. Category does not exist.'
+            });
+        }
+
+        const newProduct = await Produkt.create({
+            ...product,
+            product_price: Number(product.product_price),
+            product_stock: Number(product.product_stock),
+            product_category_id: Number(product.product_category_id)
+        }, { transaction: t });
 
         if (additionalDetails) {
             await ProduktAdditionalDetails.create({
@@ -32,7 +44,11 @@ const createProduct = async (req, res) => {
         res.status(201).json(completeProduct);
     } catch (error) {
         await t.rollback();
-        res.status(500).json({ message: error.message });
+        console.error('Product creation error:', error);
+        res.status(500).json({ 
+            message: 'Error creating product',
+            error: error.message 
+        });
     }
 };
 

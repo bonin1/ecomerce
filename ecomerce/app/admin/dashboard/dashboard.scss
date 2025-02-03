@@ -1,0 +1,68 @@
+.admin-main {
+    margin-left: 250px;
+    padding: 2rem;
+}
+
+.dashboard-header {
+    display: flex;  
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    
+    h1 {
+        font-size: 2rem;
+        color: #2c2c2c;
+    }
+
+    .period-filter {
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid #ddd;
+        font-size: 1rem;
+        outline: none;
+        
+        &:focus {
+            border-color: #007bff;
+        }
+    }
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h3 {
+        color: #666;
+        margin: 0 0 1rem 0;
+        font-size: 1.1rem;
+    }
+
+    .stat-number {
+        color: #2c2c2c;
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 0;
+    }
+}
