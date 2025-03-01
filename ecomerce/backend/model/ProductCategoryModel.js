@@ -13,6 +13,9 @@ const ProductCategory = db.define('product_category', {
         allowNull: false
     },
     
+}, {
+    timestamps: true,
+    freezeTableName: true,
 });
 
 module.exports = ProductCategory;

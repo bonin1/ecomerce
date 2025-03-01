@@ -13,8 +13,8 @@ const syncModels = async () => {
     try {
         await UserModel.sync({ alter: false });
         await UserImage.sync({ alter: false });
+        await ProductCategory.sync({ alter: false }); // Moved before ProductModel
         await ProductModel.sync({ alter: false });
-        await ProductCategory.sync({ alter: false });
         await ProductMedia.sync({ alter: false });
         await ProductAdditionalDetails.sync({ alter: false });
         await AuditLog.sync({ alter: false });

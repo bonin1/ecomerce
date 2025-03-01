@@ -12,7 +12,7 @@ const createCategory = async (req, res) => {
             });
         }
 
-        if (req.user.role === 'admin') {
+        if (req.user.role === 'admin' || req.user.role === 'superadmin') {
             const newCategory = await ProductCategory.create({ product_category });
             
             await AuditLog.create({
@@ -68,7 +68,7 @@ const updateCategory = async (req, res) => {
             });
         }
 
-        if (req.user.role === 'admin') {
+        if (req.user.role === 'admin' || req.user.role === 'superadmin') {
             await category.update({ product_category });
 
             await AuditLog.create({
@@ -124,7 +124,7 @@ const deleteCategory = async (req, res) => {
             });
         }
 
-        if (req.user.role === 'admin') {
+        if (req.user.role === 'admin' || req.user.role === 'superadmin') {
             await category.destroy();
 
             await AuditLog.create({

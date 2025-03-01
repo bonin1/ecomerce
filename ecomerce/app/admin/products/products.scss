@@ -1,0 +1,40 @@
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 0 20px;
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+  }
+
+  .tab-navigation {
+    display: flex;
+    
+    button {
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        color: #3498db;
+      }
+      
+      &.active {
+        color: #3498db;
+        border-bottom: 2px solid #3498db;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.admin-content {
+  padding: 0 20px;
+}

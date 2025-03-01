@@ -1,0 +1,218 @@
+.product-management {
+    padding: 1rem;
+    margin-left: 250px;
+    max-width: 800px;
+    margin: 0 auto;
+  
+  h2 {
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+  }
+  
+  .product-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    
+    .search-box {
+      flex: 1;
+      margin-right: 20px;
+      
+      input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+    }
+    
+    .add-product-btn {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      
+      &:hover {
+        background-color: #2980b9;
+      }
+    }
+  }
+  
+  .products-list {
+    width: 100%;
+    overflow-x: auto;
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      
+      th, td {
+        text-align: left;
+        padding: 12px 15px;
+        border-bottom: 1px solid #ddd;
+      }
+      
+      th {
+        background-color: #f9f9f9;
+        font-weight: 600;
+      }
+      
+      tbody tr:hover {
+        background-color: #f5f5f5;
+      }
+      
+      button {
+        margin-right: 8px;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        
+        &:first-child {
+          background-color: #3498db;
+          color: white;
+          
+          &:hover {
+            background-color: #2980b9;
+          }
+        }
+        
+        &:last-child {
+          background-color: #e74c3c;
+          color: white;
+          
+          &:hover {
+            background-color: #c0392b;
+          }
+        }
+      }
+    }
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 20px;
+    font-size: 16px;
+    color: #777;
+  }
+  
+  .product-form-container {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .form-section {
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 20px;
+      
+      h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+        color: #333;
+      }
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+      
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+      
+      input, textarea, select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        
+        &:focus {
+          outline: none;
+          border-color: #3498db;
+          box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+      }
+      
+      textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+      
+      &.checkbox {
+        display: flex;
+        align-items: center;
+        
+        input {
+          width: auto;
+          margin-right: 10px;
+        }
+        
+        label {
+          margin-bottom: 0;
+        }
+      }
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 20px;
+      
+      .form-group {
+        flex: 1;
+      }
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+      
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        
+        &:first-child {
+          background-color: #3498db;
+          color: white;
+          
+          &:hover:not(:disabled) {
+            background-color: #2980b9;
+          }
+          
+          &:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+          }
+        }
+        
+        &:last-child {
+          background-color: #ecf0f1;
+          color: #34495e;
+          
+          &:hover {
+            background-color: #bdc3c7;
+          }
+        }
+      }
+    }
+  }
+}
