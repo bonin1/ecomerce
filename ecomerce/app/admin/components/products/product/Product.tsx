@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { apiClient } from '@/app/utils/apiClient';
 import './Product.scss';
 
@@ -40,6 +40,16 @@ interface Product {
     category?: Category;
 }
 
+interface ProductMedia {
+    id: number;
+    product_id: number;
+    media_type: string;
+    is_primary?: boolean;
+    media_data: string; // Base64 encoded image data
+    createdAt: string;
+    updatedAt: string;
+}
+
 export default function ProductManagement() {
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
@@ -47,6 +57,10 @@ export default function ProductManagement() {
     const [loading, setLoading] = useState(false);
     const [showForm, setShowForm] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [productMedia, setProductMedia] = useState<ProductMedia[]>([]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState('');
 
     // Form state
     const [formData, setFormData] = useState<Product>({
@@ -84,6 +98,12 @@ export default function ProductManagement() {
         fetchCategories();
     }, []);
 
+    useEffect(() => {
+        if (selectedProduct?.id) {
+            fetchProductMedia(selectedProduct.id);
+        }
+    }, [selectedProduct]);
+
     const fetchProducts = async () => {
         try {
             setLoading(true);
@@ -102,6 +122,15 @@ export default function ProductManagement() {
             setCategories(response.data);
         } catch (error) {
             console.error('Error fetching categories:', error);
+        }
+    };
+
+    const fetchProductMedia = async (productId: number) => {
+        try {
+            const response = await apiClient(`/product/products/${productId}/media`);
+            setProductMedia(response.data || []);
+        } catch (error) {
+            console.error('Error fetching product media:', error);
         }
     };
 
@@ -207,6 +236,55 @@ export default function ProductManagement() {
         }
         
         setShowForm(true);
+    };
+
+    const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>, isPrimary: boolean = false) => {
+        if (!e.target.files || !e.target.files[0] || !selectedProduct?.id) return;
+        
+        try {
+            setUploading(true);
+            setUploadError('');
+            
+            const formData = new FormData();
+            formData.append('image', e.target.files[0]);
+            formData.append('isPrimary', isPrimary ? 'true' : 'false');
+            
+            await apiClient(`/product/products/${selectedProduct.id}/media`, {
+                method: 'POST',
+                body: formData,
+                headers: {}, // Let browser set content type with boundary
+            });
+            
+            // Refresh media list
+            fetchProductMedia(selectedProduct.id);
+            
+            // Reset file input
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        } catch (error: any) {
+            console.error('Error uploading image:', error);
+            setUploadError(error.message || 'Failed to upload image');
+        } finally {
+            setUploading(false);
+        }
+    };
+    
+    const handleDeleteImage = async (mediaId: number) => {
+        if (!selectedProduct?.id) return;
+        
+        if (!window.confirm('Are you sure you want to delete this image?')) return;
+        
+        try {
+            await apiClient(`/product/products/${selectedProduct.id}/media/${mediaId}`, {
+                method: 'DELETE'
+            });
+            
+            // Refresh media list
+            fetchProductMedia(selectedProduct.id);
+        } catch (error) {
+            console.error('Error deleting image:', error);
+        }
     };
 
     const filteredProducts = products.filter(product =>
@@ -557,6 +635,80 @@ export default function ProductManagement() {
                                 />
                             </div>
                         </div>
+
+                        {selectedProduct?.id && (
+                            <div className="form-section">
+                                <h3>Product Images</h3>
+                                <p className="image-limit-info">
+                                    Maximum of 10 images allowed per product.
+                                    {productMedia.length >= 10 && (
+                                        <span className="limit-reached"> Limit reached.</span>
+                                    )}
+                                </p>
+                                
+                                <div className="image-upload-container">
+                                    <div className="primary-image">
+                                        <h4>Primary Image</h4>
+                                        <div className="upload-box">
+                                            <input
+                                                type="file"
+                                                accept="image/jpeg,image/png,image/gif"
+                                                onChange={(e) => handleUploadImage(e, true)}
+                                                disabled={uploading || productMedia.length >= 10}
+                                                ref={fileInputRef}
+                                            />
+                                            <p>Drop a file here or click to browse</p>
+                                            {uploading && <div className="upload-spinner">Uploading...</div>}
+                                        </div>
+                                        {uploadError && <p className="upload-error">{uploadError}</p>}
+                                    </div>
+                                    
+                                    <div className="additional-images">
+                                        <h4>Additional Images</h4>
+                                        <div className="upload-box">
+                                            <input
+                                                type="file"
+                                                accept="image/jpeg,image/png,image/gif"
+                                                onChange={(e) => handleUploadImage(e, false)}
+                                                disabled={uploading || productMedia.length >= 10}
+                                            />
+                                            <p>Drop a file here or click to browse</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="media-gallery">
+                                    <h4>Current Images</h4>
+                                    {productMedia.length === 0 ? (
+                                        <p>No images uploaded yet.</p>
+                                    ) : (
+                                        <div className="media-grid">
+                                            {productMedia.map((media) => (
+                                                <div key={media.id} className={`media-item ${media.is_primary ? 'primary' : ''}`}>
+                                                    {media.is_primary && <span className="primary-badge">Primary</span>}
+                                                    <div className="media-actions">
+                                                        <button 
+                                                            type="button" 
+                                                            className="delete-media" 
+                                                            onClick={() => handleDeleteImage(media.id)}
+                                                        >
+                                                            ×
+                                                        </button>
+                                                    </div>
+                                                    {media.media_data && (
+                                                        <img 
+                                                            src={media.media_data} 
+                                                            alt="Product" 
+                                                            className="media-image" 
+                                                        />
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                         
                         <div className="form-actions">
                             <button type="submit" disabled={loading}>

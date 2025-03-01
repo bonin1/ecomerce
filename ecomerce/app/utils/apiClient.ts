@@ -7,7 +7,11 @@ export const apiClient = async (endpoint: string, options: RequestOptions = {}) 
         const { skipAuth = false, headers = {}, ...rest } = options;
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
-        const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+        // Handle client-side and server-side scenarios for token
+        let token = null;
+        if (typeof window !== 'undefined') {
+            token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+        }
 
         const isFormData = options.body instanceof FormData;
         const defaultHeaders: HeadersInit = {
@@ -16,23 +20,39 @@ export const apiClient = async (endpoint: string, options: RequestOptions = {}) 
             ...headers,
         };
 
-        const response = await fetch(`${baseUrl}${endpoint}`, {
+        const fullUrl = `${baseUrl}${endpoint}`;
+        console.log('Fetching from:', fullUrl);
+        
+        const response = await fetch(fullUrl, {
             headers: defaultHeaders,
             credentials: 'include',
             ...rest,
         });
 
         const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.message || `HTTP error! status: ${response.status}`);
-            }
-            return data;
-        }
-
+        
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text();
+            let errorMessage;
+            try {
+                const errorData = JSON.parse(errorText);
+                errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+            } catch {
+                errorMessage = `HTTP error! status: ${response.status}: ${errorText}`;
+            }
+            throw new Error(errorMessage);
+        }
+        
+        if (contentType && contentType.includes('application/json')) {
+            const jsonData = await response.json();
+            // Log the structure to help with debugging
+            console.log('API response structure:', {
+                keys: Object.keys(jsonData),
+                hasData: 'data' in jsonData,
+                dataType: jsonData.data ? typeof jsonData.data : null,
+                isArray: jsonData.data ? Array.isArray(jsonData.data) : null
+            });
+            return jsonData;
         }
 
         return { success: true };
@@ -44,7 +64,7 @@ export const apiClient = async (endpoint: string, options: RequestOptions = {}) 
         });
         
         if (error instanceof Error) {
-            throw new Error(`API request failed: ${error.message}`);
+            throw error;
         }
         throw new Error('API request failed');
     }

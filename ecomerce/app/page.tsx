@@ -1,4 +1,5 @@
 import Navbar from "./components/global/navbar";
+import ProductGrid from "./components/home/product/Product";
 import './globals.css'
 
 export default function Home() {
@@ -7,7 +8,7 @@ export default function Home() {
       <Navbar />
       <main className="wrapper">
         <section className="wrapper-assist">
-          
+          <ProductGrid />
         </section>
       </main>
     </div>

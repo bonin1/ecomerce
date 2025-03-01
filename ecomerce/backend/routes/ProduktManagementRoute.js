@@ -5,6 +5,9 @@ const { createCategory, updateCategory, deleteCategory } = require('../controlle
 const { createProduct, updateProduct, deleteProduct } = require('../controller/ProductManagement/Product/CRUDoperations');
 const { getAllProducts, getProductById } = require('../controller/ProductManagement/Product/GetProduct');
 const { authenticate, isAdminOrStaff } = require('../middleware/authMiddleware');
+const { uploadProductMedia, getProductMedia, deleteProductMedia } = require('../controller/ProductManagement/Product/MediaOperations');
+
+const upload = require('../config/UploadConfig');
 
 // Category routes
 router.get('/categories', getAllCategories);
@@ -21,5 +24,10 @@ router.get('/products/:id', getProductById);
 router.post('/products', authenticate, isAdminOrStaff, createProduct);
 router.put('/products/:id', authenticate, isAdminOrStaff, updateProduct);
 router.delete('/products/:id', authenticate, isAdminOrStaff, deleteProduct);
+
+// Product Media routes
+router.post('/products/:id/media', authenticate, isAdminOrStaff, upload.single('image'), uploadProductMedia);
+router.get('/products/:id/media', getProductMedia);
+router.delete('/products/:id/media/:mediaId', authenticate, isAdminOrStaff, deleteProductMedia);
 
 module.exports = router;

@@ -25,6 +25,10 @@ const ProduktMedia = db.define('produkt_media', {
     media_type: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    is_primary: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     }
 });
 

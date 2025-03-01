@@ -78,6 +78,9 @@ const getAllProducts = async (req, res) => {
             
             const category = categoryMap[product.product_category_id] || null;
             
+            // Get primary image for display in product grid
+            const primaryImage = product.product_primary_image || null;
+            
             return {
                 ...product.dataValues,
                 additional_details: additionalDetails ? additionalDetails.dataValues : null,
