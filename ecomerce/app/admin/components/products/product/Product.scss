@@ -1,93 +1,321 @@
 .product-management {
-    padding: 1rem;
-    margin-left: 250px;
-    max-width: 800px;
-    margin: 0 auto;
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Inter', sans-serif;
   
-  h2 {
-    margin-bottom: 20px;
-    font-size: 1.8rem;
+  .product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    
+    h2 {
+      margin: 0;
+      font-size: 1.875rem;
+      font-weight: 600;
+      color: #1a2035;
+    }
+    
+    .add-product-btn {
+      display: flex;
+      align-items: center;
+      background-color: #4c6fff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem 1.25rem;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      
+      .icon {
+        margin-right: 0.5rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+      
+      &:hover {
+        background-color: #3451db;
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      
+      .filter-toggle-btn {
+        display: flex;
+        align-items: center;
+        background-color: #f7fafc;
+        color: #4a5568;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.75rem 1.25rem;
+        font-weight: 500;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        
+        &:hover {
+          background-color: #edf2f7;
+        }
+        
+        .icon {
+          margin-right: 0.5rem;
+        }
+      }
+    }
+  }
+  
+  .filter-panel {
+    background-color: #f7fafc;
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    
+    .filter-panel-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      
+      h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2d3748;
+      }
+      
+      .clear-filters {
+        background: none;
+        border: none;
+        color: #4c6fff;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        padding: 0;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+    
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        
+        label {
+          font-size: 0.85rem;
+          font-weight: 500;
+          color: #4a5568;
+          margin-bottom: 0.5rem;
+        }
+        
+        select, input {
+          padding: 0.6rem 0.75rem;
+          border: 1px solid #e2e8f0;
+          border-radius: 6px;
+          font-size: 0.95rem;
+          
+          &:focus {
+            outline: none;
+            border-color: #4c6fff;
+            box-shadow: 0 0 0 3px rgba(76, 111, 255, 0.1);
+          }
+        }
+        
+        .price-range {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          
+          input {
+            flex: 1;
+            min-width: 0;
+          }
+          
+          span {
+            color: #718096;
+            font-size: 0.85rem;
+          }
+        }
+      }
+    }
   }
   
   .product-controls {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
+    align-items: center;
+    margin-bottom: 1.5rem;
     
     .search-box {
       flex: 1;
-      margin-right: 20px;
+      max-width: 400px;
+      position: relative;
+      
+      .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #718096;
+      }
       
       input {
         width: 100%;
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+        
+        &:focus {
+          outline: none;
+          border-color: #4c6fff;
+          box-shadow: 0 0 0 3px rgba(76, 111, 255, 0.1);
+        }
       }
     }
     
-    .add-product-btn {
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 8px 16px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      
-      &:hover {
-        background-color: #2980b9;
-      }
+    .product-count {
+      font-size: 0.95rem;
+      color: #718096;
     }
   }
   
   .products-list {
-    width: 100%;
-    overflow-x: auto;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
     
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
+    .loading {
+      padding: 3rem 0;
+      text-align: center;
       
-      th, td {
-        text-align: left;
-        padding: 12px 15px;
-        border-bottom: 1px solid #ddd;
+      .spinner {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(76, 111, 255, 0.1);
+        border-radius: 50%;
+        border-top-color: #4c6fff;
+        animation: spin 1s ease-in-out infinite;
+        margin-bottom: 1rem;
       }
       
-      th {
-        background-color: #f9f9f9;
-        font-weight: 600;
+      p {
+        color: #718096;
+        font-size: 1rem;
+        margin: 0;
       }
+    }
+    
+    .table-responsive {
+      overflow-x: auto;
       
-      tbody tr:hover {
-        background-color: #f5f5f5;
-      }
-      
-      button {
-        margin-right: 8px;
-        padding: 6px 12px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
+      table {
+        width: 100%;
+        border-collapse: collapse;
         
-        &:first-child {
-          background-color: #3498db;
-          color: white;
+        th, td {
+          padding: 1rem;
+          text-align: left;
+          border-bottom: 1px solid #edf2f7;
+        }
+        
+        th {
+          font-weight: 600;
+          background-color: #f9fafc;
+          color: #4a5568;
+          font-size: 0.85rem;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+        
+        td {
+          color: #2d3748;
+          font-size: 0.95rem;
           
-          &:hover {
-            background-color: #2980b9;
+          &.product-name {
+            font-weight: 500;
+            color: #1a202c;
           }
         }
         
-        &:last-child {
-          background-color: #e74c3c;
-          color: white;
+        tbody tr {
+          transition: all 0.2s;
           
           &:hover {
-            background-color: #c0392b;
+            background-color: #f7fafc;
           }
+        }
+        
+        .stock-badge {
+          padding: 0.25rem 0.75rem;
+          border-radius: 9999px;
+          font-size: 0.85rem;
+          font-weight: 500;
+          
+          &.in-stock {
+            background-color: #def7ec;
+            color: #047857;
+          }
+          
+          &.out-of-stock {
+            background-color: #fee2e2;
+            color: #b91c1c;
+          }
+        }
+        
+        .action-buttons {
+          display: flex;
+          gap: 0.5rem;
+          
+          button {
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            
+            &.edit-btn {
+              background-color: #ebf5ff;
+              color: #3182ce;
+              
+              &:hover {
+                background-color: #bee3f8;
+              }
+            }
+            
+            &.delete-btn {
+              background-color: #fff5f5;
+              color: #e53e3e;
+              
+              &:hover {
+                background-color: #fed7d7;
+              }
+            }
+          }
+        }
+        
+        .no-products {
+          text-align: center;
+          padding: 3rem;
+          color: #718096;
+          font-size: 1rem;
         }
       }
     }
@@ -165,6 +393,13 @@
         label {
           margin-bottom: 0;
         }
+      }
+      
+      .form-text {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.75rem;
+        color: #718096;
       }
     }
     
@@ -365,5 +600,9 @@
         }
       }
     }
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
   }
 }

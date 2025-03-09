@@ -73,10 +73,7 @@ const Dashboard = () => {
             console.error('Error fetching stats:', error);
         } finally {
             setLoading(false);
-        }
-    };
-
-    const lineChartOptions = {
+        }  };    const lineChartOptions = {
         responsive: true,
         interaction: {
             mode: 'index' as const,

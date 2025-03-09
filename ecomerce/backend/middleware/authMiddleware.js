@@ -5,11 +5,19 @@ const { isTokenBlacklisted } = require('../controller/Auth/Login/LoginSystem');
 exports.authenticate = async (req, res, next) => {
     try {
         let token;
+        let isAdminRequest = false;
+        
+        if (req.path.startsWith('/admin') || req.baseUrl.startsWith('/admin')) {
+            isAdminRequest = true;
+        }
         
         if (req.cookies.sessionToken) {
             token = req.cookies.sessionToken;
         } else if (req.cookies.rememberMeToken) {
             token = req.cookies.rememberMeToken;
+        } else if (req.cookies.adminToken) {
+            token = req.cookies.adminToken;
+            isAdminRequest = true;
         } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
             token = req.headers.authorization.split(' ')[1];
         }
@@ -28,8 +36,11 @@ exports.authenticate = async (req, res, next) => {
             });
         }
 
+        let decoded;
         try {
-            decoded = jwt.verify(token, process.env.JWT_SECRET);
+            // Use the appropriate secret based on the request type
+            const secret = isAdminRequest ? process.env.ADMIN_JWT_SECRET : process.env.JWT_SECRET;
+            decoded = jwt.verify(token, secret);
         } catch (error) {
             return res.status(401).json({ 
                 success: false, 
@@ -46,6 +57,7 @@ exports.authenticate = async (req, res, next) => {
         }
 
         req.user = user;
+        req.isAdminRequest = isAdminRequest;
         next();
     } catch (error) {
         console.error('Auth middleware error:', error);
@@ -70,7 +82,7 @@ exports.authorize = (...roles) => {
 };
 
 exports.isAdmin = async (req, res, next) => {
-    if (req.user.role !== 'admin') {
+    if (!['admin', 'superadmin'].includes(req.user.role)) {
         return res.status(403).json({
             success: false,
             message: 'Access denied. Admin rights required.'

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { authenticate, isAdmin } = require('../middleware/authMiddleware');
+const { authenticateAdmin } = require('../middleware/adminAuthMiddleware');
+const { isAdmin } = require('../middleware/authMiddleware');
 const { 
     adminLogin,
     verifyAdminOTP,
@@ -15,11 +16,11 @@ const { getDashboardStats } = require('../controller/Admin/DashboardStats');
 
 router.post('/login', adminLogin);
 router.post('/verify-otp', verifyAdminOTP);
-router.post('/logout', authenticate, isAdmin, adminLogout);
+router.post('/logout', authenticateAdmin, adminLogout);
 
-router.get('/change-requests', authenticate, isAdmin, getPendingRequests);
-router.post('/change-requests/:requestId/approve', authenticate, isAdmin, approveRequest);
-router.post('/change-requests/:requestId/reject', authenticate, isAdmin, rejectRequest);
-router.get('/dashboard/stats', authenticate, isAdmin, getDashboardStats);
+router.get('/change-requests', authenticateAdmin, getPendingRequests);
+router.post('/change-requests/:requestId/approve', authenticateAdmin, approveRequest);
+router.post('/change-requests/:requestId/reject', authenticateAdmin, rejectRequest);
+router.get('/dashboard/stats', authenticateAdmin, getDashboardStats);
 
 module.exports = router;

@@ -6,14 +6,21 @@ import './Product.scss';
 import Link from 'next/link';
 import Image from 'next/image';
 
+interface ProductMedia {
+  id: number;
+  media_type: string;
+  is_primary: boolean;
+  media_data: string; 
+}
+
 interface ProductType {
   id: number;
   product_name: string;
-  product_primary_image: string;
   product_price: number | string;
   product_discount_active: boolean;
   product_discount_price: number | string;
   product_discount_percentage: number | string;
+  media?: ProductMedia[]; 
 }
 
 const ProductGrid = () => {
@@ -25,13 +32,13 @@ const ProductGrid = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        // Using the correct endpoint: /product/products
         const response = await apiClient('/product/products?limit=18', { 
           method: 'GET', 
           skipAuth: true 
         });
         
         if (response && response.success && Array.isArray(response.data)) {
+          console.log('Product data sample:', response.data[0]);
           setProducts(response.data);
         } else {
           console.error('Unexpected API response structure:', response);
@@ -48,18 +55,37 @@ const ProductGrid = () => {
     fetchProducts();
   }, []);
 
-  // Helper function to safely format price values
   const formatPrice = (price: number | string): string => {
     if (price === null || price === undefined) return '0.00';
     
-    // Convert to number if it's a string
     const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
     
-    // Check if it's a valid number
     if (isNaN(numericPrice)) return '0.00';
     
-    // Format the number
     return numericPrice.toFixed(2);
+  };
+
+  const getProductImage = (product: ProductType): string | null => {
+    if (product.media && product.media.length > 0) {
+      const primaryImage = product.media.find(m => m.is_primary);
+      if (primaryImage) {
+        return primaryImage.media_data;
+      }
+      return product.media[0].media_data;
+    }
+    return null;
+  };
+
+  // Calculate actual discount percentage
+  const calculateDiscount = (original: number | string, discounted: number | string): string => {
+    const originalPrice = Number(original);
+    const discountPrice = Number(discounted);
+    
+    if (originalPrice > 0 && discountPrice > 0) {
+      const percentage = Math.round(((originalPrice - discountPrice) / originalPrice) * 100);
+      return percentage.toString();
+    }
+    return '0';
   };
 
   if (loading) {
@@ -79,20 +105,22 @@ const ProductGrid = () => {
             <div className="product-card" key={product.id}>
               <Link href={`/product/${product.id}`}>
                 <div className="product-image-container">
-                  {product.product_primary_image ? (
+                  {getProductImage(product) ? (
                     <Image 
-                      src={product.product_primary_image} 
-                      alt={product.product_name} 
+                      src={getProductImage(product) || '/placeholder-image.jpg'}
+                      alt={product.product_name}
                       width={250}
                       height={250}
                       className="product-image"
+                      loading="lazy"
                     />
                   ) : (
                     <div className="placeholder-image">No image available</div>
                   )}
                   {product.product_discount_active && (
                     <div className="discount-badge">
-                      -{formatPrice(product.product_discount_percentage)}%
+                      -{product.product_discount_percentage || 
+                        calculateDiscount(product.product_price, product.product_discount_price)}%
                     </div>
                   )}
                 </div>
@@ -100,12 +128,12 @@ const ProductGrid = () => {
                   <h3 className="product-name">{product.product_name}</h3>
                   <div className="product-price">
                     {product.product_discount_active ? (
-                      <>
-                        <span className="original-price">${formatPrice(product.product_price)}</span>
+                      <div className="price-row">
                         <span className="discount-price">${formatPrice(product.product_discount_price)}</span>
-                      </>
+                        <span className="original-price">${formatPrice(product.product_price)}</span>
+                      </div>
                     ) : (
-                      <span>${formatPrice(product.product_price)}</span>
+                      <span className="regular-price">${formatPrice(product.product_price)}</span>
                     )}
                   </div>
                 </div>

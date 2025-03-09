@@ -4,7 +4,6 @@ const ProduktMedia = require('../../../model/ProduktMediaModel');
 const ProductCategory = require('../../../model/ProductCategoryModel');
 const { Op } = require('sequelize');
 
-// Get all products with pagination and filtering
 const getAllProducts = async (req, res) => {
     try {
         const {
@@ -19,7 +18,6 @@ const getAllProducts = async (req, res) => {
             brand
         } = req.query;
 
-        // Build filter conditions
         const whereConditions = {};
         
         if (search) {
@@ -43,10 +41,8 @@ const getAllProducts = async (req, res) => {
             whereConditions.product_brand = { [Op.like]: `%${brand}%` };
         }
 
-        // Calculate pagination
         const offset = (page - 1) * limit;
         
-        // Get products with count (without eager loading)
         const { count, rows: products } = await Produkt.findAndCountAll({
             where: whereConditions,
             limit: parseInt(limit),
@@ -54,23 +50,19 @@ const getAllProducts = async (req, res) => {
             order: [[sort, order]]
         });
 
-        // Get all category IDs from the products
         const categoryIds = [...new Set(products.map(product => product.product_category_id))];
         
-        // Fetch all relevant categories in one query
         const categories = categoryIds.length > 0 
             ? await ProductCategory.findAll({
                 where: { id: categoryIds }
               }) 
             : [];
             
-        // Create a map for quick access to categories
         const categoryMap = {};
         categories.forEach(cat => {
             categoryMap[cat.id] = cat;
         });
 
-        // Get additional details for each product
         const productsWithDetails = await Promise.all(products.map(async (product) => {
             const additionalDetails = await ProduktAdditionalDetails.findOne({
                 where: { product_id: product.id }
@@ -78,13 +70,31 @@ const getAllProducts = async (req, res) => {
             
             const category = categoryMap[product.product_category_id] || null;
             
-            // Get primary image for display in product grid
-            const primaryImage = product.product_primary_image || null;
+            // Get all media for product
+            const media = await ProduktMedia.findAll({
+                where: { product_id: product.id }
+            });
+            
+            const mediaWithBase64 = media.map(item => {
+                let base64 = '';
+                if (item.media) {
+                    base64 = Buffer.from(item.media).toString('base64');
+                }
+                
+                return {
+                    id: item.id,
+                    product_id: item.product_id,
+                    media_type: item.media_type,
+                    is_primary: item.is_primary,
+                    media_data: `data:${item.media_type};base64,${base64}`
+                };
+            });
             
             return {
                 ...product.dataValues,
                 additional_details: additionalDetails ? additionalDetails.dataValues : null,
-                category: category ? category.dataValues : null
+                category: category ? category.dataValues : null,
+                media: mediaWithBase64
             };
         }));
 

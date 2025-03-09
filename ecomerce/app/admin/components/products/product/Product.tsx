@@ -38,6 +38,8 @@ interface Product {
     warranty?: string;
     additional_details?: AdditionalDetails;
     category?: Category;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 interface ProductMedia {
@@ -45,9 +47,17 @@ interface ProductMedia {
     product_id: number;
     media_type: string;
     is_primary?: boolean;
-    media_data: string; // Base64 encoded image data
+    media_data: string; 
     createdAt: string;
     updatedAt: string;
+}
+
+interface FilterOptions {
+    category: number | '';
+    minPrice: number | '';
+    maxPrice: number | '';
+    stockStatus: 'all' | 'in-stock' | 'out-of-stock';
+    dateAdded: string | '';
 }
 
 export default function ProductManagement() {
@@ -61,8 +71,15 @@ export default function ProductManagement() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [uploading, setUploading] = useState(false);
     const [uploadError, setUploadError] = useState('');
+    const [showFilters, setShowFilters] = useState(false);
+    const [filters, setFilters] = useState<FilterOptions>({
+        category: '',
+        minPrice: '',
+        maxPrice: '',
+        stockStatus: 'all',
+        dateAdded: ''
+    });
 
-    // Form state
     const [formData, setFormData] = useState<Product>({
         product_name: '',
         product_description: '',
@@ -82,7 +99,6 @@ export default function ProductManagement() {
         }
     });
 
-    // Additional details form state
     const [additionalDetails, setAdditionalDetails] = useState<AdditionalDetails>({
         product_color: '',
         product_size: '',
@@ -94,8 +110,11 @@ export default function ProductManagement() {
     });
 
     useEffect(() => {
-        fetchProducts();
-        fetchCategories();
+        const adminToken = localStorage.getItem('adminToken');
+        if (adminToken) {
+            fetchProducts();
+            fetchCategories();
+        }
     }, []);
 
     useEffect(() => {
@@ -144,15 +163,96 @@ export default function ProductManagement() {
                 [detailName]: type === 'number' ? parseFloat(value) : value
             }));
         } else {
+            const newValue = type === 'checkbox' 
+                ? (e.target as HTMLInputElement).checked 
+                : type === 'number' 
+                    ? parseFloat(value) 
+                    : value;
+            
+            if (name === 'product_discount_price' && formData.product_price > 0) {
+                const originalPrice = formData.product_price;
+                const discountPrice = parseFloat(value);
+                
+                if (!isNaN(discountPrice) && discountPrice > 0 && discountPrice < originalPrice) {
+                    const percentage = ((originalPrice - discountPrice) / originalPrice) * 100;
+                    
+                    setFormData(prev => ({
+                        ...prev,
+                        [name]: discountPrice,
+                        product_discount_percentage: Math.round(percentage)
+                    }));
+                    return;
+                }
+            } 
+            else if (name === 'product_discount_percentage' && formData.product_price > 0) {
+                const originalPrice = formData.product_price;
+                const discountPercentage = parseFloat(value);
+                
+                if (!isNaN(discountPercentage) && discountPercentage > 0 && discountPercentage < 100) {
+                    const discountPrice = originalPrice - (originalPrice * (discountPercentage / 100));
+                    
+                    setFormData(prev => ({
+                        ...prev,
+                        [name]: discountPercentage,
+                        product_discount_price: Math.round(discountPrice * 100) / 100
+                    }));
+                    return;
+                }
+            }
+            else if (name === 'product_price' && formData.product_discount) {
+                const newPrice = parseFloat(value);
+                
+                if (!isNaN(newPrice) && newPrice > 0) {
+                    if (formData.product_discount_percentage && formData.product_discount_percentage > 0) {
+                        const discountPercentage = formData.product_discount_percentage;
+                        const discountPrice = newPrice - (newPrice * (discountPercentage / 100));
+                        
+                        setFormData(prev => ({
+                            ...prev,
+                            [name]: newPrice,
+                            product_discount_price: Math.round(discountPrice * 100) / 100
+                        }));
+                        return;
+                    }
+                    else if (formData.product_discount_price && formData.product_discount_price > 0) {
+                        const discountPrice = formData.product_discount_price;
+                        if (discountPrice < newPrice) {
+                            const percentage = ((newPrice - discountPrice) / newPrice) * 100;
+                            
+                            setFormData(prev => ({
+                                ...prev,
+                                [name]: newPrice,
+                                product_discount_percentage: Math.round(percentage)
+                            }));
+                            return;
+                        }
+                    }
+                }
+            }
+            
             setFormData(prev => ({
                 ...prev,
-                [name]: type === 'checkbox' 
-                    ? (e.target as HTMLInputElement).checked 
-                    : type === 'number' 
-                        ? parseFloat(value) 
-                        : value
+                [name]: newValue
             }));
         }
+    };
+
+    const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setFilters(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+    
+    const clearFilters = () => {
+        setFilters({
+            category: '',
+            minPrice: '',
+            maxPrice: '',
+            stockStatus: 'all',
+            dateAdded: ''
+        });
     };
 
     const resetForm = () => {
@@ -188,13 +288,11 @@ export default function ProductManagement() {
             };
 
             if (selectedProduct?.id) {
-                // Update existing product
                 await apiClient(`/product/products/${selectedProduct.id}`, {
                     method: 'PUT',
                     body: JSON.stringify(productData),
                 });
             } else {
-                // Create new product
                 await apiClient('/product/products', {
                     method: 'POST',
                     body: JSON.stringify(productData),
@@ -252,13 +350,11 @@ export default function ProductManagement() {
             await apiClient(`/product/products/${selectedProduct.id}/media`, {
                 method: 'POST',
                 body: formData,
-                headers: {}, // Let browser set content type with boundary
+                headers: {}, 
             });
             
-            // Refresh media list
             fetchProductMedia(selectedProduct.id);
             
-            // Reset file input
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';
             }
@@ -280,19 +376,52 @@ export default function ProductManagement() {
                 method: 'DELETE'
             });
             
-            // Refresh media list
             fetchProductMedia(selectedProduct.id);
         } catch (error) {
             console.error('Error deleting image:', error);
         }
     };
 
-    const filteredProducts = products.filter(product =>
-        product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.product_brand.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredProducts = products.filter(product => {
+        if (searchTerm && 
+            !product.product_name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+            !product.product_brand.toLowerCase().includes(searchTerm.toLowerCase())) {
+            return false;
+        }
+        
+        if (filters.category !== '' && product.product_category_id !== Number(filters.category)) {
+            return false;
+        }
+        
+        if (filters.minPrice !== '' && product.product_price < Number(filters.minPrice)) {
+            return false;
+        }
+        if (filters.maxPrice !== '' && product.product_price > Number(filters.maxPrice)) {
+            return false;
+        }
+        
+        if (filters.stockStatus === 'in-stock' && product.product_stock <= 0) {
+            return false;
+        }
+        if (filters.stockStatus === 'out-of-stock' && product.product_stock > 0) {
+            return false;
+        }
+        
+        if (filters.dateAdded && product.createdAt) {
+            const filterDate = new Date(filters.dateAdded);
+            const productDate = new Date(product.createdAt);
+            
+            filterDate.setHours(0, 0, 0, 0);
+            productDate.setHours(0, 0, 0, 0);
+            
+            if (productDate < filterDate) {
+                return false;
+            }
+        }
+        
+        return true;
+    });
 
-    // Helper function to format price safely
     const formatPrice = (price: any): string => {
         if (price === null || price === undefined || isNaN(Number(price))) {
             return '$0.00';
@@ -300,14 +429,45 @@ export default function ProductManagement() {
         return `$${Number(price).toFixed(2)}`;
     };
 
+    const formatDate = (dateString?: string) => {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        return date.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+
     return (
         <div className="product-management">
-            <h2>{selectedProduct ? 'Edit Product' : 'Product Management'}</h2>
+            <div className="product-header">
+                <h2>{selectedProduct ? 'Edit Product' : 'Product Management'}</h2>
+                {!showForm && (
+                    <div className="header-actions">
+                        <button 
+                            className="filter-toggle-btn" 
+                            onClick={() => setShowFilters(!showFilters)}
+                        >
+                            <span className="icon">🔍</span> {showFilters ? 'Hide Filters' : 'Show Filters'}
+                        </button>
+                        <button 
+                            className="add-product-btn" 
+                            onClick={() => setShowForm(true)}
+                        >
+                            <span className="icon">+</span> Add New Product
+                        </button>
+                    </div>
+                )}
+            </div>
             
             {!showForm && (
                 <>
                     <div className="product-controls">
                         <div className="search-box">
+                            <span className="search-icon">🔍</span>
                             <input
                                 type="text"
                                 placeholder="Search products..."
@@ -315,42 +475,143 @@ export default function ProductManagement() {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <button className="add-product-btn" onClick={() => setShowForm(true)}>
-                            Add New Product
-                        </button>
+                        <div className="product-count">
+                            {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''} found
+                        </div>
                     </div>
+                    
+                    {showFilters && (
+                        <div className="filter-panel">
+                            <div className="filter-panel-header">
+                                <h3>Filters</h3>
+                                <button className="clear-filters" onClick={clearFilters}>Clear All</button>
+                            </div>
+                            <div className="filter-grid">
+                                <div className="filter-group">
+                                    <label>Category</label>
+                                    <select 
+                                        name="category"
+                                        value={filters.category}
+                                        onChange={handleFilterChange}
+                                    >
+                                        <option value="">All Categories</option>
+                                        {categories.map(category => (
+                                            <option key={category.id} value={category.id}>
+                                                {category.product_category}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                
+                                <div className="filter-group">
+                                    <label>Price Range</label>
+                                    <div className="price-range">
+                                        <input
+                                            type="number"
+                                            name="minPrice"
+                                            placeholder="Min"
+                                            value={filters.minPrice}
+                                            onChange={handleFilterChange}
+                                        />
+                                        <span>to</span>
+                                        <input
+                                            type="number"
+                                            name="maxPrice"
+                                            placeholder="Max"
+                                            value={filters.maxPrice}
+                                            onChange={handleFilterChange}
+                                        />
+                                    </div>
+                                </div>
+                                
+                                <div className="filter-group">
+                                    <label>Stock Status</label>
+                                    <select
+                                        name="stockStatus"
+                                        value={filters.stockStatus}
+                                        onChange={handleFilterChange}
+                                    >
+                                        <option value="all">All</option>
+                                        <option value="in-stock">In Stock</option>
+                                        <option value="out-of-stock">Out of Stock</option>
+                                    </select>
+                                </div>
+                                
+                                <div className="filter-group">
+                                    <label>Added After</label>
+                                    <input
+                                        type="date"
+                                        name="dateAdded"
+                                        value={filters.dateAdded}
+                                        onChange={handleFilterChange}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     
                     <div className="products-list">
                         {loading ? (
-                            <div className="loading">Loading...</div>
+                            <div className="loading">
+                                <div className="spinner"></div>
+                                <p>Loading products...</p>
+                            </div>
                         ) : (
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Brand</th>
-                                        <th>Price</th>
-                                        <th>Stock</th>
-                                        <th>Category</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {filteredProducts.map(product => (
-                                        <tr key={product.id}>
-                                            <td>{product.product_name}</td>
-                                            <td>{product.product_brand}</td>
-                                            <td>{formatPrice(product.product_price)}</td>
-                                            <td>{product.product_stock}</td>
-                                            <td>{product.category?.product_category || ''}</td>
-                                            <td>
-                                                <button onClick={() => handleEdit(product)}>Edit</button>
-                                                <button onClick={() => product.id && handleDelete(product.id)}>Delete</button>
-                                            </td>
+                            <div className="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Brand</th>
+                                            <th>Price</th>
+                                            <th>Stock</th>
+                                            <th>Category</th>
+                                            <th>Created</th>
+                                            <th>Updated</th>
+                                            <th>Actions</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {filteredProducts.length > 0 ? (
+                                            filteredProducts.map(product => (
+                                                <tr key={product.id}>
+                                                    <td className="product-name">{product.product_name}</td>
+                                                    <td>{product.product_brand}</td>
+                                                    <td>{formatPrice(product.product_price)}</td>
+                                                    <td>
+                                                        <span className={`stock-badge ${product.product_stock > 0 ? 'in-stock' : 'out-of-stock'}`}>
+                                                            {product.product_stock > 0 ? product.product_stock : 'Out of stock'}
+                                                        </span>
+                                                    </td>
+                                                    <td>{product.category?.product_category || ''}</td>
+                                                    <td>{formatDate(product.createdAt)}</td>
+                                                    <td>{formatDate(product.updatedAt)}</td>
+                                                    <td className="action-buttons">
+                                                        <button 
+                                                            className="edit-btn"
+                                                            onClick={() => handleEdit(product)}
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                        <button 
+                                                            className="delete-btn"
+                                                            onClick={() => product.id && handleDelete(product.id)}
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan={8} className="no-products">
+                                                    No products found. Try adjusting your search or add a new product.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
                         )}
                     </div>
                 </>
@@ -472,6 +733,9 @@ export default function ProductManagement() {
                                                 min="0"
                                                 step="0.01"
                                             />
+                                            <small className="form-text text-muted">
+                                                Enter discount price to auto-calculate percentage
+                                            </small>
                                         </div>
                                         
                                         <div className="form-group">
@@ -485,6 +749,9 @@ export default function ProductManagement() {
                                                 min="0"
                                                 max="100"
                                             />
+                                            <small className="form-text text-muted">
+                                                Enter percentage to auto-calculate discount price
+                                            </small>
                                         </div>
                                     </div>
                                     

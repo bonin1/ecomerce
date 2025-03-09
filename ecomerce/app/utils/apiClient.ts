@@ -5,12 +5,16 @@ interface RequestOptions extends RequestInit {
 export const apiClient = async (endpoint: string, options: RequestOptions = {}) => {
     try {
         const { skipAuth = false, headers = {}, ...rest } = options;
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
-        // Handle client-side and server-side scenarios for token
         let token = null;
         if (typeof window !== 'undefined') {
-            token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+            if (endpoint.startsWith('/admin')) {
+                token = localStorage.getItem('adminToken');
+                console.log('Using admin token for admin route:', endpoint);
+            } else {
+                token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+            }
         }
 
         const isFormData = options.body instanceof FormData;
@@ -22,10 +26,11 @@ export const apiClient = async (endpoint: string, options: RequestOptions = {}) 
 
         const fullUrl = `${baseUrl}${endpoint}`;
         console.log('Fetching from:', fullUrl);
+        console.log('Using token:', token ? 'Yes' : 'No');
         
         const response = await fetch(fullUrl, {
             headers: defaultHeaders,
-            credentials: 'include',
+            credentials: 'include', // This is crucial for cookies
             ...rest,
         });
 

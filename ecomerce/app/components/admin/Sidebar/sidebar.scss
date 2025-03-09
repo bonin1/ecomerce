@@ -1,24 +1,38 @@
 .admin-sidebar {
-    width: 250px;
+    width: 260px;
     height: 100vh;
-    background: #1a1a1a;
+    background: linear-gradient(180deg, #1a2035 0%, #232a42 100%);
     color: #fff;
     position: fixed;
     left: 0;
     top: 0;
-    padding: 1rem;
     display: flex;
     flex-direction: column;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    transition: all 0.3s ease;
 
     .sidebar-header {
-        padding: 1rem 0;
-        border-bottom: 1px solid #333;
-        margin-bottom: 1rem;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 0.5rem;
 
         h3 {
             margin: 0;
             font-size: 1.5rem;
-            text-align: center;
+            font-weight: 600;
+            background: linear-gradient(45deg, #6e8efb, #a777e3);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .admin-logo {
+            height: 32px;
+            margin-right: 0.5rem;
         }
     }
 
@@ -26,55 +40,152 @@
         flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        padding: 1rem 0;
+        overflow-y: auto;
 
-        .nav-item {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 0.5rem;
-            transition: background-color 0.2s;
-
-            &:hover {
-                background: #333;
+        .nav-section {
+            margin-bottom: 0.5rem;
+            
+            .section-title {
+                font-size: 0.7rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: rgba(255, 255, 255, 0.4);
+                padding: 0.5rem 1.5rem;
+                margin-bottom: 0.25rem;
             }
 
-            &.active {
-                background: #2c2c2c;
-                font-weight: bold;
-            }
+            .nav-item {
+                display: flex;
+                align-items: center;
+                padding: 0.75rem 1.5rem;
+                color: rgba(255, 255, 255, 0.7);
+                text-decoration: none;
+                border-left: 3px solid transparent;
+                margin: 0.15rem 0;
+                transition: all 0.2s ease;
+                font-weight: 500;
 
-            .icon {
-                margin-right: 0.75rem;
+                &:hover {
+                    background: rgba(255, 255, 255, 0.05);
+                    color: #fff;
+                }
+
+                &.active {
+                    background: rgba(255, 255, 255, 0.1);
+                    color: #fff;
+                    border-left-color: #6e8efb;
+                }
+
+                .icon {
+                    margin-right: 0.75rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 24px;
+                    height: 24px;
+                    font-size: 1.1rem;
+                }
             }
         }
     }
 
     .sidebar-footer {
-        padding-top: 1rem;
-        border-top: 1px solid #333;
+        padding: 1rem 1.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+            .avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: #6e8efb;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 0.75rem;
+                font-weight: bold;
+                font-size: 1rem;
+            }
+
+            .user-details {
+                .user-name {
+                    font-weight: 600;
+                    margin: 0;
+                    font-size: 0.9rem;
+                }
+                .user-role {
+                    color: rgba(255, 255, 255, 0.5);
+                    font-size: 0.75rem;
+                    text-transform: capitalize;
+                }
+            }
+        }
 
         .logout-btn {
             width: 100%;
             padding: 0.75rem;
             display: flex;
             align-items: center;
-            background: #ff4444;
-            border: none;
-            border-radius: 0.5rem;
-            color: white;
+            justify-content: center;
+            background: rgba(255, 99, 99, 0.15);
+            border: 1px solid rgba(255, 99, 99, 0.3);
+            border-radius: 8px;
+            color: #ff6363;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
+            font-weight: 500;
 
             &:hover {
-                background: #ff2020;
+                background: rgba(255, 99, 99, 0.25);
             }
 
             .icon {
-                margin-right: 0.75rem;
+                margin-right: 0.5rem;
             }
         }
+    }
+}
+
+// For responsive design
+@media (max-width: 768px) {
+    .admin-sidebar {
+        width: 70px;
+        overflow-x: hidden;
+
+        .sidebar-header h3, 
+        .nav-item .label,
+        .user-details,
+        .logout-btn .label {
+            display: none;
+        }
+
+        .nav-item, 
+        .logout-btn {
+            justify-content: center;
+        }
+
+        .icon {
+            margin-right: 0 !important;
+            font-size: 1.25rem !important;
+        }
+
+        .sidebar-footer .logout-btn {
+            padding: 0.5rem;
+        }
+
+        .sidebar-nav .nav-section .section-title {
+            display: none;
+        }
+    }
+
+    .admin-main {
+        margin-left: 70px !important;
     }
 }

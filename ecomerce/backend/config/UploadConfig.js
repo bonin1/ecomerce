@@ -3,25 +3,19 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
-    const allowedTypes = [
-        'image/jpeg', 
-        'image/png', 
-        'image/gif'
-    ];
-    
-    if (allowedTypes.includes(file.mimetype)) {
-        cb(null, true);
-    } else {
-        cb(new Error('Invalid file type. Only JPEG, PNG, and GIF are allowed for profile pictures'), false);
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+        req.fileValidationError = 'Only image files are allowed!';
+        return cb(null, false);
     }
+    cb(null, true);
 };
 
 const upload = multer({
     storage: storage,
-    fileFilter: fileFilter,
     limits: {
-        fileSize: 5 * 1024 * 1024 
-    }
+        fileSize: 5 * 1024 * 1024,
+    },
+    fileFilter: fileFilter
 });
 
 module.exports = upload;
