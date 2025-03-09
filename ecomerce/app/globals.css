@@ -24,3 +24,15 @@
         padding: 50px 20px;
     }
 }
+
+@media (max-width: 1024px) {
+    body {
+        padding-top: 100px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 80px;
+    }
+}

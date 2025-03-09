@@ -1,15 +1,47 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import './navbar.scss'
 import Link from 'next/link'
 import { User } from '@/app/types'
+import { useCart } from '@/app/context/CartContext'
 
 const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
     const [user, setUser] = useState<User | null>(null);
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+    const { toggleCart, totalItems } = useCart();
+    const mobileMenuRef = useRef<HTMLDivElement>(null);
+    const profileDropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (isProfileMenuOpen && 
+                profileDropdownRef.current && 
+                !profileDropdownRef.current.contains(event.target as Node)) {
+                setIsProfileMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isProfileMenuOpen]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (isMobileMenuOpen) {
+                setIsMobileMenuOpen(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [isMobileMenuOpen]);
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -43,6 +75,8 @@ const Navbar = () => {
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
         if (isCategoriesOpen) setIsCategoriesOpen(false);
+        
+        document.body.style.overflow = !isMobileMenuOpen ? 'hidden' : '';
     };
 
     const toggleCategories = () => {
@@ -64,7 +98,7 @@ const Navbar = () => {
                         <span className="profile-name">{user.name}</span>
                     </div>
                     {isProfileMenuOpen && (
-                        <div className="profile-dropdown">
+                        <div className="profile-dropdown" ref={profileDropdownRef}>
                             <Link href="/profile" className="dropdown-item">
                                 <i className="bi bi-person"></i> Profile
                             </Link>
@@ -96,6 +130,11 @@ const Navbar = () => {
         );
     };
 
+    const handleCartClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        toggleCart();
+    };
+
     return (
         <header>
             <nav className='navbar'>
@@ -115,9 +154,9 @@ const Navbar = () => {
 
                     <div className="nav-actions desktop-only">
                         {renderAuthButtons()}
-                        <div className="cart">
+                        <div className="cart" onClick={handleCartClick}>
                             <i className="bi bi-cart3"></i>
-                            <span className="cart-count">0</span>
+                            <span className="cart-count">{totalItems}</span>
                         </div>
                     </div>
 
@@ -126,7 +165,10 @@ const Navbar = () => {
                     </button>
                 </div>
             </nav>
-            <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
+            <div 
+                className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`} 
+                ref={mobileMenuRef}
+            >
                 <div className="search-container">
                     <input type="text" placeholder="Search products..." />
                     <button className="search-btn">
@@ -138,9 +180,19 @@ const Navbar = () => {
                     {renderAuthButtons()}
                 </div>
 
+                <div className="mobile-nav-actions">
+                    <div className="cart-action" onClick={handleCartClick}>
+                        <i className="bi bi-cart3"></i>
+                        <span>Cart ({totalItems})</span>
+                    </div>
+                </div>
+
                 <div className="mobile-categories">
                     <button className="categories-toggle" onClick={toggleCategories}>
-                        Categories {isCategoriesOpen}
+                        Categories
+                        <span className="toggle-icon">
+                            {isCategoriesOpen ? '−' : '+'}
+                        </span>
                     </button>
                     <ul className={`categories ${isCategoriesOpen ? 'open' : ''}`}>
                         <li><Link href="/category/electronics">Electronics</Link></li>

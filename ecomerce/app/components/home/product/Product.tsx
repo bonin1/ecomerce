@@ -5,6 +5,9 @@ import { apiClient } from '../../../utils/apiClient';
 import './Product.scss';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCart } from '@/app/context/CartContext';
+import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 interface ProductMedia {
   id: number;
@@ -27,6 +30,8 @@ const ProductGrid = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { addToCart } = useCart();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -76,7 +81,6 @@ const ProductGrid = () => {
     return null;
   };
 
-  // Calculate actual discount percentage
   const calculateDiscount = (original: number | string, discounted: number | string): string => {
     const originalPrice = Number(original);
     const discountPrice = Number(discounted);
@@ -86,6 +90,19 @@ const ProductGrid = () => {
       return percentage.toString();
     }
     return '0';
+  };
+
+  const handleAddToCart = (e: React.MouseEvent, product: ProductType) => {
+    e.preventDefault(); 
+    e.stopPropagation();
+    addToCart(product);
+    toast.success(`${product.product_name} added to cart`);
+  };
+
+  const handleViewProduct = (e: React.MouseEvent, productId: number) => {
+    e.preventDefault();
+    e.stopPropagation(); 
+    router.push(`/product/${productId}`);
   };
 
   if (loading) {
@@ -123,6 +140,21 @@ const ProductGrid = () => {
                         calculateDiscount(product.product_price, product.product_discount_price)}%
                     </div>
                   )}
+                  
+                  <div className="product-actions">
+                    <button 
+                      className="view-product-btn"
+                      onClick={(e) => handleViewProduct(e, product.id)}
+                    >
+                      View Product
+                    </button>
+                    <button 
+                      className="add-to-cart-btn" 
+                      onClick={(e) => handleAddToCart(e, product)}
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
                 <div className="product-info">
                   <h3 className="product-name">{product.product_name}</h3>
