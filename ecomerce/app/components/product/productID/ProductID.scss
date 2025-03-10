@@ -1,0 +1,317 @@
+.product-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.product-detail-loading,
+.product-detail-error {
+  text-align: center;
+  padding: 3rem 1rem;
+  font-size: 1.1rem;
+  color: #555;
+  
+  &.product-detail-error {
+    color: #d32f2f;
+  }
+}
+
+.product-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.product-images {
+  .main-image {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f8f8f8;
+    margin-bottom: 1rem;
+    
+    .product-img {
+      width: 100%;
+      height: auto;
+      max-height: 500px;
+      object-fit: contain;
+      display: block;
+    }
+    
+    .product-img-placeholder {
+      height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 1rem;
+    }
+    
+    .discount-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background-color: #d32f2f;
+      color: white;
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      z-index: 2;
+    }
+  }
+  
+  .thumbnail-gallery {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+    
+    .thumbnail {
+      width: 80px;
+      height: 80px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+      
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      &:hover {
+        border-color: #999;
+        transform: translateY(-2px);
+      }
+      
+      &.active {
+        border-color: #2c3e50;
+        border-width: 2px;
+      }
+    }
+  }
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  
+  .product-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    color: #2c3e50;
+  }
+  
+  .product-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    color: #555;
+    
+    strong {
+      color: #2c3e50;
+    }
+  }
+  
+  .product-price-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    
+    .discount-price {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #d32f2f;
+    }
+    
+    .original-price {
+      font-size: 1.2rem;
+      text-decoration: line-through;
+      color: #777;
+    }
+    
+    .regular-price {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    
+    .discount-tag {
+      background-color: #d32f2f;
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+  }
+  
+  .product-stock {
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    
+    .in-stock {
+      color: #2e7d32;
+      font-weight: 500;
+    }
+    
+    .out-of-stock {
+      color: #d32f2f;
+      font-weight: 500;
+    }
+  }
+  
+  .product-description, .product-specs, .product-warranty {
+    margin-bottom: 1.5rem;
+    
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0 0 0.75rem 0;
+      color: #2c3e50;
+    }
+    
+    .description-content {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #444;
+      white-space: pre-line;
+    }
+  }
+  
+  .specs-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 0.75rem;
+    
+    li {
+      font-size: 0.95rem;
+      display: flex;
+      
+      span {
+        font-weight: 600;
+        min-width: 120px;
+        color: #2c3e50;
+      }
+    }
+  }
+  
+  .product-actions {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-top: 1rem;
+    
+    .quantity-selector {
+      display: flex;
+      align-items: center;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+      
+      .quantity-btn {
+        background-color: #f0f0f0;
+        border: none;
+        padding: 0.75rem;
+        width: 40px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        &:hover:not(:disabled) {
+          background-color: #e0e0e0;
+        }
+        
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+      
+      input {
+        width: 60px;
+        text-align: center;
+        border: none;
+        font-size: 1rem;
+        padding: 0.75rem 0.5rem;
+        -moz-appearance: textfield;
+        
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        
+        &:focus {
+          outline: none;
+          background-color: #f8f8f8;
+        }
+      }
+    }
+    
+    .add-to-cart-btn {
+      flex: 1;
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover:not(:disabled) {
+        background-color: #1a252f;
+      }
+      
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .product-actions {
+    flex-direction: column;
+    width: 100%;
+    
+    .quantity-selector {
+      width: 100%;
+      margin-bottom: 0.75rem;
+      
+      .quantity-btn {
+        flex: 1;
+      }
+      
+      input {
+        flex: 2;
+      }
+    }
+    
+    .add-to-cart-btn {
+      width: 100%;
+    }
+  }
+}

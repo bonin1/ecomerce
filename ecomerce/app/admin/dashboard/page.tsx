@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Sidebar from '@/app/components/admin/Sidebar/sidebar';
 import { Line, Bar } from 'react-chartjs-2';
 import { apiClient } from '@/app/utils/apiClient';
+import Cookies from 'js-cookie';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -55,10 +56,22 @@ const Dashboard = () => {
 
     useEffect(() => {
         const user = localStorage.getItem('adminUser');
-        if (!user) {
+        const token = localStorage.getItem('adminToken');
+        
+        if (!user || !token) {
             router.push('/admin/login');
             return;
         }
+
+        const syncCookie = Cookies.get('adminTokenSync');
+        if (token && !syncCookie) {
+            Cookies.set('adminTokenSync', token, {
+                expires: 1/6, 
+                path: '/',
+                sameSite: 'Strict'
+            });
+        }
+        
         setAdminUser(JSON.parse(user));
         fetchDashboardStats();
     }, [router]);

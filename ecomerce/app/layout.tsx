@@ -2,9 +2,8 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import Script from 'next/script'
 import { CartProvider } from './context/CartContext'
-import Navbar from './components/global/navbar'
-import CartSidebar from './components/cart/CartSidebar'
 import { Toaster } from 'react-hot-toast'
+import ConditionalLayout from './components/global/ConditionalLayout'
 
 export default function RootLayout({
   children,
@@ -20,9 +19,9 @@ export default function RootLayout({
       </head>
       <body>
         <CartProvider>
-          <Navbar />
-          {children}
-          <CartSidebar />
+          <ConditionalLayout>
+            {children}
+          </ConditionalLayout>
           <Toaster position="top-right" />
         </CartProvider>
         <Script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" />

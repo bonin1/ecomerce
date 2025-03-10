@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import './sidebar.scss';
+import Cookies from 'js-cookie'; 
 
 interface AdminUser {
     name: string;
@@ -33,8 +34,12 @@ const Sidebar = () => {
                 method: 'POST',
                 credentials: 'include',
             });
+            
+            // Clear both localStorage and cookie
             localStorage.removeItem('adminToken');
             localStorage.removeItem('adminUser');
+            Cookies.remove('adminTokenSync', { path: '/' });
+            
             router.push('/admin/login');
         } catch (error) {
             console.error('Logout failed:', error);

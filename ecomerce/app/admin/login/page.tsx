@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { Toaster } from 'react-hot-toast';
+import Cookies from 'js-cookie';
 
 const AdminLoginPage = () => {
     const router = useRouter();
@@ -73,6 +74,12 @@ const AdminLoginPage = () => {
             if (data.success) {
                 localStorage.setItem('adminToken', data.data.token);
                 localStorage.setItem('adminUser', JSON.stringify(data.data.user));
+                
+                Cookies.set('adminTokenSync', data.data.token, {
+                    expires: 1/6, 
+                    path: '/',
+                    sameSite: 'Strict'
+                });
                 
                 toast.success('Login successful');
                 router.push('/admin/dashboard');
