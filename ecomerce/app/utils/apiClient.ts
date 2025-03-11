@@ -25,38 +25,32 @@ export const apiClient = async (endpoint: string, options: RequestOptions = {}) 
         };
 
         const fullUrl = `${baseUrl}${endpoint}`;
-        console.log('Fetching from:', fullUrl);
-        console.log('Using token:', token ? 'Yes' : 'No');
         
         const response = await fetch(fullUrl, {
             headers: defaultHeaders,
-            credentials: 'include', // This is crucial for cookies
+            credentials: 'include',
             ...rest,
         });
 
         const contentType = response.headers.get('content-type');
         
         if (!response.ok) {
+            console.error(`HTTP error! Status: ${response.status}`);
             const errorText = await response.text();
             let errorMessage;
             try {
                 const errorData = JSON.parse(errorText);
-                errorMessage = errorData.message || `HTTP error! status: ${response.status}`;
+                errorMessage = errorData.message || `HTTP error! Status: ${response.status}`;
+                console.error('Error response:', errorData);
             } catch {
-                errorMessage = `HTTP error! status: ${response.status}: ${errorText}`;
+                errorMessage = `HTTP error! Status: ${response.status}: ${errorText}`;
+                console.error('Error text:', errorText);
             }
             throw new Error(errorMessage);
         }
         
         if (contentType && contentType.includes('application/json')) {
             const jsonData = await response.json();
-            // Log the structure to help with debugging
-            console.log('API response structure:', {
-                keys: Object.keys(jsonData),
-                hasData: 'data' in jsonData,
-                dataType: jsonData.data ? typeof jsonData.data : null,
-                isArray: jsonData.data ? Array.isArray(jsonData.data) : null
-            });
             return jsonData;
         }
 
@@ -64,13 +58,9 @@ export const apiClient = async (endpoint: string, options: RequestOptions = {}) 
     } catch (error) {
         console.error('API Client Error:', {
             error,
-            endpoint,
-            options
+            endpoint
         });
         
-        if (error instanceof Error) {
-            throw error;
-        }
-        throw new Error('API request failed');
+        throw error;
     }
 };

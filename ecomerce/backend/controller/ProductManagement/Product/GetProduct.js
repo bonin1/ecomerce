@@ -139,18 +139,41 @@ const getProductById = async (req, res) => {
         });
         
         // Get media files
-        const media = await ProduktMedia.findAll({
+        const mediaItems = await ProduktMedia.findAll({
             where: { product_id: id }
         });
         
-        // Get category
+        const media = mediaItems
+            .filter(item => item.media && Buffer.isBuffer(item.media) && item.media.length > 0)
+            .map(item => {
+                try {
+                    const base64 = Buffer.from(item.media).toString('base64');
+                    if (!base64 || base64.length === 0) {
+                        return null;
+                    }
+                    
+                    return {
+                        id: item.id,
+                        product_id: item.product_id,
+                        media_type: item.media_type || 'image/png',
+                        is_primary: Boolean(item.is_primary),
+                        media_data: `data:${item.media_type || 'image/png'};base64,${base64}`,
+                        createdAt: item.createdAt,
+                        updatedAt: item.updatedAt
+                    };
+                } catch (err) {
+                    console.error(`Error processing media ${item.id}:`, err);
+                    return null;
+                }
+            })
+            .filter(item => item !== null);
+        
         const category = await ProductCategory.findByPk(product.product_category_id);
         
-        // Combine all data
         const completeProduct = {
             ...product.dataValues,
             additional_details: additionalDetails ? additionalDetails.dataValues : null,
-            media: media.length > 0 ? media.map(item => item.dataValues) : [],
+            media: media,
             category: category ? category.dataValues : null
         };
         

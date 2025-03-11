@@ -6,10 +6,16 @@ import { useParams } from 'next/navigation';
 
 export default function ProductPage() {
   const params = useParams();
-  const productId = Number(params.id);
+  const productId = Number(params?.id);
 
-  if (isNaN(productId)) {
-    return <div className="container mt-5 text-center">Invalid product ID</div>;
+  if (!params?.id || isNaN(productId)) {
+    return (
+      <main className="wrapper">
+        <section className="wrapper-assist">
+          <div className="container mt-5 text-center">Invalid product ID</div>
+        </section>
+      </main>
+    );
   }
 
   return (

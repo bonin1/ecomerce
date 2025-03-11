@@ -100,22 +100,34 @@ const getProductMedia = async (req, res) => {
             where: { product_id: productId }
         });
         
-        const mediaWithBase64 = media.map(item => {
-            let base64 = '';
-            if (item.media) {
-                base64 = Buffer.from(item.media).toString('base64');
+        const mediaWithBase64 = media
+            .filter(item => item.media && Buffer.isBuffer(item.media) && item.media.length > 0)
+            .map(item => {
+                try {
+                    const base64 = Buffer.from(item.media).toString('base64');
+                    
+                    return {
+                        id: item.id,
+                        product_id: item.product_id,
+                        media_type: item.media_type || 'image/png',
+                        is_primary: Boolean(item.is_primary),
+                        media_data: `data:${item.media_type || 'image/png'};base64,${base64}`,
+                        createdAt: item.createdAt,
+                        updatedAt: item.updatedAt
+                    };
+                } catch (err) {
+                    console.error(`Error processing media ${item.id}:`, err);
+                    return null;
+                }
+            })
+            .filter(item => item !== null);
+        
+        if (mediaWithBase64.length > 0) {
+            const firstItem = mediaWithBase64[0];
+            if (firstItem && firstItem.media_data) {
+                const dataStart = firstItem.media_data.substring(0, 50);
             }
-            
-            return {
-                id: item.id,
-                product_id: item.product_id,
-                media_type: item.media_type,
-                is_primary: item.is_primary,
-                media_data: `data:${item.media_type};base64,${base64}`,
-                createdAt: item.createdAt,
-                updatedAt: item.updatedAt
-            };
-        });
+        }
         
         return res.status(200).json({
             success: true,
