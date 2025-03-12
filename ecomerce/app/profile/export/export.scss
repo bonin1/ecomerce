@@ -1,0 +1,50 @@
+.export-data-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    
+    .page-header {
+        margin-bottom: 2rem;
+    
+        h2 {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+    }
+    
+    .content-panel {
+        background-color: #fff;
+        border: 1px solid #e9ecef;
+        border-radius: 0.25rem;
+        padding: 2rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    
+    .format-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+        margin: 1rem 0;
+        
+        .format-card {
+            border: 1px solid #e9ecef;
+            border-radius: 0.25rem;
+            padding: 1rem;
+            
+            &:hover {
+                background-color: #f8f9fa;
+            }
+            
+            .form-check-label {
+                cursor: pointer;
+                width: 100%;
+            }
+            
+            .format-icon {
+                font-size: 2rem;
+                margin-right: 1rem;
+                color: #6c757d;
+            }
+        }
+    }
+}

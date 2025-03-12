@@ -19,6 +19,7 @@
     "@mui/icons-material": "^6.4.2",
     "@mui/material": "^6.4.2",
     "@popperjs/core": "^2.11.8",
+    "archiver": "^7.0.1",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
@@ -28,6 +29,7 @@
     "concurrently": "^9.1.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "csv-writer": "^1.6.0",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
@@ -42,6 +44,8 @@
     "next": "15.1.6",
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9",
+    "pdfkit": "^0.16.0",
+    "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
     "react-chartjs-2": "^5.3.0",
@@ -53,6 +57,7 @@
     "sass": "^1.83.4",
     "sequelize": "^6.37.5",
     "sharp": "^0.33.5",
+    "speakeasy": "^2.0.0",
     "ua-parser-js": "^2.0.0"
   },
   "devDependencies": {

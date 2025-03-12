@@ -1,5 +1,6 @@
 const UserModel = require('./UserModel');
 const UserImage = require('./UserImageModel');
+const UserActivityLog = require('./UserActivityLogModel');
 
 const ProductModel = require('./ProduktModel');
 const ProductCategory = require('./ProductCategoryModel');
@@ -13,6 +14,7 @@ const syncModels = async () => {
     try {
         await UserModel.sync({ alter: false });
         await UserImage.sync({ alter: false });
+        await UserActivityLog.sync({ alter: false });
         await ProductCategory.sync({ alter: false });
         await ProductModel.sync({ alter: false });
         await ProductMedia.sync({ alter: false });

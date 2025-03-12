@@ -4,6 +4,7 @@ const path = require('path');
 const transporter = require('../../../config/EmailConfig');
 const User = require('../../../model/UserModel');
 const { validateEmail } = require('../../../utils/validation');
+const { Op } = require('sequelize');
 
 const getEmailTemplate = async () => {
     const templatePath = path.join(__dirname, '../../../template/EmailChangeTemplate.html');

@@ -1,0 +1,65 @@
+.security-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    
+    .page-header {
+        margin-bottom: 2rem;
+    
+        h2 {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+    }
+    
+    .content-panel {
+        background-color: #fff;
+        border: 1px solid #e9ecef;
+        border-radius: 0.25rem;
+        padding: 2rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    
+    .security-options {
+        .security-card {
+            padding: 1.5rem 0;
+            
+            h4 {
+                font-size: 1.25rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+        
+        .security-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            
+            i {
+                font-size: 2rem;
+                color: #6c757d;
+            }
+            
+            &.active {
+                background-color: #d4edda;
+                
+                i {
+                    color: #28a745;
+                }
+            }
+            
+            &.warning {
+                background-color: #fff3cd;
+                
+                i {
+                    color: #dc3545;
+                }
+            }
+        }
+    }
+}

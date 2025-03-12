@@ -70,3 +70,56 @@ export const confirmEmailChange = async (token: string) => {
         throw error;
     }
 };
+
+export const changePassword = async (currentPassword: string, newPassword: string) => {
+    try {
+        const response = await apiClient('/api/profile/password/change', {
+            method: 'POST',
+            body: JSON.stringify({ currentPassword, newPassword })
+        });
+
+        return response;
+    } catch (error) {
+        console.error('Password change error:', error);
+        throw error;
+    }
+};
+
+export const deleteAccount = async () => {
+    try {
+        const response = await apiClient('/api/profile/delete', {
+            method: 'DELETE'
+        });
+
+        return response;
+    } catch (error) {
+        console.error('Account deletion error:', error);
+        throw error;
+    }
+};
+
+export const reactivateAccount = async () => {
+    try {
+        const response = await apiClient('/api/profile/reactivate', {
+            method: 'POST'
+        });
+
+        return response;
+    } catch (error) {
+        console.error('Account reactivation error:', error);
+        throw error;
+    }
+};
+
+export const getActivityHistory = async (page = 1, limit = 10) => {
+    try {
+        const response = await apiClient(`/api/profile/activity?page=${page}&limit=${limit}`, {
+            method: 'GET'
+        });
+
+        return response;
+    } catch (error) {
+        console.error('Activity history error:', error);
+        throw error;
+    }
+};

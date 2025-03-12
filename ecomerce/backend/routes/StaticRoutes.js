@@ -18,6 +18,8 @@ const staticRoutes = [
     }
 ];
 
+const path = require('path');
+
 exports.setupStaticRoutes = (app) => {
     staticRoutes.forEach(route => {
         const handlers = [
@@ -28,5 +30,16 @@ exports.setupStaticRoutes = (app) => {
             }
         ];
         app.get(route.path, handlers);
+    });
+
+    app.get('/api/downloads/:exportId/:filename', (req, res) => {
+        const { exportId, filename } = req.params;
+        const filePath = path.join(__dirname, '../exports', exportId, filename);
+        
+        res.download(filePath, filename, (err) => {
+            if (err) {
+                res.status(404).send('File not found');
+            }
+        });
     });
 };

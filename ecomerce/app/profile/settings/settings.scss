@@ -1,0 +1,47 @@
+.settings-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    
+    .page-header {
+        margin-bottom: 2rem;
+    
+        h2 {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+    }
+    
+    .content-panel {
+        background-color: #fff;
+        border: 1px solid #e9ecef;
+        border-radius: 0.25rem;
+        padding: 2rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    
+    .settings-section {
+        margin-bottom: 1.5rem;
+        
+        .section-title {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .form-check-label {
+            div {
+                font-weight: 500;
+            }
+            
+            small {
+                display: block;
+                margin-top: 0.25rem;
+            }
+        }
+    }
+    
+    .settings-loading {
+        text-align: center;
+        padding: 3rem;
+    }
+}
