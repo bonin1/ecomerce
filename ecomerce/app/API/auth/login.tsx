@@ -1,4 +1,5 @@
 import { LoginData, ApiResponse, LoginResponse } from '@/app/types';
+import { dispatchUserLogin } from '@/app/utils/auth-events';
 
 export const login = async (loginData: LoginData): Promise<ApiResponse<LoginResponse>> => {
     try {
@@ -26,6 +27,8 @@ export const login = async (loginData: LoginData): Promise<ApiResponse<LoginResp
                 sessionStorage.setItem('accessToken', data.data.accessToken);
                 sessionStorage.setItem('user', JSON.stringify(data.data.user));
             }
+            
+            dispatchUserLogin(data.data.user);
         }
 
         return data;

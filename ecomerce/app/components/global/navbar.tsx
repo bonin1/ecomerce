@@ -5,15 +5,18 @@ import './navbar.scss'
 import Link from 'next/link'
 import { User } from '@/app/types'
 import { useCart } from '@/app/context/CartContext'
+import { dispatchUserLogout } from '@/app/utils/auth-events'
 
 const Navbar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
     const [user, setUser] = useState<User | null>(null);
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+    const [isMobileProfileMenuOpen, setIsMobileProfileMenuOpen] = useState(false);
     const { toggleCart, totalItems } = useCart();
     const mobileMenuRef = useRef<HTMLDivElement>(null);
     const profileDropdownRef = useRef<HTMLDivElement>(null);
+    const mobileProfileDropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -22,13 +25,19 @@ const Navbar = () => {
                 !profileDropdownRef.current.contains(event.target as Node)) {
                 setIsProfileMenuOpen(false);
             }
+            
+            if (isMobileProfileMenuOpen && 
+                mobileProfileDropdownRef.current && 
+                !mobileProfileDropdownRef.current.contains(event.target as Node)) {
+                setIsMobileProfileMenuOpen(false);
+            }
         };
 
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [isProfileMenuOpen]);
+    }, [isProfileMenuOpen, isMobileProfileMenuOpen]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -44,10 +53,37 @@ const Navbar = () => {
     }, [isMobileMenuOpen]);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
+        const checkUserAuth = () => {
+            const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
+            if (storedUser) {
+                try {
+                    setUser(JSON.parse(storedUser));
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
+                }
+            }
+        };
+        
+        checkUserAuth();
+        
+        const handleLogin = (event: Event) => {
+            const customEvent = event as CustomEvent<User>;
+            if (customEvent.detail) {
+                setUser(customEvent.detail);
+            }
+        };
+        
+        const handleLogout = () => {
+            setUser(null);
+        };
+        
+        window.addEventListener('user-login', handleLogin as EventListener);
+        window.addEventListener('user-logout', handleLogout);
+        
+        return () => {
+            window.removeEventListener('user-login', handleLogin as EventListener);
+            window.removeEventListener('user-logout', handleLogout);
+        };
     }, []);
 
     const handleLogout = async () => {
@@ -63,6 +99,7 @@ const Navbar = () => {
                 sessionStorage.removeItem('user');
                 sessionStorage.removeItem('accessToken');
                 setUser(null);
+                dispatchUserLogout();
                 window.location.href = '/';
             } else {
                 console.error('Logout failed');
@@ -129,6 +166,63 @@ const Navbar = () => {
             </div>
         );
     };
+    
+    const renderMobileAuthButtons = () => {
+        if (user) {
+            return (
+                <div className="profile-section mobile-profile-section">
+                    <div className="profile-trigger" onClick={(e) => {
+                        e.stopPropagation();
+                        setIsMobileProfileMenuOpen(!isMobileProfileMenuOpen);
+                    }}>
+                        {user.profilePic ? (
+                            <img src={user.profilePic} alt="Profile" className="profile-pic" />
+                        ) : (
+                            <div className="default-profile">
+                                {user.name.charAt(0).toUpperCase()}
+                            </div>
+                        )}
+                        <span className="profile-name">{user.name}</span>
+                    </div>
+                    {isMobileProfileMenuOpen && (
+                        <div className="profile-dropdown mobile-profile-dropdown" ref={mobileProfileDropdownRef}>
+                            <Link href="/profile" className="dropdown-item">
+                                <i className="bi bi-person"></i> Profile
+                            </Link>
+                            <Link href="/orders" className="dropdown-item">
+                                <i className="bi bi-box"></i> Orders
+                            </Link>
+                            <Link href="/settings" className="dropdown-item">
+                                <i className="bi bi-gear"></i> Settings
+                            </Link>
+                            <hr className="dropdown-divider" />
+                            <button 
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleLogout();
+                                }} 
+                                className="dropdown-item text-danger"
+                            >
+                                <i className="bi bi-box-arrow-right"></i> Logout
+                            </button>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        return (
+            <div className="auth-buttons">
+                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                    <button className="login">Login</button>
+                </Link>
+                <Link href="/register" onClick={() => setIsMobileMenuOpen(false)}>
+                    <button className="register">Register</button>
+                </Link>
+            </div>
+        );
+    };
 
     const handleCartClick = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -177,7 +271,7 @@ const Navbar = () => {
                 </div>
 
                 <div className="mobile-auth">
-                    {renderAuthButtons()}
+                    {renderMobileAuthButtons()}
                 </div>
 
                 <div className="mobile-nav-actions">

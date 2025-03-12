@@ -60,6 +60,13 @@ interface FilterOptions {
     dateAdded: string | '';
 }
 
+interface PaymentMethod {
+    id: number;
+    name: string;
+    icon: string | null;
+    is_active: boolean;
+}
+
 export default function ProductManagement() {
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
@@ -79,6 +86,9 @@ export default function ProductManagement() {
         stockStatus: 'all',
         dateAdded: ''
     });
+    const [availablePaymentMethods, setAvailablePaymentMethods] = useState<PaymentMethod[]>([]);
+    const [selectedPaymentMethods, setSelectedPaymentMethods] = useState<number[]>([]);
+    const [loadingPaymentMethods, setLoadingPaymentMethods] = useState(false);
 
     const [formData, setFormData] = useState<Product>({
         product_name: '',
@@ -118,8 +128,13 @@ export default function ProductManagement() {
     }, []);
 
     useEffect(() => {
+        fetchAvailablePaymentMethods();
+    }, []);
+
+    useEffect(() => {
         if (selectedProduct?.id) {
             fetchProductMedia(selectedProduct.id);
+            fetchProductPaymentMethods(selectedProduct.id);
         }
     }, [selectedProduct]);
 
@@ -150,6 +165,35 @@ export default function ProductManagement() {
             setProductMedia(response.data || []);
         } catch (error) {
             console.error('Error fetching product media:', error);
+        }
+    };
+
+    const fetchAvailablePaymentMethods = async () => {
+        try {
+            setLoadingPaymentMethods(true);
+            const response = await apiClient('/payment-methods');
+            if (response.success) {
+                setAvailablePaymentMethods(response.data.filter((method: PaymentMethod) => method.is_active));
+            }
+        } catch (error) {
+            console.error('Error fetching payment methods:', error);
+        } finally {
+            setLoadingPaymentMethods(false);
+        }
+    };
+
+    const fetchProductPaymentMethods = async (productId: number) => {
+        try {
+            setLoadingPaymentMethods(true);
+            const response = await apiClient(`/payment-methods/product/${productId}`);
+            if (response.success && Array.isArray(response.data)) {
+                const methodIds = response.data.map((method: PaymentMethod) => method.id);
+                setSelectedPaymentMethods(methodIds);
+            }
+        } catch (error) {
+            console.error('Error fetching product payment methods:', error);
+        } finally {
+            setLoadingPaymentMethods(false);
         }
     };
 
@@ -275,6 +319,7 @@ export default function ProductManagement() {
             product_origin: ''
         });
         setSelectedProduct(null);
+        setSelectedPaymentMethods([]);
     };
 
     const handleCreateOrUpdate = async (e: React.FormEvent) => {
@@ -287,15 +332,26 @@ export default function ProductManagement() {
                 additionalDetails
             };
 
+            let productId;
             if (selectedProduct?.id) {
-                await apiClient(`/product/products/${selectedProduct.id}`, {
+                const response = await apiClient(`/product/products/${selectedProduct.id}`, {
                     method: 'PUT',
                     body: JSON.stringify(productData),
                 });
+                productId = selectedProduct.id;
             } else {
-                await apiClient('/product/products', {
+                const response = await apiClient('/product/products', {
                     method: 'POST',
                     body: JSON.stringify(productData),
+                });
+                productId = response.data.id;
+            }
+            
+            // Save payment methods if we have a product ID
+            if (productId) {
+                await apiClient(`/payment-methods/product/${productId}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ paymentMethodIds: selectedPaymentMethods })
                 });
             }
             
@@ -380,6 +436,16 @@ export default function ProductManagement() {
         } catch (error) {
             console.error('Error deleting image:', error);
         }
+    };
+
+    const handlePaymentMethodToggle = (methodId: number) => {
+        setSelectedPaymentMethods(prev => {
+            if (prev.includes(methodId)) {
+                return prev.filter(id => id !== methodId);
+            } else {
+                return [...prev, methodId];
+            }
+        });
     };
 
     const filteredProducts = products.filter(product => {
@@ -901,6 +967,40 @@ export default function ProductManagement() {
                                     onChange={handleInputChange}
                                 />
                             </div>
+                        </div>
+
+                        <div className="form-section">
+                            <h3>Payment Methods</h3>
+                            <p className="form-hint">Select which payment methods are allowed for this product:</p>
+                            
+                            {loadingPaymentMethods ? (
+                                <div className="loading-methods">Loading payment methods...</div>
+                            ) : availablePaymentMethods.length === 0 ? (
+                                <p className="no-methods-warning">
+                                    No payment methods available. Please add payment methods first in the 
+                                    section.
+                                </p>
+                            ) : (
+                                <div className="payment-methods-options">
+                                    {availablePaymentMethods.map((method) => (
+                                        <div key={method.id} className="payment-method-option">
+                                            <input
+                                                type="checkbox"
+                                                id={`payment-method-${method.id}`}
+                                                checked={selectedPaymentMethods.includes(method.id)}
+                                                onChange={() => handlePaymentMethodToggle(method.id)}
+                                            />
+                                            <label htmlFor={`payment-method-${method.id}`}>
+                                                {method.icon && <span className="method-icon">{method.icon}</span>}
+                                                {method.name}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            <p className="payment-method-help">
+                                If no payment methods are selected, all available payment methods will be allowed.
+                            </p>
                         </div>
 
                         {selectedProduct?.id && (

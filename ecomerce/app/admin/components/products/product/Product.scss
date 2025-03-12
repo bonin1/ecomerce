@@ -351,6 +351,67 @@
         font-size: 1.3rem;
         color: #333;
       }
+      
+      .form-hint {
+        color: #666;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .payment-methods-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 0.75rem 1.5rem;
+        margin: 1rem 0;
+        
+        .payment-method-option {
+          display: flex;
+          align-items: center;
+          
+          input[type="checkbox"] {
+            margin-right: 10px;
+          }
+          
+          label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            
+            .method-icon {
+              margin-right: 8px;
+              font-size: 1.1rem;
+            }
+          }
+        }
+      }
+      
+      .payment-method-help {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 0.75rem;
+        font-style: italic;
+      }
+      
+      .loading-methods {
+        padding: 1rem;
+        text-align: center;
+        color: #666;
+      }
+      
+      .no-methods-warning {
+        color: #e74c3c;
+        font-weight: 500;
+        
+        .add-methods-link {
+          color: #3498db;
+          text-decoration: none;
+          font-weight: 600;
+          
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
     }
     
     .form-group {

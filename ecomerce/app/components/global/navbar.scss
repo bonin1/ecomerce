@@ -6,7 +6,7 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     padding: 1rem 0;
     transition: all 0.3s ease;
-    z-index: 1000;  // Lower than cart sidebar to ensure proper stacking
+    z-index: 1000;
     display: flex;
     justify-content: center !important;
     align-items: center;
@@ -172,7 +172,7 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     transform: translateY(-100%);
     transition: transform 0.3s ease-in-out;
-    z-index: 1000; // Same as navbar, lower than cart sidebar
+    z-index: 1000;
 
     &.open {
         transform: translateY(0);
@@ -371,7 +371,7 @@
 
     .navbar {
         height: 100px;
-        position: fixed; // Fixed position to stay at top of screen
+        position: fixed;
         top: 0;
         left: 0;
 
@@ -379,7 +379,7 @@
             padding: 0 1rem;
 
             .logo {
-                width: auto; // Adjust width for mobile
+                width: auto; 
                 
                 img {
                     height: 60px;
@@ -388,7 +388,6 @@
         }
     }
 
-    // Add padding to body to prevent content from being hidden under fixed navbar
     body {
         padding-top: 100px;
     }
@@ -396,28 +395,28 @@
 
 @media (max-width: 768px) {
     .navbar {
-        height: 80px; // Reduce height on smaller screens
+        height: 80px; 
 
         .container-navbar {
             .logo {
                 img {
-                    height: 50px; // Smaller logo on smaller screens
+                    height: 50px;
                 }
             }
             
             .burger-menu {
-                font-size: 1.3rem; // Slightly smaller icon
+                font-size: 1.3rem; 
             }
         }
     }
 
     .mobile-menu {
-        top: 80px; // Match navbar height
-        height: calc(100vh - 80px); // Adjust height accordingly
+        top: 80px;
+        height: calc(100vh - 80px);
     }
     
     body {
-        padding-top: 80px; // Match navbar height
+        padding-top: 80px;
     }
 }
 
@@ -592,7 +591,6 @@
     }
 }
 
-// Improve mobile dropdown toggle animation
 .mobile-categories {
     .categories {
         max-height: 0;
@@ -601,15 +599,40 @@
 
         &.open {
             display: block;
-            max-height: 500px; // Enough height for all items
+            max-height: 500px; 
         }
     }
 }
 
-// Add page content adjustment to account for fixed navbar
 .wrapper, 
 .wrapper-assist, 
 main {
     position: relative;
-    z-index: 10; // Below navbar and sidebars
+    z-index: 10; 
+}
+
+.mobile-profile-section {
+    width: 100%;
+    
+    .profile-trigger {
+        width: 100%;
+        justify-content: flex-start;
+        padding: 12px;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+    }
+    
+    .mobile-profile-dropdown {
+        position: static;
+        width: 100%;
+        margin-top: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+        
+        .dropdown-item {
+            padding: 12px 16px;
+            font-size: 0.95rem;
+        }
+    }
 }

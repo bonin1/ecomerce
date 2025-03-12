@@ -1,5 +1,4 @@
 .product-detail-container {
-  max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
   font-family: 'Inter', sans-serif;
@@ -741,7 +740,6 @@
       }
     }
     
-    // Payment methods tab
     .payment-content {
       h3 {
         font-size: 1.2rem;
@@ -752,6 +750,21 @@
         &:not(:first-child) {
           margin-top: 2rem;
         }
+      }
+      
+      .loading-payment-methods,
+      .error-payment-methods {
+        padding: 1rem;
+        text-align: center;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+        margin-bottom: 1.5rem;
+      }
+      
+      .error-payment-methods {
+        color: #d32f2f;
+        border: 1px solid #ffcdd2;
+        background-color: #ffebee;
       }
       
       .payment-methods {
@@ -804,6 +817,17 @@
             &.googlepay {
               background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234285F4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 18c-1.1 0-2-.9-2-2v-4h7v4c0 1.1-.9 2-2 2h-3Z'%3E%3C/path%3E%3Cpath d='M2 6v12c0 1.1.9 2 2 2h3c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2Z'%3E%3C/path%3E%3Cpath d='M15 6v4H9V6c0-1.1.9-2 2-2h2c1.1 0 2 .9 2 2Z'%3E%3C/path%3E%3C/svg%3E");
             }
+            
+            &.default-icon {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background-color: #2c3e50;
+              color: white;
+              font-size: 1.25rem;
+              font-weight: 600;
+              border-radius: 6px;
+            }
           }
           
           p {
@@ -816,6 +840,12 @@
           small {
             font-size: 0.8rem;
             color: #666;
+          }
+          
+          .fee-info {
+            display: block;
+            margin-top: 0.25rem;
+            font-style: italic;
           }
         }
       }

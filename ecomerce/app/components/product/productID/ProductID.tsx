@@ -29,6 +29,20 @@ interface Category {
   product_category: string;
 }
 
+interface PaymentMethod {
+  id: number;
+  name: string;
+  description?: string;
+  icon?: string;
+  is_active: boolean;
+  processing_time?: string;
+  fee_percentage?: number;
+  fee_fixed?: number;
+  min_amount?: number;
+  max_amount?: number;
+  display_order: number;
+}
+
 interface ProductData {
   id: number;
   product_name: string;
@@ -64,6 +78,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
   const imageRef = useRef<HTMLDivElement>(null);
   const isMobile = typeof window !== 'undefined' ? window.innerWidth <= 768 : false;
   const magnificationLevel = 2.5; 
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [paymentMethodsLoading, setPaymentMethodsLoading] = useState(false);
+  const [paymentMethodsError, setPaymentMethodsError] = useState<string | null>(null);
 
   const placeholderImage = '/placeholder-image.jpg';
 
@@ -124,6 +141,38 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
       fetchProduct();
     }
   }, [productId, placeholderImage]);
+
+  useEffect(() => {
+    const fetchPaymentMethods = async () => {
+      if (!productId) return;
+      
+      try {
+        setPaymentMethodsLoading(true);
+        setPaymentMethodsError(null);
+        
+        const response = await apiClient(`/payment-methods/product/${productId}`, {
+          skipAuth: true
+        });
+        
+        if (response.success && response.data) {
+          setPaymentMethods(response.data);
+        } else {
+          console.warn("Failed to load payment methods or no payment methods available");
+          setPaymentMethods([]);
+        }
+      } catch (err) {
+        console.error('Error fetching payment methods:', err);
+        setPaymentMethodsError(`Error loading payment methods: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        setPaymentMethods([]);
+      } finally {
+        setPaymentMethodsLoading(false);
+      }
+    };
+    
+    if (productId) {
+      fetchPaymentMethods();
+    }
+  }, [productId]);
 
   const handleAddToCart = () => {
     if (product) {
@@ -477,28 +526,35 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
           {activeTab === 'payment' && (
             <div className="tab-pane payment-content">
               <h3>Accepted Payment Methods</h3>
-              <div className="payment-methods">
-                <div className="payment-method">
-                  <div className="payment-icon credit-card"></div>
-                  <p>Credit/Debit Cards</p>
-                  <small>Visa, MasterCard, American Express, Discover</small>
+              
+              {paymentMethodsLoading ? (
+                <div className="loading-payment-methods">Loading payment methods...</div>
+              ) : paymentMethodsError ? (
+                <div className="error-payment-methods">{paymentMethodsError}</div>
+              ) : paymentMethods.length === 0 ? (
+                <p>No specific payment methods are defined for this product. Standard payment options are available at checkout.</p>
+              ) : (
+                <div className="payment-methods">
+                  {paymentMethods.map(method => (
+                    <div key={method.id} className="payment-method">
+                      <div className={`payment-icon ${method.icon ? '' : 'default-icon'}`} 
+                           style={method.icon ? { backgroundImage: `url(${method.icon})` } : {}}>
+                        {!method.icon && method.name.charAt(0)}
+                      </div>
+                      <p>{method.name}</p>
+                      {method.description && <small>{method.description}</small>}
+                      {<small>Processing: {method.processing_time}</small>}
+                      {(method.fee_percentage || method.fee_fixed) && (
+                        <small className="fee-info">
+                          Fee: {method.fee_percentage ? `${method.fee_percentage}%` : ''}
+                          {(method.fee_percentage && method.fee_fixed) ? ' + ' : ''}
+                          {method.fee_fixed ? `$${method.fee_fixed.toFixed(2)}` : ''}
+                        </small>
+                      )}
+                    </div>
+                  ))}
                 </div>
-                <div className="payment-method">
-                  <div className="payment-icon paypal"></div>
-                  <p>PayPal</p>
-                  <small>Safe online payment system</small>
-                </div>
-                <div className="payment-method">
-                  <div className="payment-icon applepay"></div>
-                  <p>Apple Pay</p>
-                  <small>For iOS users</small>
-                </div>
-                <div className="payment-method">
-                  <div className="payment-icon googlepay"></div>
-                  <p>Google Pay</p>
-                  <small>For Android users</small>
-                </div>
-              </div>
+              )}
 
               <h3>Secure Checkout</h3>
               <p>All transactions are secure and encrypted. We never store your credit card information.</p>

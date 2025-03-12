@@ -1,0 +1,44 @@
+.payment-methods-container {
+  padding: 2rem 0;
+  
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+  }
+
+  .method-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    .method-icon {
+      font-size: 1.2rem;
+    }
+  }
+
+  .status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    
+    &.active {
+      background-color: rgba(46, 204, 113, 0.15);
+      color: #27ae60;
+    }
+    
+    &.inactive {
+      background-color: rgba(189, 195, 199, 0.15);
+      color: #7f8c8d;
+    }
+  }
+
+  .fee-container, 
+  .amount-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}

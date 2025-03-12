@@ -35,7 +35,6 @@ const Sidebar = () => {
                 credentials: 'include',
             });
             
-            // Clear both localStorage and cookie
             localStorage.removeItem('adminToken');
             localStorage.removeItem('adminUser');
             Cookies.remove('adminTokenSync', { path: '/' });
@@ -68,10 +67,11 @@ const Sidebar = () => {
             ]
         },
         {
-            section: 'System',
+            section: 'Settings',
             items: [
+                { path: '/admin/payment-methods', label: 'Payment Methods', icon: '💳' },
                 { path: '/admin/users', label: 'Users', icon: '👤' },
-                { path: '/admin/settings', label: 'Settings', icon: '⚙️' }
+                { path: '/admin/settings', label: 'General Settings', icon: '⚙️' }
             ]
         }
     ];

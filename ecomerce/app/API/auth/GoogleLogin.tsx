@@ -1,4 +1,5 @@
 import { ApiResponse, LoginResponse } from '@/app/types';
+import { dispatchUserLogin } from '@/app/utils/auth-events';
 
 export const googleLogin = async (token: string): Promise<ApiResponse<LoginResponse>> => {
     try {
@@ -21,6 +22,9 @@ export const googleLogin = async (token: string): Promise<ApiResponse<LoginRespo
         
         if (data.success && data.data?.accessToken) {
             localStorage.setItem('accessToken', data.data.accessToken);
+            localStorage.setItem('user', JSON.stringify(data.data.user));
+            
+            dispatchUserLogin(data.data.user);
         }
 
         return data;
