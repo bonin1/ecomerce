@@ -9,6 +9,8 @@ const ProductAdditionalDetails = require('./ProduktAdditionalDetails');
 const AuditLog = require('./AuditLogModel');
 const PaymentMethod = require('./PaymentMethodsModel');
 const ProductPaymentMethod = require('./ProductPaymentMethodsModel');
+const Order = require('./OrderModel');
+const OrderItem = require('./OrderItemModel');
 
 const syncModels = async () => {
     try {
@@ -22,6 +24,8 @@ const syncModels = async () => {
         await AuditLog.sync({ alter: false });
         await PaymentMethod.sync({ alter: false });
         await ProductPaymentMethod.sync({ alter: false });
+        await Order.sync({ alter: false });
+        await OrderItem.sync({ alter: false });
 
         console.log('All models synchronized successfully');
     } catch (error) {

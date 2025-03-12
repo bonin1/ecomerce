@@ -1,6 +1,7 @@
 const User = require('../../model/UserModel');
 const Produkt = require('../../model/ProduktModel');
 const ProductCategory = require('../../model/ProductCategoryModel');
+const Order = require('../../model/OrderModel');
 const { Op, Sequelize } = require('sequelize');
 const { subDays, format } = require('date-fns');
 
@@ -9,6 +10,7 @@ exports.getDashboardStats = async (req, res) => {
         const now = new Date();
         const thirtyDaysAgo = subDays(now, 30);
         
+        // Daily users
         const dailyUsers = await User.findAll({
             where: {
                 createdAt: {
@@ -24,6 +26,7 @@ exports.getDashboardStats = async (req, res) => {
             raw: true
         });
 
+        // Daily products
         const dailyProducts = await Produkt.findAll({
             where: {
                 createdAt: {
@@ -38,11 +41,36 @@ exports.getDashboardStats = async (req, res) => {
             group: [Sequelize.fn('DATE_FORMAT', Sequelize.col('createdAt'), '%Y-%m-%d')],
             raw: true
         });
+        
+        // Daily orders
+        const dailyOrders = await Order.findAll({
+            where: {
+                createdAt: {
+                    [Op.gte]: thirtyDaysAgo,
+                    [Op.lte]: now
+                }
+            },
+            attributes: [
+                [Sequelize.fn('DATE_FORMAT', Sequelize.col('createdAt'), '%Y-%m-%d'), 'date'],
+                [Sequelize.fn('COUNT', Sequelize.col('id')), 'count'],
+                [Sequelize.fn('SUM', Sequelize.col('total_amount')), 'revenue']
+            ],
+            group: [Sequelize.fn('DATE_FORMAT', Sequelize.col('createdAt'), '%Y-%m-%d')],
+            raw: true
+        });
 
-        const [totalUsers, totalProducts, totalCategories] = await Promise.all([
+        const [totalUsers, totalProducts, totalCategories, totalOrders, totalRevenue] = await Promise.all([
             User.count(),
             Produkt.count(),
-            ProductCategory.count()
+            ProductCategory.count(),
+            Order.count(),
+            Order.sum('total_amount', {
+                where: {
+                    status: {
+                        [Op.ne]: 'cancelled'
+                    }
+                }
+            })
         ]);
 
         const timeSeriesData = [];
@@ -50,16 +78,22 @@ exports.getDashboardStats = async (req, res) => {
             const date = format(subDays(now, i), 'yyyy-MM-dd');
             const userCount = dailyUsers.find(d => d.date === date)?.count || 0;
             const productCount = dailyProducts.find(d => d.date === date)?.count || 0;
+            const orderCount = dailyOrders.find(d => d.date === date)?.count || 0;
+            const revenue = dailyOrders.find(d => d.date === date)?.revenue || 0;
             
             timeSeriesData.unshift({
                 date,
                 users: parseInt(userCount),
-                products: parseInt(productCount)
+                products: parseInt(productCount),
+                orders: parseInt(orderCount),
+                revenue: parseFloat(revenue)
             });
         }
 
         const userGrowth = calculateGrowthRate(timeSeriesData.map(d => d.users));
         const productGrowth = calculateGrowthRate(timeSeriesData.map(d => d.products));
+        const orderGrowth = calculateGrowthRate(timeSeriesData.map(d => d.orders));
+        const revenueGrowth = calculateGrowthRate(timeSeriesData.map(d => d.revenue));
 
         res.json({
             success: true,
@@ -67,10 +101,14 @@ exports.getDashboardStats = async (req, res) => {
                 totalUsers,
                 totalProducts,
                 totalCategories,
+                totalOrders,
+                totalRevenue,
                 timeSeriesData,
                 growth: {
                     users: userGrowth,
-                    products: productGrowth
+                    products: productGrowth,
+                    orders: orderGrowth,
+                    revenue: revenueGrowth
                 }
             }
         });

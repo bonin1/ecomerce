@@ -52,6 +52,9 @@ app.use('/product', require('./routes/ProduktManagementRoute'));
 // Add payment methods route
 app.use('/payment-methods', require('./routes/PaymentMethodRoutes'));
 
+// Add order routes
+app.use('/orders', require('./routes/OrderRoutes'));
+
 // ---------------------------------------------------
 
 app.listen(PORT,()=>{
