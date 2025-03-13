@@ -123,11 +123,19 @@ exports.login = async (req, res) => {
 
             res.cookie('rememberMeToken', rememberMeToken, {
                 ...cookieOptions,
-                maxAge: 30 * 24 * 3600000
+                maxAge: 30 * 24 * 3600000 
+            });
+            
+            res.cookie('sessionToken', accessToken, {
+                ...cookieOptions,
+                maxAge: 24 * 3600000 
+            });
+        } else {
+            res.cookie('sessionToken', accessToken, {
+                ...cookieOptions,
+                maxAge: 24 * 3600000 
             });
         }
-
-        res.cookie('sessionToken', accessToken, cookieOptions);
 
         return res.status(200).json({
             success: true,

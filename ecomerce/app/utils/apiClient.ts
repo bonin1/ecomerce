@@ -11,9 +11,16 @@ export const apiClient = async (endpoint: string, options: RequestOptions = {}) 
         if (typeof window !== 'undefined') {
             if (endpoint.startsWith('/admin')) {
                 token = localStorage.getItem('adminToken');
+                if (token) {
+                    document.cookie = `ls_admin_token=${token}; path=/; max-age=14400; SameSite=Strict`;
+                }
                 console.log('Using admin token for admin route:', endpoint);
             } else {
-                token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+                token = sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken');
+                
+                if (token) {
+                    document.cookie = `ls_user_token=${token}; path=/; max-age=86400; SameSite=Strict`;
+                }
             }
         }
 

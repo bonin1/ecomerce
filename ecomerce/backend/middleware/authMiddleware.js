@@ -6,9 +6,11 @@ exports.authenticate = async (req, res, next) => {
     try {
         let token;
         let isAdminRequest = false;
+        let tokenSecret = process.env.JWT_SECRET;
         
         if (req.path.startsWith('/admin') || req.baseUrl.startsWith('/admin')) {
             isAdminRequest = true;
+            tokenSecret = process.env.ADMIN_JWT_SECRET;
         }
         
         if (req.cookies.sessionToken) {
@@ -18,8 +20,19 @@ exports.authenticate = async (req, res, next) => {
         } else if (req.cookies.adminToken) {
             token = req.cookies.adminToken;
             isAdminRequest = true;
-        } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+            tokenSecret = process.env.ADMIN_JWT_SECRET;
+        } 
+        else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
             token = req.headers.authorization.split(' ')[1];
+            try {
+                const decoded = jwt.decode(token);
+                if (decoded && decoded.isAdminToken) {
+                    isAdminRequest = true;
+                    tokenSecret = process.env.ADMIN_JWT_SECRET;
+                }
+            } catch (error) {
+                console.error('Token decode error:', error);
+            }
         }
 
         if (!token) {
@@ -38,21 +51,46 @@ exports.authenticate = async (req, res, next) => {
 
         let decoded;
         try {
-            // Use the appropriate secret based on the request type
-            const secret = isAdminRequest ? process.env.ADMIN_JWT_SECRET : process.env.JWT_SECRET;
-            decoded = jwt.verify(token, secret);
+            decoded = jwt.verify(token, tokenSecret);
         } catch (error) {
-            return res.status(401).json({ 
-                success: false, 
-                message: 'Invalid or expired token' 
-            });
+            try {
+                const alternativeSecret = isAdminRequest ? process.env.JWT_SECRET : process.env.ADMIN_JWT_SECRET;
+                decoded = jwt.verify(token, alternativeSecret);
+                isAdminRequest = !isAdminRequest;
+            } catch (fallbackError) {
+                return res.status(401).json({ 
+                    success: false, 
+                    message: 'Invalid or expired token' 
+                });
+            }
         }
 
-        const user = await User.findByPk(decoded.userId || decoded.id);
+        const userId = decoded.userId || decoded.id;
+        const user = await User.findByPk(userId);
+        
         if (!user) {
             return res.status(401).json({ 
                 success: false, 
                 message: 'User not found' 
+            });
+        }
+
+        const tokenExp = decoded.exp;
+        const currentTime = Math.floor(Date.now() / 1000);
+    
+        if (tokenExp && (tokenExp - currentTime < 3600)) {
+            const newToken = jwt.sign(
+                { userId: user.id, email: user.email, role: user.role },
+                tokenSecret,
+                { expiresIn: '24h' }
+            );
+            
+            res.cookie(isAdminRequest ? 'adminToken' : 'sessionToken', newToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'Strict',
+                path: '/',
+                maxAge: 24 * 3600000 // 24 hours
             });
         }
 

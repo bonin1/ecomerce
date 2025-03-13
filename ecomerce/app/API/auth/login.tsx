@@ -23,9 +23,15 @@ export const login = async (loginData: LoginData): Promise<ApiResponse<LoginResp
             if (loginData.rememberMe) {
                 localStorage.setItem('accessToken', data.data.accessToken);
                 localStorage.setItem('user', JSON.stringify(data.data.user));
+                
+                // Sync with cookie for middleware
+                document.cookie = `ls_user_token=${data.data.accessToken}; path=/; max-age=${30*24*60*60}; SameSite=Strict`;
             } else {
                 sessionStorage.setItem('accessToken', data.data.accessToken);
                 sessionStorage.setItem('user', JSON.stringify(data.data.user));
+                
+                // Sync with cookie for middleware - session only
+                document.cookie = `ls_user_token=${data.data.accessToken}; path=/; SameSite=Strict`;
             }
             
             dispatchUserLogin(data.data.user);

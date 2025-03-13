@@ -115,7 +115,6 @@ const ProductGrid = () => {
 
   return (
     <div className="product-section">
-      <h2 className="section-title">Featured Products</h2>
       <div className="product-grid">
         {products && products.length > 0 ? (
           products.map((product) => (
