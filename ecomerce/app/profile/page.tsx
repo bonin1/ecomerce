@@ -140,10 +140,6 @@ const ProfilePage = () => {
         <div className="wrapper">
             <div className="wrapper-assist">
                 <div className="profile-container">
-                <div className="page-header">
-                    <h1>My Account</h1>
-                    <p className="text-muted">Manage your account settings and preferences</p>
-                </div>
 
                 {profile?.marked_for_deletion && (
                     <div className="alert alert-warning mb-4">

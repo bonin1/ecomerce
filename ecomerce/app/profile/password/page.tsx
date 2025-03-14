@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { changePassword } from '../../API/profile/updateProfile';
+import ForgotPasswordModal from '../../components/auth/ForgotPasswordModal';
 import './password.scss';
 
 const PasswordChangePage = () => {
@@ -18,6 +19,7 @@ const PasswordChangePage = () => {
         confirm: false
     });
     const [passwordStrength, setPasswordStrength] = useState(0);
+    const [showForgotModal, setShowForgotModal] = useState(false);
 
     const checkPasswordStrength = (password: string) => {
         let strength = 0;
@@ -57,13 +59,11 @@ const PasswordChangePage = () => {
             if (response.status === 'success') {
                 setSuccess(true);
                 
-                // Reset form
                 setCurrentPassword('');
                 setNewPassword('');
                 setConfirmPassword('');
                 setPasswordStrength(0);
                 
-                // Redirect after delay
                 setTimeout(() => router.push('/profile'), 2000);
             } else {
                 throw new Error(response.message || 'Failed to change password');
@@ -121,8 +121,17 @@ const PasswordChangePage = () => {
             <div className="content-panel">
                 <form onSubmit={handleSubmit}>
                     <div className="mb-3">
-                        <label htmlFor="currentPassword" className="form-label">Current Password</label>
-                        <div className="input-group">
+                        <div className="d-flex justify-content-between align-items-center">
+                            <label htmlFor="currentPassword" className="form-label mb-0">Current Password</label>
+                            <button 
+                                type="button"
+                                className="btn btn-link p-0 text-decoration-none"
+                                onClick={() => setShowForgotModal(true)}
+                            >
+                                <small>Forgot password?</small>
+                            </button>
+                        </div>
+                        <div className="input-group mt-1">
                             <input 
                                 type={showPassword.current ? "text" : "password"} 
                                 className="form-control" 
@@ -259,6 +268,13 @@ const PasswordChangePage = () => {
                     </div>
                 </form>
             </div>
+            
+            {/* Forgot Password Modal */}
+            <ForgotPasswordModal 
+                isOpen={showForgotModal}
+                onClose={() => setShowForgotModal(false)}
+                isProfileContext={true}
+            />
         </div>
     );
 };

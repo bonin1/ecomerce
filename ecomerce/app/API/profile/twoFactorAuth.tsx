@@ -27,10 +27,11 @@ export const verifyAndEnableTwoFactorAuth = async (token: string) => {
     }
 };
 
-export const disableTwoFactorAuth = async () => {
+export const disableTwoFactorAuth = async (password: string, token: string) => {
     try {
         const response = await apiClient('/api/profile/2fa/disable', {
-            method: 'POST'
+            method: 'POST',
+            body: JSON.stringify({ password, token })
         });
 
         return response;
