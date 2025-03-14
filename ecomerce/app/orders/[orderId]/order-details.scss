@@ -1,0 +1,152 @@
+.order-details-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+
+  .order-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    h1 {
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 1rem;
+
+      .status-badge {
+        font-size: 1rem;
+        padding: 0.5rem 0.75rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .header-right {
+        width: 100%;
+        align-items: flex-start;
+      }
+      
+      .header-actions {
+        display: flex;
+        width: 100%;
+        
+        .btn {
+          flex: 1;
+        }
+      }
+    }
+  }
+
+  .order-details-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .card {
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+
+    .card-header {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+      padding: 1rem 1.25rem;
+
+      h5 {
+        margin: 0;
+        font-weight: 600;
+      }
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+  }
+
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f1f1f1;
+
+    &:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+  }
+
+  address {
+    margin-bottom: 0;
+    font-style: normal;
+  }
+
+  .table {
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+    }
+
+    .product-name a {
+      color: #212529;
+      text-decoration: none;
+      font-weight: 500;
+
+      &:hover {
+        color: #007bff;
+        text-decoration: underline;
+      }
+    }
+
+    .quantity-badge {
+      display: inline-block;
+      background-color: #f8f9fa;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+    }
+
+    .item-total {
+      font-weight: 600;
+    }
+
+    tfoot {
+      font-weight: 700;
+
+      th {
+        padding-top: 1rem;
+        border-top: 2px solid #dee2e6;
+      }
+    }
+  }
+
+  .notes-text {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    font-style: italic;
+    margin-bottom: 0;
+  }
+
+  .tracking-info {
+    .tracking-number {
+      font-size: 1.1rem;
+    }
+
+    .btn-primary {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+}
