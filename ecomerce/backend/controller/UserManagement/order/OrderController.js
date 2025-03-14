@@ -5,6 +5,7 @@ const User = require('../../../model/UserModel');
 const { v4: uuidv4 } = require('uuid');
 const { Op } = require('sequelize');
 const db = require('../../../database');
+const emailService = require('../../../services/emailServices');
 
 const generateOrderNumber = () => {
     const timestamp = Date.now().toString().slice(-8);
@@ -92,7 +93,26 @@ exports.createOrder = async (req, res) => {
             }, { transaction });
         }
 
+        // After successfully creating the order and committing the transaction
         await transaction.commit();
+
+        try {
+            // Fetch the complete order with items to send in email
+            const completeOrder = await Order.findByPk(order.id, {
+                include: [
+                    {
+                        model: OrderItem,
+                        as: 'items'
+                    }
+                ]
+            });
+
+            // Send order confirmation email
+            await emailService.sendOrderConfirmationEmail(contactEmail, completeOrder);
+        } catch (emailError) {
+            console.error('Failed to send order confirmation email:', emailError);
+            // Don't return an error to the client, just log it
+        }
 
         return res.status(201).json({
             message: 'Order created successfully',

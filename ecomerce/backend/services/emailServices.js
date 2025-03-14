@@ -130,3 +130,64 @@ exports.sendOTPEmail = async (email, otp) => {
         return false;
     }
 };
+
+exports.sendOrderConfirmationEmail = async (email, orderDetails) => {
+    try {
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+        const trackOrderUrl = `${frontendUrl}/account/orders/${orderDetails.id}`;
+        
+        let template = await fs.readFile(
+            path.join(__dirname, '../template/OrderConfirmationEmailTemplate.html'),
+            'utf8'
+        );
+
+        // Generate order items HTML
+        let orderItemsHtml = '';
+        if (orderDetails.items && orderDetails.items.length) {
+            orderDetails.items.forEach(item => {
+                // Convert price to number before using toFixed
+                const price = parseFloat(item.price);
+                orderItemsHtml += `
+                <tr>
+                    <td style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">${item.product_name}</td>
+                    <td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${item.quantity}</td>
+                    <td style="padding: 10px; text-align: right; border-bottom: 1px solid #ddd;">$${price.toFixed(2)}</td>
+                </tr>
+                `;
+            });
+        }
+
+        // Convert total_amount to number for safe formatting
+        const totalAmount = parseFloat(orderDetails.total_amount);
+
+        template = template
+            .replace('#{LOGO_URL}#', `${process.env.BASE_URL}/static/image/STRIKETECH-1.png`)
+            .replace('#{ORDER_NUMBER}#', orderDetails.order_number)
+            .replace('#{ORDER_DATE}#', new Date(orderDetails.createdAt).toLocaleDateString())
+            .replace('#{ORDER_TOTAL}#', totalAmount.toFixed(2))
+            .replace('#{PAYMENT_METHOD}#', orderDetails.payment_method)
+            .replace('#{ORDER_ITEMS}#', orderItemsHtml)
+            .replace('#{SHIPPING_ADDRESS}#', orderDetails.shipping_address)
+            .replace('#{SHIPPING_CITY}#', orderDetails.shipping_city)
+            .replace('#{SHIPPING_POSTAL}#', orderDetails.shipping_postal_code)
+            .replace('#{SHIPPING_COUNTRY}#', orderDetails.shipping_country)
+            .replace('#{ORDER_NOTES}#', orderDetails.notes || 'No additional notes')
+            .replace('#{TRACK_ORDER_URL}#', trackOrderUrl);
+
+        const mailOptions = {
+            from: {
+                name: 'StrikeTech',
+                address: process.env.EMAIL_USER
+            },
+            to: email,
+            subject: `Order Confirmed: ${orderDetails.order_number} - StrikeTech`,
+            html: template
+        };
+
+        await transporter.sendMail(mailOptions);
+        return true;
+    } catch (error) {
+        console.error('Order confirmation email sending error:', error);
+        return false;
+    }
+};
