@@ -5,7 +5,6 @@ const Product = require('../../model/ProduktModel');
 const { Op } = require('sequelize');
 const db = require('../../database');
 
-// Get all orders with pagination and filters
 exports.getAllOrders = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -75,7 +74,6 @@ exports.getAllOrders = async (req, res) => {
     }
 };
 
-// Get a specific order by ID
 exports.getOrderById = async (req, res) => {
     try {
         const { orderId } = req.params;
@@ -121,7 +119,6 @@ exports.getOrderById = async (req, res) => {
     }
 };
 
-// Update order status
 exports.updateOrderStatus = async (req, res) => {
     const transaction = await db.transaction();
     
@@ -129,7 +126,16 @@ exports.updateOrderStatus = async (req, res) => {
         const { orderId } = req.params;
         const { status, payment_status, tracking_number, estimated_delivery_date } = req.body;
         
-        const order = await Order.findByPk(orderId, { transaction });
+        const order = await Order.findByPk(orderId, { 
+            include: [
+                {
+                    model: User,
+                    as: 'user',
+                    attributes: ['id', 'name', 'email', 'phone_number']
+                }
+            ],
+            transaction 
+        });
         
         if (!order) {
             await transaction.rollback();
@@ -150,7 +156,7 @@ exports.updateOrderStatus = async (req, res) => {
         await order.update(updateData, { transaction });
         
         // If order is being cancelled, return items to inventory
-        if (status === 'cancelled' && order.status !== 'cancelled') {
+        if (status === 'cancelled' && order.previous('status') !== 'cancelled') {
             const orderItems = await OrderItem.findAll({
                 where: { order_id: orderId },
                 transaction
@@ -172,8 +178,19 @@ exports.updateOrderStatus = async (req, res) => {
         const updatedOrder = await Order.findByPk(orderId, {
             include: [
                 {
+                    model: User,
+                    as: 'user',
+                    attributes: ['id', 'name', 'email', 'phone_number']
+                },
+                {
                     model: OrderItem,
-                    as: 'items'
+                    as: 'items',
+                    include: [
+                        {
+                            model: Product,
+                            attributes: ['id', 'product_name', 'product_primary_image', 'product_price']
+                        }
+                    ]
                 }
             ]
         });
@@ -194,7 +211,6 @@ exports.updateOrderStatus = async (req, res) => {
     }
 };
 
-// Get order statistics for dashboard
 exports.getOrderStats = async (req, res) => {
     try {
         const totalOrders = await Order.count();
@@ -204,7 +220,6 @@ exports.getOrderStats = async (req, res) => {
         const deliveredOrders = await Order.count({ where: { status: 'delivered' } });
         const cancelledOrders = await Order.count({ where: { status: 'cancelled' } });
         
-        // Get total revenue
         const orders = await Order.findAll({
             where: {
                 status: {

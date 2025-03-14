@@ -34,15 +34,13 @@ router.post('/change-requests/:requestId/approve', authenticateAdmin, approveReq
 router.post('/change-requests/:requestId/reject', authenticateAdmin, rejectRequest);
 router.get('/dashboard/stats', authenticateAdmin, getDashboardStats);
 
-// Order management routes
-router.get('/orders', authenticateAdmin, getAllOrders);
-router.get('/orders/:orderId', authenticateAdmin, getOrderById);
-router.put('/orders/:orderId', authenticateAdmin, updateOrderStatus);
-router.get('/order-stats', authenticateAdmin, getOrderStats);
-
-// Advanced order statistics routes
 router.get('/orders/statistics/advanced', authenticateAdmin, getAdvancedOrderStats);
 router.get('/orders/statistics/fulfillment', authenticateAdmin, getOrderFulfillmentStats);
 router.get('/orders/statistics/customer-insights', authenticateAdmin, getCustomerOrderInsights);
+router.get('/orders/statistics/basic', authenticateAdmin, getOrderStats);
+
+router.get('/orders', authenticateAdmin, getAllOrders);
+router.get('/orders/:orderId', authenticateAdmin, getOrderById);
+router.put('/orders/:orderId/status', authenticateAdmin, updateOrderStatus);
 
 module.exports = router;

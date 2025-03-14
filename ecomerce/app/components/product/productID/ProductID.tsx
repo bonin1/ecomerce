@@ -74,8 +74,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
   const [activeTab, setActiveTab] = useState('description');
   const [isHovered, setIsHovered] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [magnifierPosition, setMagnifierPosition] = useState({ x: 0, y: 0 });
   const imageRef = useRef<HTMLDivElement>(null);
+  const productInfoRef = useRef<HTMLDivElement>(null);
   const isMobile = typeof window !== 'undefined' ? window.innerWidth <= 768 : false;
   const magnificationLevel = 2.5; 
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
@@ -212,25 +212,15 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
     
     const { left, top, width, height } = imageRef.current.getBoundingClientRect();
     
+    // Calculate relative mouse position within the image
     const relativeX = (event.clientX - left) / width;
     const relativeY = (event.clientY - top) / height;
     
+    // Set background position percentage for magnifier
     const backgroundX = relativeX * 100;
     const backgroundY = relativeY * 100;
     
-    const magnifierX = event.clientX + 20; 
-    const magnifierY = event.clientY - 100; 
-    
     setMousePosition({ x: backgroundX, y: backgroundY });
-    setMagnifierPosition({ x: magnifierX, y: magnifierY });
-    
-    const cursorX = event.clientX - left;
-    const cursorY = event.clientY - top;
-    
-    if (imageRef.current) {
-      imageRef.current.style.setProperty('--cursor-x', `${cursorX}px`);
-      imageRef.current.style.setProperty('--cursor-y', `${cursorY}px`);
-    }
   };
 
   if (loading) {
@@ -254,7 +244,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
       <div className="product-detail-grid">
         <div className="product-images">
           <div 
-            className={`main-image ${isHovered && !isMobile ? 'has-magnifier' : ''}`}
+            className="main-image"
             ref={imageRef}
             onMouseEnter={() => !isMobile && setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -268,6 +258,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
                 height={500}
                 className="product-img"
                 priority
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             ) : (
               <div className="product-img-placeholder">No image available</div>
@@ -277,21 +268,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
               <div className="discount-badge">-{discountPercentage}%</div>
             )}
           </div>
-          
-          {isHovered && !isMobile && isValidImage(selectedImage) && (
-            <div 
-              className="image-magnifier"
-              style={{
-                left: `${magnifierPosition.x}px`,
-                top: `${magnifierPosition.y}px`,
-                backgroundImage: `url(${selectedImage})`,
-                backgroundPosition: `${mousePosition.x}% ${mousePosition.y}%`,
-                backgroundSize: `${magnificationLevel * 100}%`,
-              }}
-            >
-              <div className="magnifier-hint">Hover to magnify</div>
-            </div>
-          )}
           
           {validMediaItems.length > 1 && (
             <div className="thumbnail-gallery">
@@ -307,6 +283,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
                     width={80}
                     height={80}
                     loading="lazy"
+                    sizes="(max-width: 576px) 60px, 80px"
                   />
                 </div>
               ))}
@@ -314,23 +291,43 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
           )}
         </div>
 
-        <div className="product-info">
-          <h1 className="product-title">{product.product_name}</h1>
+        <div className="product-info" ref={productInfoRef}>
+          {isHovered && !isMobile && isValidImage(selectedImage) && (
+            <div 
+              className="overlay-magnifier"
+              style={{
+                backgroundImage: `url(${selectedImage})`,
+                backgroundPosition: `${mousePosition.x}% ${mousePosition.y}%`,
+                backgroundSize: `${magnificationLevel * 100}%`,
+              }}
+            >
+            </div>
+          )}
           
-          <div className="product-meta">
-            <span className="product-brand">Brand: <strong>{product.product_brand}</strong></span>
+          <div className="product-header">
             {product.category && (
-              <span className="product-category">Category: <strong>{product.category.product_category}</strong></span>
+              <span className="product-category-badge">{product.category.product_category}</span>
             )}
-            {product.warranty && (
-              <span className="product-warranty-badge">
+            <h1 className="product-title">{product.product_name}</h1>
+            
+            <div className="product-meta">
+              <span className="product-brand">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                  <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                  <path d="M8 1a1.5 1.5 0 0 0-1.5 1.5h3A1.5 1.5 0 0 0 8 1z"/>
+                  <path d="M12 5V4a3 3 0 1 0-6 0v1H2.5A1.5 1.5 0 0 0 1 6.5v6A1.5 1.5 0 0 0 2.5 14h11a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 13.5 5H12zm-1 0H5V4a3 3 0 0 1 6 0v1z"/>
                 </svg>
-                {product.warranty}
+                <strong>{product.product_brand}</strong>
               </span>
-            )}
+              {product.warranty && (
+                <span className="product-warranty-badge">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                  </svg>
+                  {product.warranty}
+                </span>
+              )}
+            </div>
           </div>
           
           <div className="product-price-container">
@@ -347,11 +344,26 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
           
           <div className="product-stock">
             <span className={product.product_stock > 0 ? "in-stock" : "out-of-stock"}>
-              {product.product_stock > 0 ? `In Stock (${product.product_stock} available)` : "Out of Stock"}
+              {product.product_stock > 0 ? (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                  </svg>
+                  In Stock ({product.product_stock} available)
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                  </svg>
+                  Out of Stock
+                </>
+              )}
             </span>
           </div>
           
-          <div className="product-actions">
+          <div className="product-actions-button">
             <div className="quantity-selector">
               <button 
                 onClick={() => handleQuantityChange(quantity - 1)}
@@ -377,7 +389,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
             </div>
             
             <button 
-              className="add-to-cart-btn"
+              className="add-to-cart-btn-product"
               onClick={handleAddToCart}
               disabled={product.product_stock <= 0}
             >
@@ -421,7 +433,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
         </div>
       </div>
 
-      {/* Tabbed content section */}
       <div className="product-details-tabs">
         <div className="tabs-header">
           <button 
@@ -452,7 +463,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
         <div className="tabs-content">
           {activeTab === 'description' && (
             <div className="tab-pane description-content">
-              {product.product_description}
+              <div className="description-text">
+                {product.product_description}
+              </div>
+              
               {product.warranty && (
                 <div className="warranty-info">
                   <h3>Warranty Information</h3>
