@@ -15,6 +15,7 @@ const Footer = () => {
   const [email, setEmail] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [subscribing, setSubscribing] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -33,16 +34,34 @@ const Footer = () => {
     fetchCategories();
   }, []);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
       toast.error("Please enter a valid email address");
       return;
     }
-
-    toast.success("Thank you for subscribing to our newsletter!");
-    setEmail("");
+    
+    setSubscribing(true);
+    
+    try {
+      const response = await apiClient("/newsletter/subscribe", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+      });
+      
+      if (response.success) {
+        toast.success("Thank you for subscribing to our newsletter!");
+        setEmail("");
+      } else {
+        toast.error(response.message || "You're already subscribed to our newsletter.");
+      }
+    } catch (error: any) {
+      console.error("Subscribe error:", error);
+      toast.error(error.message || "Failed to subscribe. Please try again.");
+    } finally {
+      setSubscribing(false);
+    }
   };
 
   const currentYear = new Date().getFullYear();
@@ -80,8 +99,11 @@ const Footer = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    disabled={subscribing}
                   />
-                  <button type="submit">Subscribe</button>
+                  <button type="submit" disabled={subscribing}>
+                    {subscribing ? "Subscribing..." : "Subscribe"}
+                  </button>
                 </div>
               </form>
             </div>

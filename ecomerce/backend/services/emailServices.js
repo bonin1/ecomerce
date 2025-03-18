@@ -1,6 +1,7 @@
 const transporter = require('../config/EmailConfig');
 const fs = require('fs').promises;
 const path = require('path');
+const crypto = require('crypto');
 
 exports.sendVerificationEmail = async (email, verificationToken) => {
     try {
@@ -188,6 +189,83 @@ exports.sendOrderConfirmationEmail = async (email, orderDetails) => {
         return true;
     } catch (error) {
         console.error('Order confirmation email sending error:', error);
+        return false;
+    }
+};
+
+exports.sendSubscriptionWelcomeEmail = async (email, unsubscribeToken) => {
+    try {
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+        const unsubscribeUrl = `${frontendUrl}/newsletter/unsubscribe?email=${encodeURIComponent(email)}&token=${unsubscribeToken}`;
+        
+        let template = await fs.readFile(
+            path.join(__dirname, '../template/SubscriptionWelcomeTemplate.html'),
+            'utf8'
+        );
+
+        const currentYear = new Date().getFullYear();
+
+        template = template
+            .replace('#{LOGO_URL}#', `${process.env.BASE_URL}/static/image/STRIKETECH-1.png`)
+            .replace('#{SHOP_URL}#', frontendUrl)
+            .replace('#{UNSUBSCRIBE_URL}#', unsubscribeUrl)
+            .replace('#{FACEBOOK_URL}#', process.env.FACEBOOK_URL || '#')
+            .replace('#{TWITTER_URL}#', process.env.TWITTER_URL || '#')
+            .replace('#{INSTAGRAM_URL}#', process.env.INSTAGRAM_URL || '#')
+            .replace('#{FACEBOOK_ICON}#', `${process.env.BASE_URL}/static/image/facebook.png`)
+            .replace('#{TWITTER_ICON}#', `${process.env.BASE_URL}/static/image/twitter.png`)
+            .replace('#{INSTAGRAM_ICON}#', `${process.env.BASE_URL}/static/image/instagram.png`)
+            .replace('#{CURRENT_YEAR}#', currentYear);
+
+        const mailOptions = {
+            from: {
+                name: 'StrikeTech Newsletter',
+                address: process.env.EMAIL_USER
+            },
+            to: email,
+            subject: 'Welcome to StrikeTech Newsletter',
+            html: template
+        };
+
+        await transporter.sendMail(mailOptions);
+        return true;
+    } catch (error) {
+        console.error('Subscription welcome email sending error:', error);
+        return false;
+    }
+};
+
+exports.sendUnsubscribeConfirmationEmail = async (email) => {
+    try {
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+        const resubscribeUrl = `${frontendUrl}/newsletter/subscribe`;
+        
+        let template = await fs.readFile(
+            path.join(__dirname, '../template/UnsubscribeConfirmationTemplate.html'),
+            'utf8'
+        );
+
+        const currentYear = new Date().getFullYear();
+
+        template = template
+            .replace('#{LOGO_URL}#', `${process.env.BASE_URL}/static/image/STRIKETECH-1.png`)
+            .replace('#{RESUBSCRIBE_URL}#', resubscribeUrl)
+            .replace('#{CURRENT_YEAR}#', currentYear);
+
+        const mailOptions = {
+            from: {
+                name: 'StrikeTech Newsletter',
+                address: process.env.EMAIL_USER
+            },
+            to: email,
+            subject: "You've Unsubscribed from StrikeTech Newsletter'",
+            html: template
+        };
+
+        await transporter.sendMail(mailOptions);
+        return true;
+    } catch (error) {
+        console.error('Unsubscribe confirmation email sending error:', error);
         return false;
     }
 };

@@ -11,6 +11,7 @@ const PaymentMethod = require('./PaymentMethodsModel');
 const ProductPaymentMethod = require('./ProductPaymentMethodsModel');
 const Order = require('./OrderModel');
 const OrderItem = require('./OrderItemModel');
+const Subscribe = require('./SubscribeModel');
 
 const syncModels = async () => {
     try {
@@ -26,6 +27,7 @@ const syncModels = async () => {
         await ProductPaymentMethod.sync({ alter: false });
         await Order.sync({ alter: false });
         await OrderItem.sync({ alter: false });
+        await Subscribe.sync({ alter: false });
 
         console.log('All models synchronized successfully');
     } catch (error) {
