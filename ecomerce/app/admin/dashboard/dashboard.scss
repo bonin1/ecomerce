@@ -66,3 +66,14 @@
         margin: 0;
     }
 }
+
+@media (max-width: 768px) {
+    .admin-main {
+        margin-left: 70px !important;
+        padding: 1rem;
+    }
+    
+    .stats-grid, .charts-grid {
+        grid-template-columns: 1fr;
+    }
+}

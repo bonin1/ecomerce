@@ -269,3 +269,101 @@ exports.sendUnsubscribeConfirmationEmail = async (email) => {
         return false;
     }
 };
+
+exports.sendJobApplicationConfirmationEmail = async (email, applicationData) => {
+    try {
+        let template = await fs.readFile(
+            path.join(__dirname, '../template/JobApplicationConfirmationTemplate.html'),
+            'utf8'
+        );
+
+        const currentYear = new Date().getFullYear();
+        const applicationDate = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        template = template
+            .replace('#{LOGO_URL}#', `${process.env.BASE_URL}/static/image/STRIKETECH-1.png`)
+            .replace('#{APPLICANT_NAME}#', applicationData.name)
+            .replace('#{JOB_TITLE}#', applicationData.jobTitle)
+            .replace('#{JOB_LOCATION}#', applicationData.jobLocation)
+            .replace('#{APPLICATION_DATE}#', applicationDate)
+            .replace('#{CURRENT_YEAR}#', currentYear);
+
+        const mailOptions = {
+            from: {
+                name: 'StrikeTech Careers',
+                address: process.env.EMAIL_USER
+            },
+            to: email,
+            subject: `Application Received: ${applicationData.jobTitle} - StrikeTech`,
+            html: template
+        };
+
+        await transporter.sendMail(mailOptions);
+        return true;
+    } catch (error) {
+        console.error('Job application confirmation email error:', error);
+        return false;
+    }
+};
+
+exports.sendApplicationStatusUpdateEmail = async (email, statusData) => {
+    try {
+        let template = await fs.readFile(
+            path.join(__dirname, '../template/ApplicationStatusUpdateTemplate.html'),
+            'utf8'
+        );
+
+        const currentYear = new Date().getFullYear();
+
+        if (statusData.status === 'approved') {
+            template = template
+                .replace('#{APPROVED_BLOCK_START}#', '')
+                .replace('#{APPROVED_BLOCK_END}#', '')
+                .replace('#{REJECTED_BLOCK_START}#', '<!--')
+                .replace('#{REJECTED_BLOCK_END}#', '-->');
+        } else {
+            template = template
+                .replace('#{APPROVED_BLOCK_START}#', '<!--')
+                .replace('#{APPROVED_BLOCK_END}#', '-->')
+                .replace('#{REJECTED_BLOCK_START}#', '')
+                .replace('#{REJECTED_BLOCK_END}#', '');
+        }
+
+        if (statusData.feedbackNote && statusData.feedbackNote.trim() !== '') {
+            template = template
+                .replace('#{FEEDBACK_BLOCK_START}#', '')
+                .replace('#{FEEDBACK_BLOCK_END}#', '')
+                .replace('#{FEEDBACK_NOTE}#', statusData.feedbackNote);
+        } else {
+            template = template
+                .replace('#{FEEDBACK_BLOCK_START}#', '<!--')
+                .replace('#{FEEDBACK_BLOCK_END}#', '-->');
+        }
+
+        template = template
+            .replace('#{LOGO_URL}#', `${process.env.BASE_URL}/static/image/STRIKETECH-1.png`)
+            .replace(/#{APPLICANT_NAME}#/g, statusData.name)
+            .replace(/#{JOB_TITLE}#/g, statusData.jobTitle)
+            .replace('#{CURRENT_YEAR}#', currentYear);
+
+        const mailOptions = {
+            from: {
+                name: 'StrikeTech Careers',
+                address: process.env.EMAIL_USER
+            },
+            to: email,
+            subject: `Application Status Update: ${statusData.jobTitle} - StrikeTech`,
+            html: template
+        };
+
+        await transporter.sendMail(mailOptions);
+        return true;
+    } catch (error) {
+        console.error('Application status update email error:', error);
+        return false;
+    }
+};

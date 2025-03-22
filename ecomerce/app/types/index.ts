@@ -131,3 +131,62 @@ export interface OrdersResponse {
         orders: Order[];
     };
 }
+
+export interface Career {
+    id: number;
+    title: string;
+    description: string;
+    location: string;
+    salary?: string;
+    status: 'active' | 'inactive';
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface CareerApplication {
+    id: number;
+    career_id: number;
+    name: string;
+    email: string;
+    phone: string;
+    resume?: string;
+    cover_letter?: string;
+    status: 'pending' | 'approved' | 'rejected';
+    createdAt: string;
+    updatedAt: string;
+    career?: {
+        title: string;
+        location: string;
+        description?: string;
+    };
+}
+
+export interface CareerStats {
+    careers: {
+        total: number;
+        active: number;
+        inactive: number;
+    };
+    applications: {
+        total: number;
+        pending: number;
+        approved: number;
+        rejected: number;
+    };
+}
+
+export interface CareersResponse {
+    success: boolean;
+    data: Career[];
+    total: number;
+    page: number;
+    totalPages: number;
+}
+
+export interface CareerApplicationsResponse {
+    success: boolean;
+    data: CareerApplication[];
+    total: number;
+    page: number;
+    totalPages: number;
+}

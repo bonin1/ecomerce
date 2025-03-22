@@ -120,6 +120,13 @@ exports.authorize = (...roles) => {
 };
 
 exports.isAdmin = async (req, res, next) => {
+    if (!req.user) {
+        return res.status(401).json({
+            success: false,
+            message: 'Authentication required. Please log in.'
+        });
+    }
+    
     if (!['admin', 'superadmin'].includes(req.user.role)) {
         return res.status(403).json({
             success: false,
@@ -130,6 +137,13 @@ exports.isAdmin = async (req, res, next) => {
 };
 
 exports.isAdminOrStaff = async (req, res, next) => {
+    if (!req.user) {
+        return res.status(401).json({
+            success: false,
+            message: 'Authentication required. Please log in.'
+        });
+    }
+    
     if (!['admin', 'staff','superadmin'].includes(req.user.role)) {
         return res.status(403).json({
             success: false,

@@ -53,10 +53,22 @@ const Sidebar = () => {
             ]
         },
         {
-            section: 'Catalog',
+            section: 'Products',
             items: [
-                { path: '/admin/products', label: 'Products', icon: '📦' },
+                { path: '/admin/products', label: 'Products', icon: '📦' }
+            ]
+        },
+        {
+            section: 'Categories',
+            items: [
                 { path: '/admin/categories', label: 'Categories', icon: '🗂️' }
+            ]
+        },
+        {
+            section: 'Careers',
+            items: [
+                { path: '/admin/careers', label: 'Job Listings', icon: '💼' },
+                { path: '/admin/careers/applications', label: 'Applications', icon: '📝' }
             ]
         },
         {

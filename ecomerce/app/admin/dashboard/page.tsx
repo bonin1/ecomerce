@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '@/app/components/admin/Sidebar/sidebar';
+import Sidebar from '@/app/admin/components/Sidebar/sidebar';
 import { Line, Bar, Pie, Doughnut } from 'react-chartjs-2';
 import { apiClient } from '@/app/utils/apiClient';
 import Cookies from 'js-cookie';

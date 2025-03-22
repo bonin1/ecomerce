@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Status Update</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td align="center" style="padding: 40px 0;">
+                <table role="presentation" style="width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <tr>
+                        <td align="center" style="padding: 40px 0; background-color: #05A7BE; border-radius: 8px 8px 0 0;">
+                            <img src="#{LOGO_URL}#" alt="Company Logo" style="width: 200px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <h1 style="color: #333333; margin-bottom: 20px;">Application Status Update</h1>
+                            <p style="color: #666666; font-size: 16px; line-height: 24px;">
+                                Hello #{APPLICANT_NAME}#,
+                            </p>
+                            
+                            <!-- For approved applications -->
+                            #{APPROVED_BLOCK_START}#
+                            <p style="color: #666666; font-size: 16px; line-height: 24px;">
+                                We are pleased to inform you that your application for the <strong>#{JOB_TITLE}#</strong> position has been <span style="color: #28a745; font-weight: bold;">approved</span> to move forward in our hiring process.
+                            </p>
+                            <p style="color: #666666; font-size: 16px; line-height: 24px;">
+                                Our HR team will contact you shortly to schedule an interview and discuss the next steps. Please keep an eye on your email and phone for our communication.
+                            </p>
+                            #{APPROVED_BLOCK_END}#
+                            
+                            <!-- For rejected applications -->
+                            #{REJECTED_BLOCK_START}#
+                            <p style="color: #666666; font-size: 16px; line-height: 24px;">
+                                Thank you for your interest in the <strong>#{JOB_TITLE}#</strong> position at StrikeTech.
+                            </p>
+                            <p style="color: #666666; font-size: 16px; line-height: 24px;">
+                                After careful consideration of your application, we regret to inform you that we have decided to move forward with other candidates whose qualifications more closely align with our current requirements.
+                            </p>
+                            <p style="color: #666666; font-size: 16px; line-height: 24px;">
+                                We appreciate the time you took to apply with us and encourage you to apply for future positions that match your skills and experience.
+                            </p>
+                            #{REJECTED_BLOCK_END}#
+                            
+                            <!-- Feedback note if provided -->
+                            #{FEEDBACK_BLOCK_START}#
+                            <div style="margin: 30px 0; padding: 20px; background-color: #f8f8f8; border-radius: 5px;">
+                                <h3 style="color: #333333; margin-top: 0;">Additional Information:</h3>
+                                <p style="color: #666666; margin-bottom: 0;">#{FEEDBACK_NOTE}#</p>
+                            </div>
+                            #{FEEDBACK_BLOCK_END}#
+                            
+                            <p style="color: #666666; font-size: 16px; line-height: 24px;">
+                                If you have any questions, please contact our HR department at <a href="mailto:careers@striketech.com" style="color: #05A7BE;">careers@striketech.com</a>.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 30px; background-color: #f8f8f8; border-radius: 0 0 8px 8px;">
+                            <p style="color: #888888; font-size: 14px; text-align: center; margin: 0;">
+                                © #{CURRENT_YEAR}# StrikeTech. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

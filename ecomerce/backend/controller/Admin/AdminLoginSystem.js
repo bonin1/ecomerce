@@ -8,7 +8,7 @@ const generateAdminToken = (userId, role) => {
     return jwt.sign(
         { userId, role, isAdminToken: true },
         process.env.ADMIN_JWT_SECRET,
-        { expiresIn: '4h' }
+        { expiresIn: '24h' }
     );
 };
 

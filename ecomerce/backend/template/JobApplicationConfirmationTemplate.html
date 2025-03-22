@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Application Confirmation</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td align="center" style="padding: 40px 0;">
+                <table role="presentation" style="width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <tr>
+                        <td align="center" style="padding: 40px 0; background-color: #05A7BE; border-radius: 8px 8px 0 0;">
+                            <img src="#{LOGO_URL}#" alt="Company Logo" style="width: 200px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <h1 style="color: #333333; margin-bottom: 20px;">Application Received</h1>
+                            <p style="color: #666666; font-size: 16px; line-height: 24px;">
+                                Hello #{APPLICANT_NAME}#,
+                            </p>
+                            <p style="color: #666666; font-size: 16px; line-height: 24px;">
+                                Thank you for applying for the <strong>#{JOB_TITLE}#</strong> position at StrikeTech in #{JOB_LOCATION}#.
+                            </p>
+                            <p style="color: #666666; font-size: 16px; line-height: 24px;">
+                                We have received your application and our team will review it shortly. If your qualifications match our requirements, we will contact you for the next steps in the hiring process.
+                            </p>
+                            <div style="margin: 30px 0; padding: 20px; background-color: #f8f8f8; border-radius: 5px;">
+                                <h3 style="color: #333333; margin-top: 0;">Application Details:</h3>
+                                <ul style="color: #666666; padding-left: 20px;">
+                                    <li>Position: #{JOB_TITLE}#</li>
+                                    <li>Location: #{JOB_LOCATION}#</li>
+                                    <li>Date Applied: #{APPLICATION_DATE}#</li>
+                                </ul>
+                            </div>
+                            <p style="color: #666666; font-size: 16px; line-height: 24px;">
+                                Please note that due to a high volume of applications, we may not be able to respond to each applicant individually.
+                            </p>
+                            <p style="color: #666666; font-size: 16px; line-height: 24px;">
+                                If you have any questions about your application, please contact our HR department at <a href="mailto:careers@striketech.com" style="color: #05A7BE;">careers@striketech.com</a>.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 30px; background-color: #f8f8f8; border-radius: 0 0 8px 8px;">
+                            <p style="color: #888888; font-size: 14px; text-align: center; margin: 0;">
+                                © #{CURRENT_YEAR}# StrikeTech. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

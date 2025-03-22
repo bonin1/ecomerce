@@ -17,7 +17,8 @@ async function verifyToken(token: string) {
 export async function middleware(request: NextRequest) {
     if (request.nextUrl.pathname.startsWith('/admin/dashboard') || 
         request.nextUrl.pathname.startsWith('/admin/settings') || 
-        request.nextUrl.pathname.startsWith('/admin/products')) {
+        request.nextUrl.pathname.startsWith('/admin/products') ||
+        request.nextUrl.pathname.startsWith('/admin/careers')) {
         
         const adminToken = request.cookies.get('adminToken')?.value;
         
@@ -60,6 +61,7 @@ export const config = {
     matcher: [
         '/admin/dashboard/:path*',
         '/admin/settings/:path*',
-        '/admin/products/:path*'
+        '/admin/products/:path*',
+        '/admin/careers/:path*'
     ]
 };

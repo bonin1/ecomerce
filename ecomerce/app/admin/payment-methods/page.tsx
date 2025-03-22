@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '@/app/components/admin/Sidebar/sidebar';
+import Sidebar from '@/app/admin/components/Sidebar/sidebar';
 import PaymentMethodsManager from '../components/payment-methods/Payment';
 
 const PaymentMethodsPage = () => {
