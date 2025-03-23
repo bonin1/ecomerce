@@ -120,7 +120,7 @@ const JobDetailsPage = () => {
 
   return (
     <>
-      <Container  maxWidth="lg" sx={{ py: 8 }}>
+      <Container maxWidth="lg" sx={{ py: 8 }}>
         {applicationSuccess && (
           <Alert severity="success" sx={{ mb: 4 }}>
             Your application has been submitted successfully! We'll review your application and contact you soon.

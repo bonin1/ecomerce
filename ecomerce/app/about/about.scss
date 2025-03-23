@@ -1,0 +1,521 @@
+// Modern Color Palette
+$primary-color: #3a6ea5;
+$secondary-color: #f8f9fa;
+$accent-color: #ff6b6b;
+$dark-color: #2d3436;
+$text-color: #4b4f56;
+$light-text: #ffffff;
+$border-color: #e9ecef;
+
+// Layout Variables
+$spacing-unit: 2rem;
+$border-radius: 12px;
+$transition-speed: 0.4s;
+$max-width: 1280px;
+
+// Typography
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
+
+// Global Styles
+.about-container {
+  font-family: 'Manrope', sans-serif;
+  color: $text-color;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+.about-section-container {
+  max-width: $max-width;
+  margin: 0 auto;
+  padding: 0 $spacing-unit;
+}
+
+section {
+  padding: $spacing-unit * 3 0;
+  position: relative;
+
+  @media (max-width: 768px) {
+    padding: $spacing-unit * 2 0;
+  }
+}
+
+// Typography & Heading Styles
+h1, h2, h3 {
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+}
+
+h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.75rem;
+}
+
+p {
+  margin-bottom: 1.5rem;
+  font-size: 1.05rem;
+}
+
+.section-heading {
+  text-align: center;
+  margin-bottom: $spacing-unit * 2;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  
+  h2 {
+    margin-bottom: 1rem;
+  }
+}
+
+.overline {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $accent-color;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+// Material Icons (Add to your public assets or use a CDN)
+.material-icon {
+  font-family: 'Material Icons'; // Add this font to your project
+  font-size: 2rem;
+}
+
+// Hero Section
+.about-hero {
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4)), url('/images/about-hero.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: $light-text;
+  height: 80vh;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  
+  .about-hero-content {
+    max-width: 800px;
+    padding: 0 $spacing-unit;
+    animation: fadeUp 1s ease-out;
+    
+    h1 {
+      font-size: 4.5rem;
+      margin-bottom: 1.5rem;
+      font-weight: 800;
+      
+      @media (max-width: 768px) {
+        font-size: 3rem;
+      }
+    }
+    
+    p {
+      font-size: 1.5rem;
+      max-width: 700px;
+      margin: 0 auto;
+      
+      @media (max-width: 768px) {
+        font-size: 1.2rem;
+      }
+    }
+  }
+}
+
+// Mission Section
+.about-mission {
+  background-color: $dark-color;
+  color: $light-text;
+  text-align: center;
+  
+  .mission-content {
+    max-width: 800px;
+    margin: 0 auto;
+    font-size: 1.3rem;
+    font-weight: 300;
+    
+    @media (max-width: 768px) {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+// Story Section
+.about-story {
+  background-color: $light-text;
+  
+  .about-story-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-unit * 2;
+    align-items: center;
+    
+    @media (max-width: 992px) {
+      grid-template-columns: 1fr;
+      gap: $spacing-unit;
+    }
+    
+    .about-story-text {
+      p {
+        color: $text-color;
+      }
+      
+      .feature-list {
+        list-style: none;
+        padding: 0;
+        margin: $spacing-unit 0;
+        
+        li {
+          margin-bottom: 0.8rem;
+          display: flex;
+          align-items: center;
+          
+          &:before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: $accent-color;
+            border-radius: 50%;
+            margin-right: 1rem;
+          }
+          
+          span {
+            font-weight: 600;
+          }
+        }
+      }
+    }
+    
+    .about-story-image {
+      .image-placeholder {
+        aspect-ratio: 4/3;
+        background-color: $secondary-color;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: $border-radius;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        position: relative;
+        
+        &:after {
+          content: '';
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          border-radius: $border-radius;
+          top: 0;
+          left: 0;
+        }
+        
+        .material-icon {
+          font-size: 4rem;
+          color: $primary-color;
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+}
+
+// Values Section
+.about-values {
+  background-color: $secondary-color;
+  position: relative;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: linear-gradient(to bottom, white, $secondary-color);
+    z-index: 1;
+  }
+  
+  .about-section-container {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing-unit;
+    
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @media (max-width: 576px) {
+      grid-template-columns: 1fr;
+    }
+    
+    .value-card {
+      background-color: white;
+      padding: $spacing-unit * 1.5;
+      border-radius: $border-radius;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      transition: all $transition-speed;
+      border: 1px solid $border-color;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      
+      &:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        border-color: $primary-color;
+        
+        .value-icon {
+          background-color: $primary-color;
+          color: white;
+        }
+      }
+      
+      .value-icon {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: $secondary-color;
+        border-radius: 50%;
+        color: $primary-color;
+        transition: all $transition-speed;
+      }
+      
+      h3 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+        color: $dark-color;
+      }
+      
+      p {
+        font-size: 1rem;
+        color: $text-color;
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+// Team Section
+.about-team {
+  background-color: white;
+  
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing-unit;
+    
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @media (max-width: 576px) {
+      grid-template-columns: 1fr;
+    }
+    
+    .team-member {
+      text-align: center;
+      padding: $spacing-unit;
+      border-radius: $border-radius;
+      transition: all $transition-speed;
+      
+      &:hover {
+        background-color: $secondary-color;
+        
+        .team-member-image .image-placeholder {
+          transform: scale(1.05);
+          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+          background-color: white;
+        }
+      }
+      
+      .team-member-image {
+        margin-bottom: 1.5rem;
+        
+        .image-placeholder {
+          background-color: $secondary-color;
+          height: 180px;
+          width: 180px;
+          border-radius: 50%;
+          margin: 0 auto;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+          transition: all $transition-speed;
+          
+          .material-icon {
+            font-size: 3rem;
+            color: $primary-color;
+            opacity: 0.5;
+          }
+        }
+      }
+      
+      h3 {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .team-role {
+        color: $accent-color;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+      }
+      
+      .team-desc {
+        font-size: 0.9rem;
+        color: $text-color;
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+// Stats Section
+.about-stats {
+  background-color: $primary-color;
+  color: white;
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing-unit;
+    
+    @media (max-width: 992px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @media (max-width: 576px) {
+      grid-template-columns: 1fr;
+      gap: $spacing-unit * 1.5;
+    }
+    
+    .stat-item {
+      text-align: center;
+      
+      .stat-number {
+        display: block;
+        font-size: 3.5rem;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+      }
+      
+      .stat-label {
+        font-size: 1.1rem;
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+// Contact CTA Section
+.about-contact {
+  background: linear-gradient(to right, $dark-color, lighten($dark-color, 10%));
+  color: $light-text;
+  
+  .contact-content {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto;
+    
+    h2 {
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+      
+      @media (max-width: 768px) {
+        font-size: 2.5rem;
+      }
+    }
+    
+    p {
+      font-size: 1.2rem;
+      margin-bottom: $spacing-unit * 1.5;
+      opacity: 0.9;
+    }
+    
+    .contact-button {
+      display: inline-block;
+      background-color: $accent-color;
+      color: white;
+      padding: 1rem 2.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: all $transition-speed;
+      border: 2px solid $accent-color;
+      
+      &:hover {
+        background-color: transparent;
+        color: white;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive Adjustments
+@media (max-width: 768px) {
+  .about-section-container {
+    padding: 0 1.5rem;
+  }
+  
+  .about-story .about-story-content {
+    .about-story-image {
+      order: 2;
+    }
+    .about-story-text {
+      order: 1;
+    }
+  }
+}

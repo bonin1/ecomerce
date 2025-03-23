@@ -2,7 +2,7 @@
   color: #333;
   font-size: 0.9rem;
   line-height: 1.6;
-  margin-top: 5rem;
+  margin-top: 2rem;
 
   .footer-main {
     background: linear-gradient(to bottom, #ffffff, #f8f9fa);
@@ -10,7 +10,6 @@
     .container {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 0 2rem;
 
       @media (max-width: 768px) {
         padding: 0 1.5rem;
@@ -18,7 +17,7 @@
     }
 
     .footer-top {
-      padding: 4rem 0 2rem;
+      padding-bottom: 4rem;
       display: flex;
       flex-wrap: wrap;
       gap: 2rem;
