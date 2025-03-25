@@ -1,0 +1,306 @@
+.affiliate-header {
+  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+  background-size: 300% 300%;
+  animation: gradientAnimation 15s ease infinite;
+  color: white;
+  padding: 8rem 0 6rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/images/affiliate/pattern.png');
+    opacity: 0.08;
+    z-index: 1;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1));
+    transform: skewY(-1.5deg);
+    z-index: 1;
+  }
+
+  .container {
+    position: relative;
+    z-index: 2;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .header-content {
+    max-width: 800px;
+    margin: 0 auto;
+    animation: fadeInDown 1s ease-out;
+  }
+
+  h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(90deg, #ffffff, #e0e0e0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+
+    @media (max-width: 768px) {
+      font-size: 2.5rem;
+    }
+
+    @media (max-width: 576px) {
+      font-size: 2rem;
+    }
+  }
+
+  p {
+    font-size: 1.3rem;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 300;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+
+    @media (max-width: 768px) {
+      font-size: 1.1rem;
+    }
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1.2rem;
+    justify-content: center;
+    
+    @media (max-width: 576px) {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .primary-btn, .secondary-btn {
+      padding: 1rem 2.2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+      text-decoration: none;
+      display: inline-block;
+      font-size: 1.05rem;
+      letter-spacing: 1px;
+    }
+
+    .primary-btn {
+      background: #fff;
+      color: #1a2a6c;
+      border: none;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        transition: all 0.5s ease-out;
+        transform: skewX(-15deg);
+        z-index: -1;
+      }
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        
+        &::before {
+          width: 120%;
+        }
+      }
+
+      &:active {
+        transform: translateY(-2px);
+      }
+    }
+
+    .secondary-btn {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      &:active {
+        transform: translateY(-2px);
+      }
+    }
+  }
+
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    margin-top: 5rem;
+    gap: 3.5rem;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 0.5s forwards;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+    }
+
+    @media (max-width: 768px) {
+      flex-wrap: wrap;
+      gap: 2rem 3rem;
+    }
+
+    .stat-item {
+      text-align: center;
+      position: relative;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: translateY(-5px);
+      }
+
+      .stat-value {
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        color: #ffffff;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        position: relative;
+        
+        @media (max-width: 576px) {
+          font-size: 2.2rem;
+        }
+      }
+
+      .stat-label {
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 300;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 2px;
+        background: #fff;
+        transition: width 0.3s ease;
+      }
+
+      &:hover::after {
+        width: 40px;
+      }
+    }
+  }
+
+  .scroll-down {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 3;
+    
+    &:hover {
+      color: white;
+      transform: translate(-50%, -5px);
+    }
+    
+    .chevron {
+      animation: bounce 2s infinite;
+    }
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

@@ -178,12 +178,6 @@ const Footer = () => {
                     <Link href="/careers">Careers</Link>
                   </li>
                   <li>
-                    <Link href="/blog">Blog</Link>
-                  </li>
-                  <li>
-                    <Link href="/press">Press</Link>
-                  </li>
-                  <li>
                     <Link href="/affiliate">Affiliate Program</Link>
                   </li>
                 </ul>
