@@ -38,6 +38,7 @@
     "express-fileupload": "^1.5.1",
     "express-session": "^1.18.1",
     "express-validator": "^7.2.1",
+    "framer-motion": "^12.6.2",
     "google-auth-library": "^9.15.1",
     "jose": "^5.9.6",
     "js-cookie": "^3.0.5",

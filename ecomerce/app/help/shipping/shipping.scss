@@ -1,0 +1,561 @@
+.shipping-page {
+    font-family: 'Montserrat', sans-serif;
+    color: #333;
+    background: #fcfcfc;
+  }
+  
+  .shipping-content {
+    margin: 0 auto;
+  }
+  
+  .shipping-section {
+    padding: 5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .shipping-section--alt {
+    background-color: #f9f9f9;
+  }
+  
+  .container {
+    margin: 0 auto;
+    max-width: 1400px;
+  }
+  
+  .section-title {
+    font-size: 2.25rem;
+    font-weight: 600;
+    margin-bottom: 3rem;
+    text-align: center;
+    position: relative;
+    padding-bottom: 1rem;
+  }
+  
+  .section-title:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(to right, #3a86ff, #00c2ff);
+  }
+  
+  /* Premium Services Tabs */
+  .service-tabs {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  }
+  
+  .tab-headers {
+    display: flex;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .tab-header {
+    flex: 1;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  
+  .tab-header:hover {
+    color: #333;
+  }
+  
+  .tab-header.active {
+    color: #3a86ff;
+    font-weight: 600;
+  }
+  
+  .tab-header.active:after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #3a86ff;
+  }
+  
+  .tab-content {
+    padding: 3rem 2rem;
+  }
+  
+  .tab-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+  
+  .service-feature {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+  
+  .feature-icon {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background: #f2f7ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .feature-content h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #222;
+  }
+  
+  .feature-content p {
+    color: #666;
+    line-height: 1.6;
+  }
+  
+  /* Shipping Calculator */
+  .calculator-container {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    padding: 2rem;
+  }
+  
+  .calculator-form {
+    display: grid;
+    gap: 2rem;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .form-group label {
+    font-weight: 500;
+    color: #333;
+    font-size: 1rem;
+  }
+  
+  .premium-select {
+    padding: 1rem 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+  }
+  
+  .weight-slider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .weight-slider input {
+    flex: 1;
+    height: 6px;
+    -webkit-appearance: none;
+    background: #e9ecef;
+    border-radius: 5px;
+    outline: none;
+  }
+  
+  .weight-slider input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #3a86ff;
+    cursor: pointer;
+  }
+  
+  .weight-value {
+    min-width: 60px;
+    padding: 0.5rem 1rem;
+    background: #f2f7ff;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  
+  .shipping-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .shipping-method {
+    padding: 1.25rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .shipping-method.active {
+    border-color: #3a86ff;
+    background: #f2f7ff;
+  }
+  
+  .method-icon {
+    color: #3a86ff;
+  }
+  
+  .method-name {
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 0.2rem;
+  }
+  
+  .method-days {
+    font-size: 0.85rem;
+    color: #666;
+  }
+  
+  .calculate-btn {
+    padding: 1rem 1.5rem;
+    background: #3a86ff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+  }
+  
+  .calculate-btn:hover {
+    background: #2a75e8;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(42, 117, 232, 0.2);
+  }
+  
+  .calculate-btn:active {
+    transform: translateY(0);
+  }
+  
+  .calculate-btn:disabled {
+    background: #a0c0ff;
+    cursor: not-allowed;
+  }
+  
+  .calculation-result {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #3a86ff 0%, #00c2ff 100%);
+    border-radius: 8px;
+    color: white;
+    overflow: hidden;
+  }
+  
+  .result-content {
+    text-align: center;
+  }
+  
+  .result-content h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+  }
+  
+  .result-price {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Interactive Timeline */
+  .interactive-timeline {
+    margin-top: 4rem;
+  }
+  
+  .timeline-progress {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 3rem;
+  }
+  
+  .timeline-line {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #e0e0e0;
+    z-index: 1;
+  }
+  
+  .timeline-progress-bar {
+    height: 100%;
+    background: #3a86ff;
+    transition: width 0.5s ease;
+  }
+  
+  .timeline-dot {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    width: 80px;
+    transition: all 0.3s ease;
+  }
+  
+  .dot-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.5rem;
+    color: transparent;
+    transition: all 0.3s ease;
+  }
+  
+  .timeline-dot.active .dot-icon {
+    background: #3a86ff;
+    border-color: #3a86ff;
+    color: white;
+    box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.3);
+  }
+  
+  .dot-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #777;
+    transition: all 0.3s ease;
+  }
+  
+  .timeline-dot.active .dot-label {
+    color: #3a86ff;
+    font-weight: 600;
+  }
+  
+  .timeline-detail {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    min-height: 300px;
+  }
+  
+  .timeline-panel h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #222;
+  }
+  
+  .timeline-panel p {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    color: #555;
+  }
+  
+  .timeline-detail-image {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+  
+  /* Accordion FAQ */
+  .accordion-faq {
+    margin-top: 3rem;
+  }
+  
+  .faq-accordion-item {
+    background: white;
+    border: 1px solid #f0f0f0;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  
+  .faq-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+  }
+  
+  .faq-header h4 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0;
+  }
+  
+  .accordion-icon {
+    font-size: 1.5rem;
+    color: #3a86ff;
+    font-weight: 300;
+  }
+  
+  .faq-content {
+    overflow: hidden;
+    height: 0;
+    padding: 0 1.5rem;
+  }
+  
+  .faq-accordion-item.expanded .faq-content {
+    padding-bottom: 1.5rem;
+  }
+  
+  .faq-content p {
+    line-height: 1.7;
+    color: #666;
+  }
+  
+  /* CTA Section */
+  .cta-section {
+    background: linear-gradient(to right, #f9f9f9, #f2f2f2);
+    padding: 5rem 2rem;
+    border-bottom: none;
+  }
+  
+  .cta-container {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+  }
+  
+  .cta-content {
+    flex: 1;
+    padding: 3rem;
+  }
+  
+  .cta-content h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #222;
+  }
+  
+  .cta-content p {
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    color: #666;
+    line-height: 1.6;
+  }
+  
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .btn-primary {
+    padding: 0.75rem 1.5rem;
+    background: #3a86ff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary:hover {
+    background: #2a75e8;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(42, 117, 232, 0.2);
+  }
+  
+  .btn-secondary {
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    color: #3a86ff;
+    border: 1px solid #3a86ff;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-secondary:hover {
+    background: #f2f7ff;
+    transform: translateY(-2px);
+  }
+  
+  .cta-image {
+    flex: 1;
+    overflow: hidden;
+    max-height: 400px;
+    display: none;
+  }
+  
+  @media (min-width: 768px) {
+    .cta-image {
+      display: block;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .service-feature {
+      flex-direction: column;
+    }
+    
+    .feature-icon {
+      margin-bottom: 1rem;
+    }
+    
+    .cta-container {
+      flex-direction: column;
+    }
+    
+    .cta-content {
+      padding: 2rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .shipping-methods {
+      grid-template-columns: 1fr;
+    }
+    
+    .section-title {
+      font-size: 1.75rem;
+    }
+    
+    .timeline-dot {
+      width: 60px;
+    }
+    
+    .dot-label {
+      font-size: 0.8rem;
+    }
+    
+    .cta-buttons {
+      flex-direction: column;
+    }
+  }
