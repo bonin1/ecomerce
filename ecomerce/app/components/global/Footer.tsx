@@ -140,9 +140,6 @@ const Footer = () => {
                         </li>
                       </>
                     )}
-                    <li>
-                      <Link href="/categories">All Categories</Link>
-                    </li>
                   </ul>
                 )}
               </div>
