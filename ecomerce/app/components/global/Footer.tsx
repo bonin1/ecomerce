@@ -20,12 +20,16 @@ const Footer = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await apiClient("/product/categories");
-        if (response && response.data) {
-          setCategories(response.data.slice(0, 5));
+        setLoading(true);
+        const response = await apiClient("/product/categories", {
+          skipAuth: true,
+        });
+
+        if (response && response.success) {
+          setCategories(response.data.slice(0, 5)); 
         }
       } catch (error) {
-        console.error("Error fetching categories:", error);
+        console.error("Error fetching categories for footer:", error);
       } finally {
         setLoading(false);
       }
@@ -41,20 +45,22 @@ const Footer = () => {
       toast.error("Please enter a valid email address");
       return;
     }
-    
+
     setSubscribing(true);
-    
+
     try {
       const response = await apiClient("/newsletter/subscribe", {
         method: "POST",
         body: JSON.stringify({ email }),
       });
-      
+
       if (response.success) {
         toast.success("Thank you for subscribing to our newsletter!");
         setEmail("");
       } else {
-        toast.error(response.message || "You're already subscribed to our newsletter.");
+        toast.error(
+          response.message || "You're already subscribed to our newsletter."
+        );
       }
     } catch (error: any) {
       console.error("Subscribe error:", error);
@@ -112,16 +118,16 @@ const Footer = () => {
           <div className="footer-middle">
             <div className="footer-links-section">
               <div className="footer-links-column">
-                <h4>Shop Categories</h4>
+                <h4>Shop by Category</h4>
                 {loading ? (
-                  <div className="loading-categories">Loading...</div>
+                  <div className="loading-categories">Loading categories...</div>
                 ) : (
                   <ul>
                     {categories.length > 0 ? (
                       categories.map((category) => (
                         <li key={category.id}>
                           <Link
-                            href={`/category/${category.product_category.toLowerCase()}`}
+                            href={`/categories/${category.product_category.toLowerCase()}`}
                           >
                             {category.product_category}
                           </Link>
@@ -130,13 +136,13 @@ const Footer = () => {
                     ) : (
                       <>
                         <li>
-                          <Link href="/category/electronics">Electronics</Link>
+                          <Link href="/categories/electronics">Electronics</Link>
                         </li>
                         <li>
-                          <Link href="/category/clothing">Clothing</Link>
+                          <Link href="/categories/clothing">Clothing</Link>
                         </li>
                         <li>
-                          <Link href="/category/books">Books</Link>
+                          <Link href="/categories/books">Books</Link>
                         </li>
                       </>
                     )}
