@@ -367,3 +367,62 @@ exports.sendApplicationStatusUpdateEmail = async (email, statusData) => {
         return false;
     }
 };
+
+exports.sendTrackingUpdateEmail = async (email, trackingData) => {
+    try {
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+        const trackingUrl = `${frontendUrl}/track-order?order=${trackingData.orderNumber}&track=${trackingData.trackingNumber}`;
+        const contactUrl = `${frontendUrl}/help`;
+        
+        let template = await fs.readFile(
+            path.join(__dirname, '../template/OrderTrackingUpdateTemplate.html'),
+            'utf8'
+        );
+
+        let estimatedDelivery = 'Not available';
+        if (trackingData.estimatedDelivery) {
+            estimatedDelivery = new Date(trackingData.estimatedDelivery).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        const formatStatus = (status) => {
+            return status
+                .split('_')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        };
+
+        template = template
+            .replace('#{LOGO_URL}#', `${process.env.BASE_URL}/static/image/STRIKETECH-1.png`)
+            .replace('#{CUSTOMER_NAME}#', trackingData.customerName)
+            .replace('#{ORDER_NUMBER}#', trackingData.orderNumber)
+            .replace('#{ORDER_STATUS}#', formatStatus(trackingData.status))
+            .replace('#{CURRENT_LOCATION}#', trackingData.location || 'Not specified')
+            .replace('#{CARRIER}#', trackingData.carrier || 'Not specified')
+            .replace('#{TRACKING_NUMBER}#', trackingData.trackingNumber || 'Not available')
+            .replace('#{ESTIMATED_DELIVERY}#', estimatedDelivery)
+            .replace('#{UPDATE_DESCRIPTION}#', trackingData.description || 'No additional details available.')
+            .replace('#{TRACKING_URL}#', trackingUrl)
+            .replace('#{CONTACT_URL}#', contactUrl);
+
+        const mailOptions = {
+            from: {
+                name: 'StrikeTech Order Tracking',
+                address: process.env.EMAIL_USER
+            },
+            to: email,
+            subject: `Order Update: ${trackingData.orderNumber} - ${formatStatus(trackingData.status)}`,
+            html: template
+        };
+
+        await transporter.sendMail(mailOptions);
+        return true;
+    } catch (error) {
+        console.error('Tracking update email sending error:', error);
+        return false;
+    }
+};

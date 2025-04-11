@@ -61,6 +61,9 @@ app.use('/newsletter', require('./routes/SubscribeRoute'));
 // Add career routes
 app.use('/careers', require('./routes/CareerRoute'));
 
+// Add tracking routes
+app.use('/track-order', require('./routes/TrackOrderRoutes'));
+
 // ---------------------------------------------------
 
 app.listen(PORT,()=>{

@@ -24,6 +24,12 @@ const {
     getOrderFulfillmentStats,
     getCustomerOrderInsights
 } = require('../controller/Admin/OrderStatistics');
+const {
+    addTrackingUpdate,
+    getOrderTrackingHistoryAdmin,
+    getLatestTrackingStatusAdmin,
+    resendTrackingNotification
+} = require('../controller/UserManagement/order/TrackingController');
 
 router.post('/login', adminLogin);
 router.post('/verify-otp', verifyAdminOTP);
@@ -42,5 +48,10 @@ router.get('/orders/statistics/basic', authenticateAdmin, getOrderStats);
 router.get('/orders', authenticateAdmin, getAllOrders);
 router.get('/orders/:orderId', authenticateAdmin, getOrderById);
 router.put('/orders/:orderId/status', authenticateAdmin, updateOrderStatus);
+
+router.post('/orders/:orderId/tracking', authenticateAdmin, addTrackingUpdate);
+router.get('/orders/:orderId/tracking', authenticateAdmin, getOrderTrackingHistoryAdmin);
+router.get('/orders/:orderId/tracking/latest', authenticateAdmin, getLatestTrackingStatusAdmin);
+router.post('/tracking/:trackingId/notify', authenticateAdmin, resendTrackingNotification);
 
 module.exports = router;

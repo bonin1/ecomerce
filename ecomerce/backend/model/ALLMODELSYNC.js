@@ -11,6 +11,7 @@ const PaymentMethod = require('./PaymentMethodsModel');
 const ProductPaymentMethod = require('./ProductPaymentMethodsModel');
 const Order = require('./OrderModel');
 const OrderItem = require('./OrderItemModel');
+const OrderTracking = require('./OrderTrackingModel');
 const Subscribe = require('./SubscribeModel');
 const CareersModel = require('./CareersModel');
 const CareerApplicationModel = require('./CareerApplicationModel');
@@ -29,6 +30,7 @@ const syncModels = async () => {
         await ProductPaymentMethod.sync({ alter: false });
         await Order.sync({ alter: false });
         await OrderItem.sync({ alter: false });
+        await OrderTracking.sync({ alter: false });
         await Subscribe.sync({ alter: false });
         await CareersModel.sync({ alter: false });
         await CareerApplicationModel.sync({ alter: false });

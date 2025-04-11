@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Tracking Update</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td align="center" style="padding: 40px 0;">
+                <table role="presentation" style="width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <tr>
+                        <td align="center" style="padding: 40px 0; background-color: #05A7BE; border-radius: 8px 8px 0 0;">
+                            <img src="#{LOGO_URL}#" alt="Store Logo" style="width: 200px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <h1 style="color: #333333; margin-bottom: 20px;">Your Order Has Been Updated</h1>
+                            <p style="color: #666666; font-size: 16px; line-height: 24px;">
+                                Hello #{CUSTOMER_NAME}#,
+                            </p>
+                            <p style="color: #666666; font-size: 16px; line-height: 24px;">
+                                There's an update to your order <strong>#{ORDER_NUMBER}#</strong>:
+                            </p>
+                            
+                            <table style="width: 100%; border-collapse: collapse; margin: 30px 0; background-color: #f9f9f9; border-radius: 5px;">
+                                <tr>
+                                    <td style="padding: 15px; border-bottom: 1px solid #eee;">
+                                        <strong style="color: #05A7BE;">Status:</strong>
+                                        <span style="float: right; font-weight: bold;">#{ORDER_STATUS}#</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px; border-bottom: 1px solid #eee;">
+                                        <strong style="color: #05A7BE;">Current Location:</strong>
+                                        <span style="float: right;">#{CURRENT_LOCATION}#</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px; border-bottom: 1px solid #eee;">
+                                        <strong style="color: #05A7BE;">Carrier:</strong>
+                                        <span style="float: right;">#{CARRIER}#</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px; border-bottom: 1px solid #eee;">
+                                        <strong style="color: #05A7BE;">Tracking Number:</strong>
+                                        <span style="float: right;">#{TRACKING_NUMBER}#</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px; border-bottom: 1px solid #eee;">
+                                        <strong style="color: #05A7BE;">Estimated Delivery:</strong>
+                                        <span style="float: right;">#{ESTIMATED_DELIVERY}#</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px;">
+                                        <strong style="color: #05A7BE;">Update Details:</strong>
+                                        <p style="margin-top: 10px;">#{UPDATE_DESCRIPTION}#</p>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <div style="text-align: center; margin: 30px 0;">
+                                <a href="#{TRACKING_URL}#" style="background-color: #05A7BE; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                                    Track Your Order
+                                </a>
+                            </div>
+                            
+                            <p style="color: #666666; font-size: 14px; margin-top: 30px;">
+                                If you have any questions about your order, please contact our customer support team.
+                            </p>
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 30px; background-color: #f8f8f8; border-radius: 0 0 8px 8px; text-align: center;">
+                            <p style="color: #888888; font-size: 14px; margin: 0;">
+                                © 2025 StrikeTech. All rights reserved.
+                            </p>
+                            <p style="color: #888888; font-size: 14px; margin: 10px 0 0 0;">
+                                If you have questions or need support, please <a href="#{CONTACT_URL}#" style="color: #05A7BE; text-decoration: none;">contact us</a>.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
