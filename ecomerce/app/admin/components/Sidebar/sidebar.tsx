@@ -75,6 +75,7 @@ const Sidebar = () => {
             section: 'Sales',
             items: [
                 { path: '/admin/orders', label: 'Orders', icon: '🛍️' },
+                { path: '/admin/orders/tracking', label: 'Order Tracking', icon: '🚚' },
                 { path: '/admin/customers', label: 'Customers', icon: '👥' }
             ]
         },
