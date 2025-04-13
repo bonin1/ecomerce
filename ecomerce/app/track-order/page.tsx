@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { apiClient } from '@/app/utils/apiClient';
+import { validateTrackingCode } from '@/app/utils/trackingCodeGenerator';
 import Link from 'next/link';
 import './track-order.scss';
 
@@ -57,6 +58,12 @@ export default function TrackOrderPage() {
 
     if (!orderNumber) {
       setError('Please enter an order number');
+      return;
+    }
+
+    // If tracking number provided, validate its format
+    if (trackingNumber && !validateTrackingCode(trackingNumber)) {
+      setError('Invalid tracking number format. Please check and try again.');
       return;
     }
 
@@ -161,8 +168,9 @@ export default function TrackOrderPage() {
                 id="trackingNumber"
                 value={trackingNumber}
                 onChange={(e) => setTrackingNumber(e.target.value)}
-                placeholder="e.g. TRK-67890"
+                placeholder="e.g. TRK-XXXX-XXXX-XXXX-X"
               />
+              <small className="form-hint">Format: TRK-XXXX-XXXX-XXXX-X</small>
             </div>
           </div>
           <button 

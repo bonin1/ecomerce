@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/app/admin/components/Sidebar/sidebar';
 import { apiClient } from '@/app/utils/apiClient';
+import { generateTrackingCode } from '@/app/utils/trackingCodeGenerator';
 import { 
     Box, 
     Button, 
@@ -33,12 +34,15 @@ import {
     Chip,
     CircularProgress,
     Alert,
+    Tooltip,
 } from '@mui/material';
 import { 
     Search as SearchIcon,
     Visibility as VisibilityIcon,
     FilterList as FilterListIcon,
     Refresh as RefreshIcon,
+    Autorenew as AutorenewIcon,
+    Lock as LockIcon,
 } from '@mui/icons-material';
 
 interface OrderItem {
@@ -121,6 +125,9 @@ const OrdersManagement = () => {
     const [estimatedDeliveryDate, setEstimatedDeliveryDate] = useState('');
     const [updateTrackingMode, setUpdateTrackingMode] = useState(false);
 
+    const [autoGenerateTracking, setAutoGenerateTracking] = useState(true);
+    const [trackingLocked, setTrackingLocked] = useState(false);
+
     // Auth check
     useEffect(() => {
         const token = localStorage.getItem('adminToken');
@@ -195,6 +202,20 @@ const OrdersManagement = () => {
             if (response.success) {
                 setSelectedOrder(response.data);
                 setOpenOrderDialog(true);
+                
+                if (response.data.tracking_number) {
+                    setTrackingNumber(response.data.tracking_number);
+                    setTrackingLocked(true);
+                } else {
+                    setTrackingLocked(false);
+                    if (autoGenerateTracking) {
+                        setTrackingNumber(generateTrackingCode(orderId));
+                    }
+                }
+                
+                if (response.data.estimated_delivery_date) {
+                    setEstimatedDeliveryDate(response.data.estimated_delivery_date.split('T')[0]);
+                }
             } else {
                 setError('Failed to fetch order details');
             }
@@ -223,8 +244,6 @@ const OrdersManagement = () => {
             });
 
             if (response.success) {
-                // Update the selected order - preserve the full order structure
-                // especially the user object
                 setSelectedOrder(prev => {
                     if (!prev) return null;
                     return {
@@ -234,7 +253,6 @@ const OrdersManagement = () => {
                     };
                 });
                 
-                // Update the order in the list
                 setOrders(prevOrders => 
                     prevOrders.map(order => 
                         order.id === orderId ? { ...order, status } : order
@@ -243,7 +261,6 @@ const OrdersManagement = () => {
                 
                 setUpdateSuccess(true);
                 
-                // Clear the success message after 3 seconds
                 setTimeout(() => setUpdateSuccess(false), 3000);
             } else {
                 setError('Failed to update order status');
@@ -256,7 +273,6 @@ const OrdersManagement = () => {
         }
     };
 
-    // Add a new function to update payment status
     const updatePaymentStatus = async (orderId: number, paymentStatus: string) => {
         try {
             setProcessingUpdate(true);
@@ -267,7 +283,6 @@ const OrdersManagement = () => {
             });
 
             if (response.success) {
-                // Update the selected order - preserve the full object structure
                 setSelectedOrder(prev => {
                     if (!prev) return null;
                     return {
@@ -277,7 +292,6 @@ const OrdersManagement = () => {
                     };
                 });
                 
-                // Update the order in the list
                 setOrders(prevOrders => 
                     prevOrders.map(order => 
                         order.id === orderId ? { ...order, payment_status: paymentStatus } : order
@@ -297,31 +311,47 @@ const OrdersManagement = () => {
         }
     };
 
-    // Update shipping information
     const updateShippingInfo = async (orderId: number) => {
         try {
             setProcessingUpdate(true);
             
+            const originalOrder = orders.find(order => order.id === orderId);
+            const finalTrackingNumber = originalOrder && originalOrder.tracking_number 
+                ? originalOrder.tracking_number 
+                : trackingNumber;
+
             const response = await apiClient(`/admin/orders/${orderId}/status`, {
                 method: 'PUT',
                 body: JSON.stringify({ 
-                    tracking_number: trackingNumber,
+                    tracking_number: finalTrackingNumber,
                     estimated_delivery_date: estimatedDeliveryDate
                 }),
             });
 
             if (response.success) {
-                // Update the selected order
                 setSelectedOrder((prev) => prev ? {
                     ...prev,
-                    tracking_number: trackingNumber,
+                    tracking_number: finalTrackingNumber,
                     estimated_delivery_date: estimatedDeliveryDate
                 } : null);
+                
+                setOrders(prevOrders => 
+                    prevOrders.map(order => 
+                        order.id === orderId ? { 
+                            ...order, 
+                            tracking_number: finalTrackingNumber,
+                            estimated_delivery_date: estimatedDeliveryDate 
+                        } : order
+                    )
+                );
+                
+                if (finalTrackingNumber && !originalOrder?.tracking_number) {
+                    setTrackingLocked(true);
+                }
                 
                 setUpdateSuccess(true);
                 setUpdateTrackingMode(false);
                 
-                // Clear the success message after 3 seconds
                 setTimeout(() => setUpdateSuccess(false), 3000);
             } else {
                 setError('Failed to update shipping information');
@@ -334,12 +364,16 @@ const OrdersManagement = () => {
         }
     };
 
-    // Function to format date
+    const regenerateTrackingCode = () => {
+        if (selectedOrder && !trackingLocked) {
+            setTrackingNumber(generateTrackingCode(selectedOrder.id));
+        }
+    };
+
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleString();
     };
 
-    // Calculate order total
     const calculateOrderTotal = (items: OrderItem[]) => {
         return items.reduce((sum, item) => sum + Number(item.total_price), 0).toFixed(2);
     };
@@ -366,7 +400,6 @@ const OrdersManagement = () => {
 
                     <Card sx={{ mb: 4 }}>
                         <Box sx={{ p: 3, display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center', justifyContent: 'space-between' }}>
-                            {/* Search Form */}
                             <Box sx={{ display: 'flex', gap: 2, flexGrow: 1, maxWidth: '600px' }}>
                                 <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '8px', width: '100%' }}>
                                     <TextField
@@ -389,7 +422,6 @@ const OrdersManagement = () => {
                                 </form>
                             </Box>
 
-                            {/* Filters */}
                             <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                                 <FormControl size="small" sx={{ minWidth: 150 }}>
                                     <InputLabel>Status</InputLabel>
@@ -421,7 +453,6 @@ const OrdersManagement = () => {
                             </Box>
                         </Box>
 
-                        {/* Orders Table */}
                         {loading && orders.length === 0 ? (
                             <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
                                 <CircularProgress />
@@ -514,7 +545,6 @@ const OrdersManagement = () => {
                 </Container>
             </main>
 
-            {/* Order Details Dialog */}
             <Dialog
                 open={openOrderDialog}
                 onClose={handleCloseOrderDialog}
@@ -683,7 +713,6 @@ const OrdersManagement = () => {
                                     </Paper>
                                 </Grid>
 
-                                {/* Add Payment Status Update Section */}
                                 <Grid item xs={12}>
                                     <Typography variant="subtitle2" gutterBottom>Update Payment Status</Typography>
                                     <Paper variant="outlined" sx={{ p: 2 }}>
@@ -755,7 +784,30 @@ const OrdersManagement = () => {
                                                             fullWidth
                                                             size="small"
                                                             value={trackingNumber}
-                                                            onChange={(e) => setTrackingNumber(e.target.value)}
+                                                            onChange={(e) => !trackingLocked && setTrackingNumber(e.target.value)}
+                                                            disabled={trackingLocked}
+                                                            helperText={trackingLocked ? "Tracking number is permanent and cannot be changed" : ""}
+                                                            InputProps={{
+                                                                endAdornment: (
+                                                                    <InputAdornment position="end">
+                                                                        {trackingLocked ? (
+                                                                            <Tooltip title="Tracking codes are permanent once set">
+                                                                                <span>
+                                                                                    <IconButton size="small" disabled>
+                                                                                        <LockIcon fontSize="small" />
+                                                                                    </IconButton>
+                                                                                </span>
+                                                                            </Tooltip>
+                                                                        ) : (
+                                                                            <Tooltip title="Generate unique tracking code">
+                                                                                <IconButton onClick={regenerateTrackingCode} size="small">
+                                                                                    <AutorenewIcon />
+                                                                                </IconButton>
+                                                                            </Tooltip>
+                                                                        )}
+                                                                    </InputAdornment>
+                                                                ),
+                                                            }}
                                                         />
                                                     </Grid>
                                                     <Grid item xs={12} sm={6}>
@@ -772,7 +824,7 @@ const OrdersManagement = () => {
                                                         />
                                                     </Grid>
                                                 </Grid>
-                                                <Box sx={{ mt: 2, display: 'flex', gap: 1 }}>
+                                                <Box sx={{ mt: 2, display: 'flex', gap: 1, alignItems: 'center' }}>
                                                     <Button 
                                                         variant="contained" 
                                                         size="small"

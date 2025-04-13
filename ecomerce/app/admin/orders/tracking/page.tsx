@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/app/admin/components/Sidebar/sidebar';
 import { apiClient } from '@/app/utils/apiClient';
+import { generateTrackingCode } from '@/app/utils/trackingCodeGenerator';
 import Cookies from 'js-cookie';
 import { 
     Box, 
@@ -62,7 +63,9 @@ import {
     Send as SendIcon,
     Add as AddIcon,
     ArrowForward as ArrowForwardIcon,
-    LocationOn as LocationOnIcon
+    LocationOn as LocationOnIcon,
+    Autorenew as AutorenewIcon,
+    Lock as LockIcon
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import '../orders.scss';
@@ -155,6 +158,8 @@ const TrackingManagementPage = () => {
     const [formSuccess, setFormSuccess] = useState(false);
     const [formError, setFormError] = useState<string | null>(null);
     const [trackingTabValue, setTrackingTabValue] = useState(0);
+    const [autoGenerateTracking, setAutoGenerateTracking] = useState(true);
+    const [trackingLocked, setTrackingLocked] = useState(false);
 
     // Validation
     const [errors, setErrors] = useState({
@@ -264,7 +269,16 @@ const TrackingManagementPage = () => {
         // Reset form fields to use the order's current values
         if (order.tracking_number) {
             setNewTrackingNumber(order.tracking_number);
+            setAutoGenerateTracking(false);
+            setTrackingLocked(true);
+        } else {
+            setTrackingLocked(false);
+            if (autoGenerateTracking) {
+                // Auto-generate unique tracking number if none exists
+                setNewTrackingNumber(generateTrackingCode(order.id));
+            }
         }
+        
         if (order.estimated_delivery_date) {
             setNewEstimatedDelivery(order.estimated_delivery_date.split('T')[0]);
         }
@@ -326,6 +340,9 @@ const TrackingManagementPage = () => {
             setFormSubmitting(true);
             setFormError(null);
 
+            const isShippingUpdate = ['shipped', 'out_for_delivery', 'delivered'].includes(newTrackingStatus);
+            const needsToLockTracking = isShippingUpdate && !trackingLocked && newTrackingNumber;
+
             const trackingData = {
                 status: newTrackingStatus,
                 location: newTrackingLocation,
@@ -333,7 +350,8 @@ const TrackingManagementPage = () => {
                 carrier: newCarrier,
                 carrierTrackingNumber: newTrackingNumber,
                 estimatedDelivery: newEstimatedDelivery || null,
-                notifyCustomer
+                notifyCustomer,
+                lockTracking: needsToLockTracking
             };
 
             const response = await apiClient(`/admin/orders/${selectedOrder.id}/tracking`, {
@@ -342,6 +360,10 @@ const TrackingManagementPage = () => {
             });
 
             if (response.success) {
+                if (needsToLockTracking) {
+                    setTrackingLocked(true);
+                }
+                
                 setFormSuccess(true);
                 
                 // Update the tracking history
@@ -415,7 +437,6 @@ const TrackingManagementPage = () => {
         return new Date(dateString).toLocaleString();
     };
 
-    // Helper function to generate suggested tracking messages based on status
     const getSuggestedMessage = (status: string) => {
         switch (status) {
             case 'processing':
@@ -435,14 +456,18 @@ const TrackingManagementPage = () => {
         }
     };
 
-    // Handle tracking tab change
     const handleTrackingTabChange = (event: React.SyntheticEvent, newValue: number) => {
         setTrackingTabValue(newValue);
     };
 
-    // Copy tracking number to clipboard
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
+    };
+
+    const regenerateTrackingCode = () => {
+        if (selectedOrder && !trackingLocked) {
+            setNewTrackingNumber(generateTrackingCode(selectedOrder.id));
+        }
     };
 
     return (
@@ -459,7 +484,6 @@ const TrackingManagementPage = () => {
                         </Typography>
                     </Box>
 
-                    {/* Pending Orders Section */}
                     <Box mb={4}>
                         <Typography variant="h5" gutterBottom fontWeight={500}>
                             Orders Awaiting Fulfillment
@@ -551,7 +575,6 @@ const TrackingManagementPage = () => {
                         </Grid>
                     </Box>
 
-                    {/* All Orders Section */}
                     <Box mb={3}>
                         <Typography variant="h5" gutterBottom fontWeight={500}>
                             All Orders
@@ -560,7 +583,6 @@ const TrackingManagementPage = () => {
 
                     <Card sx={{ mb: 4 }}>
                         <Box sx={{ p: 3, display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center', justifyContent: 'space-between' }}>
-                            {/* Search Form */}
                             <Box sx={{ display: 'flex', gap: 2, flexGrow: 1, maxWidth: '600px' }}>
                                 <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '8px', width: '100%' }}>
                                     <TextField
@@ -583,7 +605,6 @@ const TrackingManagementPage = () => {
                                 </form>
                             </Box>
 
-                            {/* Filters */}
                             <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                                 <FormControl size="small" sx={{ minWidth: 150 }}>
                                     <InputLabel>Status</InputLabel>
@@ -615,7 +636,6 @@ const TrackingManagementPage = () => {
                             </Box>
                         </Box>
 
-                        {/* Orders Table */}
                         <TableContainer>
                             <Table sx={{ minWidth: 650 }}>
                                 <TableHead>
@@ -715,7 +735,6 @@ const TrackingManagementPage = () => {
                 </Container>
             </main>
 
-            {/* Tracking Dialog */}
             <Dialog 
                 open={openTrackingDialog} 
                 onClose={handleCloseTrackingDialog}
@@ -766,7 +785,6 @@ const TrackingManagementPage = () => {
                                 </Tabs>
                             </Box>
 
-                            {/* Add Tracking Update Tab */}
                             {trackingTabValue === 0 && (
                                 <Box sx={{ py: 2 }}>
                                     {formSuccess && (
@@ -791,7 +809,6 @@ const TrackingManagementPage = () => {
                                                         label="Status"
                                                         onChange={(e) => {
                                                             setNewTrackingStatus(e.target.value);
-                                                            // Update the description with a suggested message
                                                             setNewTrackingDescription(getSuggestedMessage(e.target.value));
                                                         }}
                                                     >
@@ -855,8 +872,31 @@ const TrackingManagementPage = () => {
                                                     label="Tracking Number"
                                                     fullWidth
                                                     value={newTrackingNumber}
-                                                    onChange={(e) => setNewTrackingNumber(e.target.value)}
+                                                    onChange={(e) => !trackingLocked && setNewTrackingNumber(e.target.value)}
                                                     placeholder="Carrier tracking number"
+                                                    disabled={trackingLocked}
+                                                    helperText={trackingLocked ? "Tracking number is permanent and cannot be changed" : ""}
+                                                    InputProps={{
+                                                        endAdornment: (
+                                                            <InputAdornment position="end">
+                                                                {trackingLocked ? (
+                                                                    <Tooltip title="Tracking codes are permanent once set">
+                                                                        <span>
+                                                                            <IconButton size="small" disabled>
+                                                                                <LockIcon fontSize="small" />
+                                                                            </IconButton>
+                                                                        </span>
+                                                                    </Tooltip>
+                                                                ) : (
+                                                                    <Tooltip title="Generate unique tracking code">
+                                                                        <IconButton onClick={regenerateTrackingCode} size="small">
+                                                                            <AutorenewIcon />
+                                                                        </IconButton>
+                                                                    </Tooltip>
+                                                                )}
+                                                            </InputAdornment>
+                                                        ),
+                                                    }}
                                                 />
                                             </Grid>
                                             
@@ -884,6 +924,24 @@ const TrackingManagementPage = () => {
                                                     }
                                                     label="Notify customer via email"
                                                 />
+                                                <FormControlLabel
+                                                    control={
+                                                        <Switch 
+                                                            checked={autoGenerateTracking} 
+                                                            onChange={(e) => {
+                                                                if (!trackingLocked) {
+                                                                    setAutoGenerateTracking(e.target.checked);
+                                                                    if (e.target.checked && selectedOrder) {
+                                                                        setNewTrackingNumber(generateTrackingCode(selectedOrder.id));
+                                                                    }
+                                                                }
+                                                            }}
+                                                            color="primary"
+                                                            disabled={trackingLocked}
+                                                        />
+                                                    }
+                                                    label="Auto-generate tracking code"
+                                                />
                                             </Grid>
                                             
                                             <Grid item xs={12}>
@@ -905,7 +963,6 @@ const TrackingManagementPage = () => {
                                 </Box>
                             )}
 
-                            {/* Tracking History Tab */}
                             {trackingTabValue === 1 && (
                                 <Box sx={{ py: 2 }}>
                                     {loadingHistory ? (

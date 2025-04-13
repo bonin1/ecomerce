@@ -70,7 +70,6 @@ const getAllProducts = async (req, res) => {
             
             const category = categoryMap[product.product_category_id] || null;
             
-            // Get all media for product
             const media = await ProduktMedia.findAll({
                 where: { product_id: product.id }
             });

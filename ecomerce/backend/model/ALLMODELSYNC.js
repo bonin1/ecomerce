@@ -15,6 +15,8 @@ const OrderTracking = require('./OrderTrackingModel');
 const Subscribe = require('./SubscribeModel');
 const CareersModel = require('./CareersModel');
 const CareerApplicationModel = require('./CareerApplicationModel');
+const ProduktReview = require('./ProduktReview');
+const ReviewMedia = require('./ReviewMediaModel');
 
 const syncModels = async () => {
     try {
@@ -34,6 +36,8 @@ const syncModels = async () => {
         await Subscribe.sync({ alter: false });
         await CareersModel.sync({ alter: false });
         await CareerApplicationModel.sync({ alter: false });
+        await ProduktReview.sync({ alter: false });
+        await ReviewMedia.sync({ alter: false });
 
         console.log('All models synchronized successfully');
     } catch (error) {
