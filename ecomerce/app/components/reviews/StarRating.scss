@@ -1,0 +1,60 @@
+.star-rating {
+  display: inline-flex;
+  align-items: center;
+  
+  &.small .star {
+    font-size: 1rem;
+  }
+  
+  &.medium .star {
+    font-size: 1.25rem;
+  }
+  
+  &.large .star {
+    font-size: 1.5rem;
+  }
+  
+  .star {
+    position: relative;
+    display: inline-block;
+    cursor: default;
+    color: #ddd;
+    margin-right: 2px;
+    
+    &.full {
+      color: #ffb800;
+    }
+    
+    &.half {
+      color: #ddd;
+      
+      &::before {
+        content: '★';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 50%;
+        overflow: hidden;
+        color: #ffb800;
+      }
+    }
+  }
+  
+  &.editable {
+    .star {
+      cursor: pointer;
+      transition: transform 0.1s ease;
+      
+      &:hover {
+        transform: scale(1.15);
+      }
+    }
+  }
+  
+  .rating-value {
+    margin-left: 8px;
+    font-size: 0.9rem;
+    color: #555;
+    font-weight: 500;
+  }
+}

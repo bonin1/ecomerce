@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useCart } from '@/app/context/CartContext';
 import { toast } from 'react-hot-toast';
 import './ProductID.scss';
+import ProductReviews from '@/app/components/reviews/ProductReviews';
 
 interface ProductMedia {
   id: number;
@@ -448,6 +449,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
             Specifications
           </button>
           <button 
+            className={`tab-btn ${activeTab === 'reviews' ? 'active' : ''}`}
+            onClick={() => setActiveTab('reviews')}
+          >
+            Reviews
+          </button>
+          <button 
             className={`tab-btn ${activeTab === 'shipping' ? 'active' : ''}`}
             onClick={() => setActiveTab('shipping')}
           >
@@ -505,6 +512,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
               ) : (
                 <p>No detailed specifications available for this product.</p>
               )}
+            </div>
+          )}
+
+          {activeTab === 'reviews' && (
+            <div className="tab-pane">
+              <ProductReviews productId={productId} />
             </div>
           )}
 

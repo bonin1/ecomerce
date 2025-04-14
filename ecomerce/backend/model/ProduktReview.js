@@ -59,4 +59,10 @@ const ProduktReview = db.define('produkt_review', {
     ]
 });
 
+// Add these associations
+ProduktReview.belongsTo(User, { foreignKey: 'user_id' });
+ProduktReview.belongsTo(Produkt, { foreignKey: 'product_id' });
+User.hasMany(ProduktReview, { foreignKey: 'user_id' });
+Produkt.hasMany(ProduktReview, { foreignKey: 'product_id' });
+
 module.exports = ProduktReview;
