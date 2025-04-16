@@ -31,42 +31,9 @@ syncModels();
 
 
 // ---------------------------------------------------
-// Routes
-
-app.get('/',(req,res)=>{
-    res.render('home')
-})
-
-const routes = require('./routes/StaticRoutes');
-routes.setupStaticRoutes(app);
-
-app.use('/auth', require('./routes/AuthRoute'));
-
-const profileRoutes = require('./routes/ProfileManagementRoute');
-app.use('/api', profileRoutes);
-
-app.use('/admin', require('./routes/AdminRoute'));
-
-app.use('/product', require('./routes/ProduktManagementRoute'));
-
-// Add payment methods route
-app.use('/payment-methods', require('./routes/PaymentMethodRoutes'));
-
-// Add order routes
-app.use('/orders', require('./routes/OrderRoutes'));
-
-// Add newsletter subscription routes
-app.use('/newsletter', require('./routes/SubscribeRoute'));
-
-// Add career routes
-app.use('/careers', require('./routes/CareerRoute'));
-
-// Add tracking routes
-app.use('/track-order', require('./routes/TrackOrderRoutes'));
-
-// Add review routes
-app.use('/reviews', require('./routes/ReviewRoutes'));
-
+// Register all routes
+const registerRoutes = require('./routes'); // Import the central route registration function
+registerRoutes(app); // Register all routes
 // ---------------------------------------------------
 
 app.listen(PORT,()=>{
