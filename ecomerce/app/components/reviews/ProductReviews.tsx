@@ -112,7 +112,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId }) => {
         toast.success('Review submitted successfully');
         setUserRating(0);
         setUserComment('');
-        fetchReviews(); // Refresh reviews
+        fetchReviews(); 
       } else {
         toast.error(response.message || 'Failed to submit review');
       }
