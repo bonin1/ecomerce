@@ -19,7 +19,6 @@ const StarRating: React.FC<StarRatingProps> = ({
 }) => {
   const [hoverRating, setHoverRating] = React.useState(0);
 
-  // Convert rating to nearest valid half-star value (0, 0.5, 1, 1.5, etc.)
   const normalizedRating = Math.round(rating * 2) / 2;
   
   const getStarClass = (position: number) => {
@@ -41,8 +40,6 @@ const StarRating: React.FC<StarRatingProps> = ({
     const x = event.clientX - rect.left;
     const halfPointPosition = rect.width / 2;
     
-    // If cursor is on the left half of the star, it's a half star
-    // If cursor is on the right half, it's a full star
     const isHalfStar = x < halfPointPosition;
     const rating = isHalfStar ? position - 0.5 : position;
     
