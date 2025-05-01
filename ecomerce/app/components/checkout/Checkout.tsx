@@ -82,7 +82,6 @@ const Checkout: React.FC = () => {
         ...formData,
       });
 
-      // Store order data in sessionStorage for the confirmation page
       sessionStorage.setItem('orderConfirmation', 'true');
       sessionStorage.setItem('orderDetails', JSON.stringify({
         orderNumber: response.order?.order_number || 'Unknown',
