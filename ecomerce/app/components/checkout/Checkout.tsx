@@ -176,7 +176,7 @@ const Checkout: React.FC = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="shippingCountry">Country</label>
+              <label htmlFor="shippingCountry">Country2</label>
               <input
                 type="text"
                 id="shippingCountry"
