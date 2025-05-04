@@ -31,9 +31,8 @@ syncModels();
 
 
 // ---------------------------------------------------
-// Register all routes
-const registerRoutes = require('./routes'); // Import the central route registration function
-registerRoutes(app); // Register all routes
+const registerRoutes = require('./routes');
+registerRoutes(app); 
 // ---------------------------------------------------
 
 app.listen(PORT,()=>{
