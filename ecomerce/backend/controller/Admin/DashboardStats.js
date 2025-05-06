@@ -10,7 +10,6 @@ exports.getDashboardStats = async (req, res) => {
         const now = new Date();
         const thirtyDaysAgo = subDays(now, 30);
         
-        // Daily users
         const dailyUsers = await User.findAll({
             where: {
                 createdAt: {
@@ -26,7 +25,6 @@ exports.getDashboardStats = async (req, res) => {
             raw: true
         });
 
-        // Daily products
         const dailyProducts = await Produkt.findAll({
             where: {
                 createdAt: {
