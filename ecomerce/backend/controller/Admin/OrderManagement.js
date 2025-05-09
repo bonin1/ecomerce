@@ -145,7 +145,6 @@ exports.updateOrderStatus = async (req, res) => {
             });
         }
         
-        // Update order with the provided fields
         const updateData = {};
         
         if (status) updateData.status = status;
@@ -155,7 +154,6 @@ exports.updateOrderStatus = async (req, res) => {
         
         await order.update(updateData, { transaction });
         
-        // If order is being cancelled, return items to inventory
         if (status === 'cancelled' && order.previous('status') !== 'cancelled') {
             const orderItems = await OrderItem.findAll({
                 where: { order_id: orderId },
@@ -174,7 +172,6 @@ exports.updateOrderStatus = async (req, res) => {
         
         await transaction.commit();
         
-        // Get the updated order with related data
         const updatedOrder = await Order.findByPk(orderId, {
             include: [
                 {
