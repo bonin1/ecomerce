@@ -320,7 +320,6 @@ exports.getCustomerOrderInsights = async (req, res) => {
             raw: true
         });
         
-        // Fix the ambiguous id column reference
         const topCustomers = await Order.findAll({
             attributes: [
                 'user_id',
