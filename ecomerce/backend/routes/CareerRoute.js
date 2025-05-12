@@ -67,7 +67,6 @@ router.put(
     careerCRUD.bulkUpdateCareerStatus
 );
 
-// Application management
 router.get(
     '/applications', 
     authenticate,
