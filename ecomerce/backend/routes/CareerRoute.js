@@ -32,7 +32,6 @@ router.post(
 );
 
 // Admin routes protected by auth and admin middleware
-// Career management
 router.post(
     '/create', 
     authenticate,
