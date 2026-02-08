@@ -190,3 +190,58 @@ export interface CareerApplicationsResponse {
     page: number;
     totalPages: number;
 }
+
+export interface Affiliate {
+    id: number;
+    fullName: string;
+    email: string;
+    website?: string;
+    socialMedia?: string;
+    message?: string;
+    status: 'pending' | 'approved' | 'rejected' | 'suspended';
+    affiliateCode?: string;
+    commissionRate: number;
+    totalEarnings: number;
+    totalClicks: number;
+    totalConversions: number;
+    paymentMethod?: 'paypal' | 'bank_transfer' | 'cryptocurrency';
+    paymentDetails?: any;
+    lastPaymentDate?: string;
+    notes?: string;
+    approvedAt?: string;
+    approvedBy?: number;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface AffiliateApplication {
+    fullName: string;
+    email: string;
+    website?: string;
+    socialMedia?: string;
+    message?: string;
+}
+
+export interface AffiliateStats {
+    totalAffiliates: number;
+    pendingAffiliates: number;
+    approvedAffiliates: number;
+    rejectedAffiliates: number;
+    suspendedAffiliates: number;
+    totalEarnings: number;
+    totalClicks: number;
+    totalConversions: number;
+    conversionRate: number;
+}
+
+export interface AffiliatesResponse {
+    success: boolean;
+    data: {
+        affiliates: Affiliate[];
+        totalCount: number;
+        totalPages: number;
+        currentPage: number;
+        hasNextPage: boolean;
+        hasPrevPage: boolean;
+    };
+}

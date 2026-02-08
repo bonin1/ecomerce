@@ -18,7 +18,8 @@ export async function middleware(request: NextRequest) {
     if (request.nextUrl.pathname.startsWith('/admin/dashboard') || 
         request.nextUrl.pathname.startsWith('/admin/settings') || 
         request.nextUrl.pathname.startsWith('/admin/products') ||
-        request.nextUrl.pathname.startsWith('/admin/careers')) {
+        request.nextUrl.pathname.startsWith('/admin/careers') ||
+        request.nextUrl.pathname.startsWith('/admin/affiliate')) {
         
         const adminToken = request.cookies.get('adminToken')?.value;
         
@@ -62,6 +63,7 @@ export const config = {
         '/admin/dashboard/:path*',
         '/admin/settings/:path*',
         '/admin/products/:path*',
-        '/admin/careers/:path*'
+        '/admin/careers/:path*',
+        '/admin/affiliate/:path*'
     ]
 };

@@ -13,6 +13,7 @@ const subscribeRoutes = require('./SubscribeRoute');
 const careerRoutes = require('./CareerRoute');
 const trackOrderRoutes = require('./TrackOrderRoutes');
 const reviewRoutes = require('./ReviewRoutes');
+const affiliateRoutes = require('./AffiliateRoute');
 
 
 const registerRoutes = (app) => {
@@ -31,6 +32,7 @@ const registerRoutes = (app) => {
     app.use('/careers', careerRoutes);
     app.use('/track-order', trackOrderRoutes);
     app.use('/reviews', reviewRoutes);
+    app.use('/affiliate', affiliateRoutes);
 };
 
 module.exports = registerRoutes;

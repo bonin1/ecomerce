@@ -72,6 +72,12 @@ const Sidebar = () => {
             ]
         },
         {
+            section: 'Affiliate Program',
+            items: [
+                { path: '/admin/affiliate', label: 'Affiliate Management', icon: '🤝' }
+            ]
+        },
+        {
             section: 'Sales',
             items: [
                 { path: '/admin/orders', label: 'Orders', icon: '🛍️' },

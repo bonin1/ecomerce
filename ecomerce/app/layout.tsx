@@ -4,6 +4,7 @@ import Script from 'next/script'
 import { CartProvider } from './context/CartContext'
 import { Toaster } from 'react-hot-toast'
 import ConditionalLayout from './components/global/ConditionalLayout'
+import AffiliateTrackingProvider from './components/global/AffiliateTrackingProvider'
 
 export default function RootLayout({
   children,
@@ -19,9 +20,11 @@ export default function RootLayout({
       </head>
       <body>
         <CartProvider>
-          <ConditionalLayout>
-            {children}
-          </ConditionalLayout>
+          <AffiliateTrackingProvider>
+            <ConditionalLayout>
+              {children}
+            </ConditionalLayout>
+          </AffiliateTrackingProvider>
           <Toaster position="top-right" />
         </CartProvider>
         <Script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" />
