@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { apiClient } from '@/app/utils/apiClient';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -33,7 +33,8 @@ interface CategoryType {
   product_category: string;
 }
 
-export default function CategoryPage({ params }: { params: { name: string } }) {
+export default function CategoryPage({ params }: { params: Promise<{ name: string }> }) {
+  const { name: categorySlug } = use(params);
   const [products, setProducts] = useState<ProductType[]>([]);
   const [category, setCategory] = useState<CategoryType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -45,7 +46,7 @@ export default function CategoryPage({ params }: { params: { name: string } }) {
     const fetchCategoryProducts = async () => {
       try {
         setLoading(true);
-        const categoryName = params.name;
+        const categoryName = categorySlug;
         
         // First, find the category ID by name
         const categoriesResponse = await apiClient('/product/categories', { 
@@ -89,7 +90,7 @@ export default function CategoryPage({ params }: { params: { name: string } }) {
     };
 
     fetchCategoryProducts();
-  }, [params.name]);
+  }, [categorySlug]);
 
   const formatPrice = (price: number | string): string => {
     if (price === null || price === undefined) return '0.00';
@@ -163,7 +164,7 @@ export default function CategoryPage({ params }: { params: { name: string } }) {
     <div className="category-page">
       <div className="container">
         <div className="category-header">
-          <h1>{category?.product_category || params.name}</h1>
+          <h1>{category?.product_category || categorySlug}</h1>
           <p>{products.length} products found</p>
         </div>
 

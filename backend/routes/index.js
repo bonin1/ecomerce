@@ -14,6 +14,7 @@ const careerRoutes = require('./CareerRoute');
 const trackOrderRoutes = require('./TrackOrderRoutes');
 const reviewRoutes = require('./ReviewRoutes');
 const affiliateRoutes = require('./AffiliateRoute');
+const wishlistRoutes = require('./WishlistRoute');
 
 
 const registerRoutes = (app) => {
@@ -33,6 +34,7 @@ const registerRoutes = (app) => {
     app.use('/track-order', trackOrderRoutes);
     app.use('/reviews', reviewRoutes);
     app.use('/affiliate', affiliateRoutes);
+    app.use('/wishlist', wishlistRoutes);
 };
 
 module.exports = registerRoutes;

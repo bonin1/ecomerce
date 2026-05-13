@@ -307,9 +307,9 @@ const Dashboard = () => {
     if (!adminUser || loading) return <CircularProgress />;
 
     return (
-        <div className="admin-layout">
+        <div className="flex min-h-screen bg-slate-50">
             <Sidebar />
-            <main className="admin-main" style={{ marginLeft: '250px', padding: '2rem' }}>
+            <main className="flex-1 overflow-x-hidden p-6 md:p-8">
                 <Typography variant="h4" gutterBottom>
                     Welcome, {adminUser.name}
                 </Typography>

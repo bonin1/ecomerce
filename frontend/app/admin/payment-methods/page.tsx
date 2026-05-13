@@ -15,9 +15,9 @@ const PaymentMethodsPage = () => {
     }, [router]);
 
     return (
-        <div className="admin-layout">
+        <div className="flex min-h-screen bg-slate-50">
             <Sidebar />
-            <main className="admin-main" style={{ marginLeft: '260px', padding: '2rem' }}>
+            <main className="flex-1 overflow-x-hidden p-6 md:p-8">
                 <PaymentMethodsManager />
             </main>
         </div>

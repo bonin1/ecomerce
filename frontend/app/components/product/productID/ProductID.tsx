@@ -7,6 +7,7 @@ import { useCart } from '@/app/context/CartContext';
 import { toast } from 'react-hot-toast';
 import './ProductID.scss';
 import ProductReviews from '@/app/components/reviews/ProductReviews';
+import { wishlistStatus, addToWishlist, removeFromWishlist } from '@/app/API/wishlist';
 
 interface ProductMedia {
   id: number;
@@ -82,8 +83,15 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [paymentMethodsLoading, setPaymentMethodsLoading] = useState(false);
   const [paymentMethodsError, setPaymentMethodsError] = useState<string | null>(null);
+  const [inWishlist, setInWishlist] = useState(false);
+  const [wishlistBusy, setWishlistBusy] = useState(false);
 
   const placeholderImage = '/placeholder-image.jpg';
+
+  const getAccessToken = () =>
+    typeof window !== 'undefined'
+      ? sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken')
+      : null;
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -174,6 +182,61 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
       fetchPaymentMethods();
     }
   }, [productId]);
+
+  useEffect(() => {
+    const token = getAccessToken();
+    if (!productId || !token) {
+      setInWishlist(false);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await wishlistStatus(productId);
+        if (!cancelled && res?.success) {
+          setInWishlist(!!res.inWishlist);
+        }
+      } catch {
+        if (!cancelled) setInWishlist(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [productId]);
+
+  const handleToggleWishlist = async () => {
+    const token = getAccessToken();
+    if (!token) {
+      toast.error('Sign in to use your wishlist');
+      return;
+    }
+    if (!product) return;
+    setWishlistBusy(true);
+    try {
+      if (inWishlist) {
+        const res = await removeFromWishlist(product.id);
+        if (res?.success) {
+          setInWishlist(false);
+          toast.success('Removed from wishlist');
+        } else {
+          toast.error(res?.message || 'Could not update wishlist');
+        }
+      } else {
+        const res = await addToWishlist(product.id);
+        if (res?.success) {
+          setInWishlist(true);
+          toast.success('Saved to wishlist');
+        } else {
+          toast.error(res?.message || 'Could not update wishlist');
+        }
+      }
+    } catch {
+      toast.error('Could not update wishlist');
+    } finally {
+      setWishlistBusy(false);
+    }
+  };
 
   const handleAddToCart = () => {
     if (product) {
@@ -365,7 +428,18 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
           </div>
           
           <div className="product-actions-button">
-            <div className="quantity-selector">
+            <div className="actions-primary">
+              <button
+                type="button"
+                className={`wishlist-toggle-btn${inWishlist ? ' active' : ''}`}
+                onClick={handleToggleWishlist}
+                disabled={wishlistBusy}
+                title={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+                aria-pressed={inWishlist}
+              >
+                <i className={`bi ${inWishlist ? 'bi-heart-fill' : 'bi-heart'}`} />
+              </button>
+              <div className="quantity-selector">
               <button 
                 onClick={() => handleQuantityChange(quantity - 1)}
                 disabled={quantity <= 1}
@@ -399,6 +473,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
               </svg>
               {product.product_stock > 0 ? 'Add to Cart' : 'Out of Stock'}
             </button>
+            </div>
           </div>
 
           <div className="product-quick-info">

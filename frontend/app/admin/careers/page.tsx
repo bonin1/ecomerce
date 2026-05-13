@@ -6,7 +6,6 @@ import CareerList from '@/app/admin/components/career/CareerList';
 import CareerStatsDashboard from '@/app/admin/components/career/CareerStats';
 import Cookies from 'js-cookie';
 import { Box, Container, Paper, Typography, Tabs, Tab } from '@mui/material';
-import '@/app/admin/dashboard/dashboard.scss';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -76,9 +75,9 @@ const CareersPage = () => {
     }
 
     return (
-        <div className="admin-layout">
+        <div className="flex min-h-screen bg-slate-50">
             <Sidebar />
-            <main className="admin-main">
+            <main className="flex-1 overflow-x-hidden p-6 md:p-8">
                 <Container maxWidth={false}>
                     <Typography variant="h4" gutterBottom>
                         Career Management

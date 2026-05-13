@@ -5,7 +5,6 @@ import Sidebar from '@/app/admin/components/Sidebar/sidebar';
 import ApplicationList from '@/app/admin/components/career/ApplicationList';
 import Cookies from 'js-cookie';
 import { Box, Container, Typography } from '@mui/material';
-import '@/app/admin/dashboard/dashboard.scss'; 
 
 const ApplicationsPage = () => {
     const router = useRouter();
@@ -37,9 +36,9 @@ const ApplicationsPage = () => {
     }
 
     return (
-        <div className="admin-layout">
+        <div className="flex min-h-screen bg-slate-50">
             <Sidebar />
-            <main className="admin-main">
+            <main className="flex-1 overflow-x-hidden p-6 md:p-8">
                 <Container maxWidth={false}>
                     <Box mb={4}>
                         <Typography variant="h4" gutterBottom>

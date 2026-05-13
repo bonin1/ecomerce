@@ -1,38 +1,34 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Preflight is disabled in tailwind.config (Bootstrap provides base styles). */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.wrapper{
+.wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrapper-assist {
+  width: 1400px;
+  height: 100%;
+  padding: 50px 0;
+}
+
+@media screen and (max-width: 1400px) {
+  .wrapper-assist {
     width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 50px 20px;
+  }
 }
 
-.wrapper-assist{
-    width: 1400px;
-    height: 100%;
-    padding: 50px 0;
-}
-
-@media screen and (max-width: 1400px){
-    .wrapper-assist{
-        width: 100%;
-        padding: 50px 20px;
-    }
-}
-
-@media (max-width: 1024px) {
-    body {
-        padding-top: 100px;
-    }
-}
-
-@media (max-width: 768px) {
-    body {
-        padding-top: 80px;
-    }
-}
+/* Do not add padding-top on body — it shifts the sticky header down. Main chrome uses normal flow. */

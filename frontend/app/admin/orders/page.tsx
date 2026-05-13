@@ -379,9 +379,9 @@ const OrdersManagement = () => {
     };
 
     return (
-        <div className="admin-layout">
+        <div className="flex min-h-screen bg-slate-50">
             <Sidebar />
-            <main className="admin-main" style={{ marginLeft: '250px', padding: '2rem' }}>
+            <main className="flex-1 overflow-x-hidden p-6 md:p-8">
                 <Container maxWidth="xl">
                     <Box mb={4}>
                         <Typography variant="h4" gutterBottom>

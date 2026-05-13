@@ -21,9 +21,11 @@ const getAllProducts = async (req, res) => {
         const whereConditions = {};
         
         if (search) {
+            const term = `%${search}%`;
             whereConditions[Op.or] = [
-                { product_name: { [Op.like]: `%${search}%` } },
-                { product_description: { [Op.like]: `%${search}%` } }
+                { product_name: { [Op.like]: term } },
+                { product_description: { [Op.like]: term } },
+                { product_brand: { [Op.like]: term } },
             ];
         }
         

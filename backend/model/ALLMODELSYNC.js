@@ -19,6 +19,7 @@ const ProduktReview = require('./ProduktReview');
 const ReviewMedia = require('./ReviewMediaModel');
 const Affiliate = require('./AffiliateModel');
 const AffiliateClick = require('./AffiliateClickModel');
+const WishlistItem = require('./WishlistModel');
 
 const syncModels = async () => {
     try {
@@ -42,6 +43,7 @@ const syncModels = async () => {
         await ReviewMedia.sync({ alter: false });
         await Affiliate.sync({ alter: false });
         await AffiliateClick.sync({ alter: false });
+        await WishlistItem.sync({ alter: false });
 
         console.log('All models synchronized successfully');
     } catch (error) {

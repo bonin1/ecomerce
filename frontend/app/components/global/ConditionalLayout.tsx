@@ -5,7 +5,6 @@ import Navbar from './navbar';
 import Footer from './Footer';
 import CartSidebar from '../cart/CartSidebar';
 import React from 'react';
-import '../../globals.css'
 
 const ConditionalLayout: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const pathname = usePathname();
