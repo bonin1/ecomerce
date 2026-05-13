@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "server": "nodemon backend/app.js",
+    "server": "npm run dev --prefix ../backend",
     "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
     "build": "next build",
     "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
     "start:frontend": "next start",
-    "start:backend": "node backend/app.js",
+    "start:backend": "npm run start --prefix ../backend",
     "lint": "next lint",
     "test": "jest"
   },

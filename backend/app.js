@@ -1,9 +1,10 @@
+const path = require('path')
+require('dotenv').config({ path: path.join(__dirname, '.env') })
+
 const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const app = express()
-require('dotenv').config()
-const path = require('path')
 
 const PORT = process.env.PORT || 8080
 
@@ -19,7 +20,7 @@ app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 app.use(cookieParser())
 
-app.use('/static',express.static('static'))
+app.use('/static', express.static(path.join(__dirname, 'static')))
 app.set('view engine','ejs')
 app.set('views', path.join(__dirname, 'views'))
 

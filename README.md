@@ -1,409 +1,339 @@
-# 🛒 StrikeTech E-Commerce Platform
+<div align="center">
 
-A comprehensive full-stack e-commerce platform built with **Next.js 15**, **Express.js**, and **MySQL**. This modern e-commerce solution features advanced user management, product catalog, order processing, admin panel, and much more.
+# StrikeTech E‑Commerce
 
-## 🚀 Features
+**Production-style full stack for commerce, accounts, and operations.**
 
-### Frontend (Next.js 15)
-- **Modern React Architecture** with TypeScript
-- **Responsive Design** with Tailwind CSS, Bootstrap, and SASS
-- **Performance Optimized** with Turbopack
-- **Google Authentication** integration
-- **Real-time Notifications** with React Hot Toast
-- **Interactive UI Components** with Material-UI and React Icons
-- **Data Visualization** with Chart.js and Recharts
-- **Smooth Animations** with Framer Motion
+![Node.js](https://img.shields.io/badge/Node.js-18%2B-43853d?logo=nodedotjs&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=nextdotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-4-404040?logo=express&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 
-### Backend (Express.js)
-- **RESTful API Architecture**
-- **JWT Authentication** with cookie-based sessions
-- **Two-Factor Authentication** (2FA) with TOTP
-- **MySQL Database** with Sequelize ORM
-- **File Upload Support** with Multer
-- **Email Services** with Nodemailer and custom templates
-- **PDF Generation** for documents and invoices
-- **QR Code Generation** for orders and tracking
-- **Rate Limiting** and security middleware
-- **Device Fingerprinting** for security
-- **Audit Logging** for admin activities
+[Quick start](#quick-start) · [Architecture](#architecture) · [Environment](#environment-variables) · [**Backend docs**](./backend/README.md) · [Contributing](#contributing)
 
-### Core Functionality
-
-#### 🔐 Authentication & Security
-- User registration with email verification
-- Login with password or Google OAuth
-- Two-factor authentication (TOTP)
-- Password reset functionality
-- Device trust management
-- Session management with JWT
-- Account lockout protection
-- Activity logging
-
-#### 👤 User Management
-- Comprehensive user profiles
-- Profile picture management
-- Account settings and preferences
-- Data export (JSON, CSV, PDF)
-- Account deletion and reactivation
-- Email change with verification
-- Activity history tracking
-
-#### 🛍️ E-Commerce Features
-- Product catalog with categories
-- Product search and filtering
-- Shopping cart functionality
-- Secure checkout process
-- Multiple payment methods
-- Order management and tracking
-- Product reviews and ratings
-- Wishlist functionality
-
-#### 📋 Order Management
-- Order creation and processing
-- Real-time order tracking
-- Order status updates
-- Email notifications
-- PDF invoice generation
-- QR code tracking
-- Shipping management
-- Return/refund processing
-
-#### 👨‍💼 Admin Panel
-- Dashboard with analytics
-- User management
-- Product management
-- Order management
-- Content management
-- System settings
-- Audit logs
-- Report generation
-
-#### 💼 Additional Features
-- Newsletter subscription/unsubscription
-- Career listings and applications
-- Affiliate program
-- Help and support system
-- Contact forms
-- About pages
-- Terms and conditions
-
-## 🏗️ Project Structure
-
-```
-ecomerce/
-├── ecomerce/                   # Main application folder
-│   ├── app/                    # Next.js App Router
-│   │   ├── components/         # React components
-│   │   │   ├── auth/          # Authentication components
-│   │   │   ├── cart/          # Shopping cart components
-│   │   │   ├── checkout/      # Checkout process components
-│   │   │   ├── global/        # Global UI components
-│   │   │   ├── home/          # Homepage components
-│   │   │   ├── product/       # Product-related components
-│   │   │   └── ...            # Other feature components
-│   │   ├── admin/             # Admin panel pages
-│   │   │   ├── dashboard/     # Admin dashboard
-│   │   │   ├── products/      # Product management
-│   │   │   ├── orders/        # Order management
-│   │   │   ├── users/         # User management
-│   │   │   └── ...            # Other admin features
-│   │   ├── profile/           # User profile pages
-│   │   │   ├── settings/      # Account settings
-│   │   │   ├── security/      # Security settings
-│   │   │   ├── activity/      # Activity logs
-│   │   │   └── ...            # Other profile features
-│   │   ├── context/           # React Context providers
-│   │   ├── hooks/             # Custom React hooks
-│   │   ├── types/             # TypeScript type definitions
-│   │   ├── utils/             # Utility functions
-│   │   └── ...                # Other pages and features
-│   ├── backend/               # Express.js backend
-│   │   ├── controller/        # Route controllers
-│   │   │   ├── Admin/         # Admin-specific controllers
-│   │   │   ├── Auth/          # Authentication controllers
-│   │   │   ├── UserManagement/ # User management controllers
-│   │   │   └── ...            # Other feature controllers
-│   │   ├── middleware/        # Express middleware
-│   │   ├── model/             # Sequelize models
-│   │   ├── routes/            # API routes
-│   │   ├── services/          # Business logic services
-│   │   ├── config/            # Configuration files
-│   │   ├── template/          # Email templates
-│   │   ├── static/            # Static assets
-│   │   ├── utils/             # Backend utilities
-│   │   └── views/             # EJS templates
-│   ├── public/                # Static public assets
-│   └── docs/                  # Documentation
-└── README.md                  # This file
-```
-
-## 🛠️ Technology Stack
-
-### Frontend
-- **Framework**: Next.js 15 with TypeScript
-- **Styling**: Tailwind CSS, Bootstrap 5, SASS
-- **UI Components**: Material-UI, React Bootstrap
-- **Icons**: React Icons, Bootstrap Icons
-- **Charts**: Chart.js, Recharts
-- **Animations**: Framer Motion
-- **State Management**: React Context API
-- **HTTP Client**: Axios
-- **Notifications**: React Hot Toast
-
-### Backend
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **Database**: MySQL with Sequelize ORM
-- **Authentication**: JWT, Google OAuth
-- **Email**: Nodemailer with Gmail
-- **File Upload**: Multer
-- **Security**: bcrypt, CORS, helmet
-- **Validation**: express-validator
-- **PDF Generation**: PDFKit
-- **QR Codes**: qrcode
-- **2FA**: Speakeasy
-- **Session Management**: express-session
-
-### Development Tools
-- **Package Manager**: npm
-- **Bundler**: Turbopack (Next.js 15)
-- **Linting**: ESLint
-- **Testing**: Jest, Supertest
-- **Development**: Nodemon, Concurrently
-
-## 📋 Prerequisites
-
-Before you begin, ensure you have the following installed:
-- **Node.js** (v18 or higher)
-- **npm** (v8 or higher)
-- **MySQL** (v8 or higher)
-- **Git**
-
-## 🚀 Installation & Setup
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/bonin1/ecomerce.git
-cd ecomerce/ecomerce
-```
-
-### 2. Install Dependencies
-```bash
-npm install
-```
-
-### 3. Environment Configuration
-
-Create a `.env` file in the root directory with the following variables:
-
-```env
-# Database Configuration
-DB_NAME=your_database_name
-DB_USER=your_database_user
-DB_PASSWORD=your_database_password
-DB_HOST=localhost
-
-# JWT Secrets
-JWT_SECRET=your_jwt_secret_key
-ADMIN_JWT_SECRET=your_admin_jwt_secret_key
-
-# Application URLs
-FRONTEND_URL=http://localhost:3000
-BASE_URL=http://localhost:8080
-
-# Email Configuration (Gmail)
-EMAIL_USER=your_gmail_address
-EMAIL_PASSWORD=your_gmail_app_password
-
-# Google OAuth (optional)
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-
-# Social Media Links (optional)
-FACEBOOK_URL=https://facebook.com/your-page
-TWITTER_URL=https://twitter.com/your-account
-INSTAGRAM_URL=https://instagram.com/your-account
-
-# Other Configuration
-NODE_ENV=development
-PORT=8080
-LOGO_URL=http://localhost:8080/static/image/STRIKETECH-1.png
-```
-
-### 4. Database Setup
-
-1. Create a MySQL database:
-```sql
-CREATE DATABASE your_database_name;
-```
-
-2. The application will automatically create and sync database tables on first run.
-
-### 5. Start the Application
-
-#### Development Mode (Recommended)
-```bash
-# Start both frontend and backend concurrently
-npm run dev:all
-```
-
-#### Individual Services
-```bash
-# Frontend only (Next.js)
-npm run dev
-
-# Backend only (Express.js)
-npm run server
-```
-
-#### Production Mode
-```bash
-# Build the application
-npm run build
-
-# Start production servers
-npm start
-```
-
-## 🔧 Available Scripts
-
-- `npm run dev` - Start Next.js development server with Turbopack
-- `npm run server` - Start Express.js backend server
-- `npm run dev:all` - Start both frontend and backend concurrently
-- `npm run build` - Build the Next.js application for production
-- `npm start` - Start both frontend and backend in production mode
-- `npm run lint` - Run ESLint for code quality
-- `npm test` - Run Jest tests
-
-## 🌐 API Endpoints
-
-### Authentication
-- `POST /auth/register` - User registration
-- `POST /auth/login` - User login
-- `POST /auth/logout` - User logout
-- `GET /auth/verify-email` - Email verification
-- `POST /auth/verify-otp` - OTP verification
-- `POST /auth/forgot-password` - Password reset request
-- `POST /auth/reset-password` - Password reset
-
-### User Profile
-- `GET /api/profile` - Get user profile
-- `PUT /api/profile/update` - Update profile
-- `PUT /api/profile/picture` - Update profile picture
-- `POST /api/profile/2fa/setup` - Setup two-factor authentication
-- `POST /api/profile/export` - Export user data
-
-### Admin
-- `POST /admin/login` - Admin login
-- `GET /admin/dashboard/stats` - Dashboard statistics
-- `GET /admin/orders` - Manage orders
-- `GET /admin/users` - Manage users
-
-### Products
-- `GET /product/all` - Get all products
-- `GET /product/:id` - Get product by ID
-- `POST /product/create` - Create new product (admin)
-- `PUT /product/:id` - Update product (admin)
-
-### Orders
-- `POST /orders/create` - Create new order
-- `GET /orders/user/:userId` - Get user orders
-- `PUT /orders/:id/status` - Update order status
-
-### Other Features
-- `POST /newsletter/subscribe` - Newsletter subscription
-- `GET /careers/listings` - Career listings
-- `POST /careers/apply/:careerId` - Job application
-
-## 🗃️ Database Schema
-
-### Key Models
-
-#### Users
-- Basic user information
-- Authentication credentials
-- Role-based access control
-- Security settings (2FA, trusted devices)
-- Profile data and preferences
-
-#### Products
-- Product information and media
-- Categories and classifications
-- Pricing and inventory
-- Additional details (color, size, weight, etc.)
-
-#### Orders
-- Order information and status
-- Order items and quantities
-- Shipping and billing details
-- Tracking information
-
-#### Additional Models
-- User activity logs
-- Product reviews and ratings
-- Career listings and applications
-- Newsletter subscriptions
-- Payment methods
-- Audit logs
-
-## 🔒 Security Features
-
-- **JWT Authentication** with secure cookie storage
-- **Two-Factor Authentication** using TOTP
-- **Password Hashing** with bcrypt
-- **Device Fingerprinting** for fraud detection
-- **Rate Limiting** to prevent abuse
-- **Input Validation** and sanitization
-- **CORS Configuration** for cross-origin requests
-- **Session Management** with automatic token refresh
-- **Account Lockout** protection
-- **Audit Logging** for admin actions
-
-## 📱 Features in Detail
-
-### User Management
-- Comprehensive registration/login system
-- Email verification with custom templates
-- Password reset with secure tokens
-- Two-factor authentication setup
-- Profile management with image upload
-- Activity tracking and export
-- Account deletion with grace period
-
-### E-Commerce
-- Product catalog with rich media
-- Category-based organization
-- Advanced search and filtering
-- Shopping cart with persistence
-- Multi-step checkout process
-- Payment integration ready
-- Order tracking with QR codes
-- Review and rating system
-
-### Admin Panel
-- Real-time dashboard with analytics
-- User management and moderation
-- Product inventory management
-- Order processing and fulfillment
-- Content management system
-- System configuration
-- Detailed reporting
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 🙏 Acknowledgments
-
-- Next.js team for the amazing framework
-- Express.js community
-- MySQL team
-- All open-source contributors
+</div>
 
 ---
 
-**Built with ❤️ by StrikeTech**
+> A **Next.js 15** storefront and admin experience talks to an **Express** API and **MySQL** (Sequelize). Authentication, catalog, checkout, orders, email flows, newsletters, careers, and affiliates live behind clear boundaries: **`frontend/`** for the UI, **`backend/`** for the API.
+
+---
+
+## Table of contents
+
+| | |
+|--|--|
+| **Basics** | [Highlights](#highlights) · [Repository map](#repository-map) · [Tech stack](#technology-stack) |
+| **Run** | [Prerequisites](#prerequisites) · [Install](#install) · [Quick start](#quick-start) · [Scripts](#npm-scripts) |
+| **Configure** | [Environment variables](#environment-variables) · [Troubleshooting](#troubleshooting) |
+| **Reference** | [API overview](#api-overview) · [Database](#database) · [Security](#security) |
+| **Community** | [Contributing](#contributing) · [Acknowledgments](#acknowledgments) |
+
+---
+
+## Highlights
+
+| Area | What you get |
+|------|----------------|
+| **Experience** | App Router, TypeScript, Turbopack (dev), Tailwind, Bootstrap, SASS, MUI, polished admin and storefront patterns. |
+| **API** | REST-style Express app, JWT flows, Google verification, 2FA (TOTP), uploads (Multer), HTML email templates, PDF/QR helpers. |
+| **Data** | Sequelize models, MySQL, sync helper for local dev (see [Database](#database) for production notes). |
+| **DX** | Run **`backend/`** and **`frontend/`** independently—each has its own `package.json`, lockfile, and **`.env`**. |
+
+---
+
+## Architecture
+
+```mermaid
+flowchart LR
+  subgraph users [Users]
+    B[Browser]
+  end
+  subgraph fe [frontend]
+    N[Next.js 15]
+  end
+  subgraph be [backend]
+    A[Express API]
+    S["/static assets"]
+  end
+  subgraph data [Data plane]
+    DB[(MySQL)]
+  end
+  B -->|UI| N
+  N -->|"NEXT_PUBLIC_API_URL"| A
+  A --> DB
+  A --> S
+```
+
+| Port (default) | Service | Folder |
+|----------------:|---------|--------|
+| **3000** | Next.js | `frontend/` |
+| **8080** | Express | `backend/` |
+
+<details>
+<summary><strong>ASCII version</strong> (plain text / older viewers)</summary>
+
+```text
+ Browser ──► Next.js (frontend/) :3000
+                │
+                │  HTTP API
+                ▼
+           Express (backend/) :8080 ──► MySQL
+```
+
+</details>
+
+---
+
+## Repository map
+
+```
+ecomerce/
+├── README.md                 ← You are here (platform overview)
+├── backend/
+│   ├── README.md             ← API deep dive, routes, env
+│   ├── package.json
+│   ├── app.js                ← HTTP server entry
+│   └── …                     ← controllers, models, routes, services
+└── frontend/
+    ├── README.md             ← Next.js quick notes
+    ├── package.json
+    └── app/                  ← pages, layouts, components
+```
+
+| I want to… | Open |
+|------------|------|
+| Understand the **whole product** | This file |
+| Run or extend the **API only** | [**backend/README.md**](./backend/README.md) |
+| Run or extend the **UI only** | [frontend/README.md](./frontend/README.md) |
+
+---
+
+## Technology stack
+
+| Layer | Choices |
+|-------|---------|
+| **Web** | Next.js 15, React 19, TypeScript, Turbopack (dev) |
+| **API** | Express 4, Sequelize 6, mysql2, express-validator |
+| **Auth & utilities** | JWT, bcrypt, Google Auth Library, Speakeasy (2FA), Multer, Nodemailer, PDFKit, QRCode |
+| **Tooling** | npm, ESLint (frontend), Jest (optional / per package) |
+
+---
+
+## Prerequisites
+
+- **Node.js** 18 or newer (LTS recommended)
+- **npm** 8+
+- **MySQL** 8 (or compatible)
+- **Git**
+
+Optional: Google Cloud OAuth client if you enable Google sign-in.
+
+---
+
+## Install
+
+Each app installs **its own** dependencies (separate `node_modules`).
+
+```bash
+git clone https://github.com/bonin1/ecomerce.git
+cd ecomerce
+
+cd backend  && npm install
+cd ../frontend && npm install
+```
+
+Packages resolve from the **public npm registry** by default. If your org uses a private registry, add the appropriate `.npmrc` and run `npm install` again in **both** folders.
+
+---
+
+## Quick start
+
+### 1. Database
+
+```sql
+CREATE DATABASE your_database_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'your_user'@'localhost' IDENTIFIED BY 'your_password';
+GRANT ALL PRIVILEGES ON your_database_name.* TO 'your_user'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+### 2. Environment (two files)
+
+| File | Role |
+|------|------|
+| **`backend/.env`** | Server: DB, JWTs, `PORT`, `BASE_URL`, `FRONTEND_URL`, email, Google server client id |
+| **`frontend/.env.local`** (or `.env`) | Browser: `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID` |
+
+```bash
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env.local
+# Edit both with real values
+```
+
+**Windows (PowerShell), from repo root:**
+
+```powershell
+Copy-Item backend\.env.example backend\.env
+Copy-Item frontend\.env.example frontend\.env.local
+```
+
+Never commit real secrets. Keep passwords and JWT material **only** in `backend/.env`.
+
+### 3. Run
+
+**Two terminals** (typical daily workflow):
+
+```bash
+# Terminal 1 — API
+cd backend && npm run dev
+
+# Terminal 2 — UI
+cd frontend && npm run dev
+```
+
+**Single terminal** (from `frontend/`):
+
+```bash
+cd frontend && npm run dev:all
+```
+
+Default URLs: app **http://localhost:3000**, API **http://localhost:8080** (override with `PORT` / env).
+
+---
+
+## Environment variables
+
+The API loads **`backend/.env`** via `__dirname`, so it behaves the same whether you start from `backend/` or from `frontend/` scripts.
+
+Next.js only reads env files under **`frontend/`**. Anything sent to the browser must use the **`NEXT_PUBLIC_`** prefix.
+
+### Backend (`backend/.env`)
+
+| Variable | Purpose |
+|----------|---------|
+| `PORT` | API port (default `8080`) |
+| `NODE_ENV` | `development` \| `production` |
+| `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST` | MySQL |
+| `JWT_SECRET` | User JWT signing |
+| `ADMIN_JWT_SECRET` | Admin JWT |
+| `FRONTEND_URL` | CORS + links in email |
+| `BASE_URL` | Public API URL (templates, assets) |
+| `EMAIL_USER`, `EMAIL_PASSWORD` | Nodemailer (prefer app passwords) |
+| `GOOGLE_CLIENT_ID` | Verify Google tokens on the server |
+| `FACEBOOK_URL`, `TWITTER_URL`, `INSTAGRAM_URL`, `LOGO_URL` | Optional template branding |
+| `SMTP_*` | Optional SMTP for affiliate mail paths |
+
+### Frontend (`frontend/.env.local`)
+
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_API_URL` | Browser → API base URL |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Client-side Google |
+
+Full examples live in **`backend/.env.example`** and **`frontend/.env.example`**.
+
+---
+
+## npm scripts
+
+### `backend/`
+
+| Script | What it does |
+|--------|----------------|
+| `npm run dev` | Nodemon + `app.js` |
+| `npm start` | Node + `app.js` |
+| `npm test` | Jest (configure as needed) |
+
+### `frontend/`
+
+| Script | What it does |
+|--------|----------------|
+| `npm run dev` | Next.js dev (Turbopack) |
+| `npm run server` | Delegates to `npm run dev` in `../backend` |
+| `npm run dev:all` | Next + backend concurrently |
+| `npm run build` | Production build |
+| `npm start` | Next production + backend `npm start` |
+| `npm run lint` | ESLint |
+
+---
+
+## API overview
+
+Mounted prefixes (see `backend/routes/index.js` and [**backend/README**](./backend/README.md) for detail):
+
+| Prefix | Area |
+|--------|------|
+| `/` | Root (EJS home) |
+| `/auth` | Register, login, Google, password flows |
+| `/api` | Authenticated profile and related |
+| `/admin` | Admin panel API |
+| `/product` | Catalog / CRUD |
+| `/payment-methods` | Payment methods |
+| `/orders` | Orders |
+| `/newsletter` | Subscriptions |
+| `/careers` | Careers + applications |
+| `/track-order` | Tracking |
+| `/reviews` | Reviews |
+| `/affiliate` | Affiliate program |
+
+Static files are exposed at **`/static`** from `backend/static/`.
+
+---
+
+## Database
+
+- Models: `backend/model/`
+- Startup sync: `ALLMODELSYNC` (convenient for local development; for production, plan explicit migrations and controlled schema changes).
+
+---
+
+## Security
+
+- Use **unique, long** `JWT_SECRET` and `ADMIN_JWT_SECRET` per environment.
+- Run production with **HTTPS** and `NODE_ENV=production` so cookies and errors follow secure defaults.
+- Lock **CORS** to your real frontend origin (`FRONTEND_URL`).
+- Report sensitive vulnerabilities **privately** to maintainers when public disclosure would harm users.
+
+---
+
+## Troubleshooting
+
+| Symptom | Check |
+|---------|--------|
+| API “cannot find module” | Run `npm install` inside **`backend/`**. |
+| Blank API / wrong DB | **`backend/.env`** present and `DB_*` correct. |
+| CORS errors | **`FRONTEND_URL`** matches the browser origin exactly. |
+| UI cannot reach API | **`NEXT_PUBLIC_API_URL`** matches `PORT` / `BASE_URL`. |
+| `/static` 404 | File exists under **`backend/static/`**; restart API after changes. |
+| Email failures | **`EMAIL_*`** or SMTP vars; Gmail needs an **app password**. |
+
+---
+
+## Contributing
+
+**Contributions are welcome.** Issues, docs, and pull requests all help.
+
+1. Fork and branch (`feature/short-description`).
+2. Keep PRs focused and match local code style.
+3. Do not commit `.env` or secrets.
+4. Describe **what** and **why** in the PR body.
+
+Be constructive in review threads. Maintainers may defer or decline changes that are out of scope or hard to maintain without prior discussion.
+
+---
+
+## Acknowledgments
+
+Built on [Next.js](https://nextjs.org/), [Express](https://expressjs.com/), [Sequelize](https://sequelize.org/), and [MySQL](https://www.mysql.com/)—and on feedback from everyone who opens issues and PRs.
+
+---
+
+<div align="center">
+
+**StrikeTech**
+
+*Lasting first impressions come from clear docs, reliable defaults, and respectful collaboration.*
+
+</div>
