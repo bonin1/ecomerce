@@ -1,9 +1,10 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { RegisterData } from '@/app/types';
 import { googleLogin } from '@/app/API/auth/GoogleLogin';
+import { getGoogleWebClientId, whenGoogleIdentityReady } from '@/app/utils/googleIdentityClient';
 import './register.scss';
 
 interface RegisterFormProps {
@@ -26,56 +27,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, error, loading })
         confirmPassword: false
     });
     const [passwordError, setPasswordError] = useState('');
-    const [googleLoading, setGoogleLoading] = useState(false);
     const [googleError, setGoogleError] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (formData.confirmPassword && formData.password !== formData.confirmPassword) {
-            setPasswordError('Passwords do not match');
-        } else {
-            setPasswordError('');
-        }
-    }, [formData.password, formData.confirmPassword]);
-
-    useEffect(() => {
-        const initializeGoogleSignIn = () => {
-            if (typeof window !== 'undefined' && window.google?.accounts?.id) {
-                google.accounts.id.initialize({
-                    client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? '',
-                    callback: handleGoogleResponse,
-                    context: 'signup'
-                });
-                
-                const buttonElement = document.getElementById("googleSignInButton");
-                if (buttonElement) {
-                    google.accounts.id.renderButton(
-                        buttonElement,
-                        { 
-                            theme: "filled_blue",
-                            size: "large",
-                            width: "100%",
-                            type: "standard",
-                            text: "signup_with",
-                            shape: "rectangular",
-                            logo_alignment: "left"
-                        }
-                    );
-                }
-            }
-        };
-
-        initializeGoogleSignIn();
-        
-        return () => {
-            const buttonElement = document.getElementById("googleSignInButton");
-            if (buttonElement) {
-                buttonElement.innerHTML = '';
-            }
-        };
-    }, []);
-
-    const handleGoogleResponse = async (response: google.accounts.id.CredentialResponse) => {
-        setGoogleLoading(true);
+    const handleGoogleResponse = useCallback(async (response: google.accounts.id.CredentialResponse) => {
         try {
             const result = await googleLogin(response.credential);
             if (result.success && result.data) {
@@ -87,11 +41,54 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, error, loading })
         } catch (err) {
             console.error('Google auth error:', err);
             setGoogleError('Google authentication failed');
-        } finally {
-            setGoogleLoading(false);
         }
-    };
+    }, [router]);
 
+    useEffect(() => {
+        if (formData.confirmPassword && formData.password !== formData.confirmPassword) {
+            setPasswordError('Passwords do not match');
+        } else {
+            setPasswordError('');
+        }
+    }, [formData.password, formData.confirmPassword]);
+
+    useEffect(() => {
+        const clientId = getGoogleWebClientId();
+        if (!clientId) return;
+
+        const ac = new AbortController();
+
+        (async () => {
+            const gsi = await whenGoogleIdentityReady(ac.signal);
+            if (!gsi || ac.signal.aborted) return;
+
+            gsi.initialize({
+                client_id: clientId,
+                callback: handleGoogleResponse,
+                context: 'signup',
+            });
+
+            const buttonElement = document.getElementById('googleSignInButton');
+            if (buttonElement && !ac.signal.aborted) {
+                buttonElement.innerHTML = '';
+                gsi.renderButton(buttonElement, {
+                    theme: 'filled_blue',
+                    size: 'large',
+                    width: '100%',
+                    type: 'standard',
+                    text: 'signup_with',
+                    shape: 'rectangular',
+                    logo_alignment: 'left',
+                });
+            }
+        })();
+
+        return () => {
+            ac.abort();
+            const buttonElement = document.getElementById('googleSignInButton');
+            if (buttonElement) buttonElement.innerHTML = '';
+        };
+    }, [handleGoogleResponse]);
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData(prev => ({
             ...prev,
@@ -106,10 +103,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, error, loading })
         }));
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (passwordError) return;
-        await onSubmit(formData);
+        void (async () => {
+            const { confirmPassword: _c, ...payload } = formData;
+            await onSubmit(payload);
+        })();
     };
 
     return (
@@ -119,7 +119,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, error, loading })
                 <span className="divider-text">or</span>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form method="post" onSubmit={handleFormSubmit}>
                 {error && (
                     <div className="alert alert-danger alert-dismissible fade show" role="alert">
                         <i className="bi bi-exclamation-circle me-2"></i>
@@ -261,7 +261,15 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, error, loading })
                     <button type="button" className="btn-close" data-bs-dismiss="alert" onClick={() => setGoogleError(null)}></button>
                 </div>
             )}
-            <div id="googleSignInButton" className="w-100 mb-3"></div>
+            {getGoogleWebClientId() ? (
+                <div id="googleSignInButton" className="w-100 mb-3" />
+            ) : (
+                <p className="text-muted small text-center mb-0">
+                    Google sign-in is disabled until <code className="small">NEXT_PUBLIC_GOOGLE_CLIENT_ID</code> is set
+                    and <strong>http://localhost:3000</strong> is added under Authorized JavaScript origins for that client
+                    in Google Cloud Console.
+                </p>
+            )}
             <div className="text-center">
                 <span className="text-muted">Already have an account? </span>
                 <Link href="/login" className="text-primary fw-bold text-decoration-none">

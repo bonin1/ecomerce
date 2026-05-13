@@ -33,3 +33,13 @@ declare namespace google {
         }
     }
 }
+
+declare global {
+    interface Window {
+        google?: {
+            accounts: {
+                id: typeof google.accounts.id;
+            };
+        };
+    }
+}

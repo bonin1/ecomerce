@@ -1,11 +1,12 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import ForgotPasswordModal from '../auth/ForgotPasswordModal';
 import './login.scss';
 import { googleLogin } from '@/app/API/auth/GoogleLogin';
+import { getGoogleWebClientId, whenGoogleIdentityReady } from '@/app/utils/googleIdentityClient';
 
 interface LoginData {
     email: string;
@@ -27,40 +28,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading }) => {
     });
     const [showPassword, setShowPassword] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [googleLoading, setGoogleLoading] = useState(false);
 
-    useEffect(() => {
-        const initializeGoogleSignIn = () => {
-            if (typeof window !== 'undefined' && window.google?.accounts?.id) {
-                google.accounts.id.initialize({
-                    client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? '',
-                    callback: handleGoogleResponse,
-                    context: 'signin'
-                });
-                
-                const buttonElement = document.getElementById("googleSignInButton");
-                if (buttonElement) {
-                    google.accounts.id.renderButton(
-                        buttonElement,
-                        { 
-                            theme: "filled_blue",
-                            size: "large",
-                            width: "100%",
-                            type: "standard",
-                            text: "signin_with",
-                            shape: "rectangular",
-                            logo_alignment: "left"
-                        }
-                    );
-                }
-            }
-        };
-
-        initializeGoogleSignIn();
-    }, []);
-
-    const handleGoogleResponse = async (response: google.accounts.id.CredentialResponse) => {
-        setGoogleLoading(true);
+    const handleGoogleResponse = useCallback(async (response: google.accounts.id.CredentialResponse) => {
         try {
             const result = await googleLogin(response.credential);
             if (result.success && result.data) {
@@ -72,10 +41,46 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading }) => {
         } catch (err) {
             console.error('Google auth error:', err);
             toast.error('Google authentication failed');
-        } finally {
-            setGoogleLoading(false);
         }
-    };
+    }, [router]);
+
+    useEffect(() => {
+        const clientId = getGoogleWebClientId();
+        if (!clientId) return;
+
+        const ac = new AbortController();
+
+        (async () => {
+            const gsi = await whenGoogleIdentityReady(ac.signal);
+            if (!gsi || ac.signal.aborted) return;
+
+            gsi.initialize({
+                client_id: clientId,
+                callback: handleGoogleResponse,
+                context: 'signin',
+            });
+
+            const buttonElement = document.getElementById('googleSignInButton');
+            if (buttonElement && !ac.signal.aborted) {
+                buttonElement.innerHTML = '';
+                gsi.renderButton(buttonElement, {
+                    theme: 'filled_blue',
+                    size: 'large',
+                    width: '100%',
+                    type: 'standard',
+                    text: 'signin_with',
+                    shape: 'rectangular',
+                    logo_alignment: 'left',
+                });
+            }
+        })();
+
+        return () => {
+            ac.abort();
+            const buttonElement = document.getElementById('googleSignInButton');
+            if (buttonElement) buttonElement.innerHTML = '';
+        };
+    }, [handleGoogleResponse]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
@@ -85,18 +90,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading }) => {
         }));
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        try {
-            await onSubmit(formData);
-        } catch (err) {
-            const message = err instanceof Error ? err.message : 'Login failed';
-            if (message.includes('Please sign in with Google')) {
-                toast.error('This email is registered with Google. Please use Google Sign-In.');
-            } else {
-                toast.error(message);
+        void (async () => {
+            try {
+                await onSubmit(formData);
+            } catch (err) {
+                const message = err instanceof Error ? err.message : 'Login failed';
+                if (message.includes('Please sign in with Google')) {
+                    toast.error('This email is registered with Google. Please use Google Sign-In.');
+                } else {
+                    toast.error(message);
+                }
             }
-        }
+        })();
     };
 
     return (
@@ -107,7 +114,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading }) => {
                 <span className="divider-text">or</span>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form method="post" onSubmit={handleFormSubmit}>
                 <div className="mb-3">
                     <label className="form-label small fw-bold">Email Address</label>
                     <div className="input-group">
@@ -189,7 +196,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading }) => {
                     ) : 'Sign In'}
                 </button>
             </form>
-            <div id="googleSignInButton" className="w-100 mb-3"></div>
+            {getGoogleWebClientId() ? (
+                <div id="googleSignInButton" className="w-100 mb-3" />
+            ) : null}
             <div className="text-center">
                 <span className="text-muted">Don't have an account? </span>
                 <Link href="/register" className="text-primary fw-bold text-decoration-none">

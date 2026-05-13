@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="48" viewBox="0 0 80 48" role="img" aria-label="Google Pay">
+  <rect width="80" height="48" rx="6" fill="#fff" stroke="#dadce0" stroke-width="1"/>
+  <text x="40" y="30" text-anchor="middle" fill="#5f6368" font-family="system-ui,sans-serif" font-size="10" font-weight="600">Google Pay</text>
+</svg>

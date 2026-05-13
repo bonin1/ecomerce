@@ -97,7 +97,7 @@ const Footer = () => {
                 Subscribe to get exclusive deals, product updates, and tech news
                 delivered to your inbox.
               </p>
-              <form onSubmit={handleSubscribe}>
+              <form method="post" onSubmit={handleSubscribe}>
                 <div className="input-group">
                   <input
                     type="email"

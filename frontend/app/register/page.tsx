@@ -17,7 +17,12 @@ const Register = () => {
         setLoading(true);
 
         try {
-            const response = await registerUser(formData);
+            const response = await registerUser({
+                name: formData.name,
+                lastname: formData.lastname,
+                email: formData.email,
+                password: formData.password,
+            });
             if (response.success) {
                 router.push(`/verify-email/pending?email=${encodeURIComponent(formData.email)}`);
             } else {

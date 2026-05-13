@@ -9,32 +9,35 @@
   },
   "dependencies": {
     "archiver": "^7.0.1",
-    "axios": "^1.7.9",
+    "axios": "^1.16.1",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "csv-writer": "^1.6.0",
     "date-fns": "^4.1.0",
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.6.1",
     "ejs": "^3.1.10",
-    "express": "^4.21.2",
+    "express": "^4.22.2",
     "express-fileupload": "^1.5.1",
     "express-validator": "^7.2.1",
-    "google-auth-library": "^9.15.1",
-    "jsonwebtoken": "^9.0.2",
-    "multer": "^1.4.5-lts.1",
-    "mysql2": "^3.12.0",
-    "nodemailer": "^6.10.0",
-    "pdfkit": "^0.16.0",
+    "google-auth-library": "^10.6.2",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.1.1",
+    "mysql2": "^3.22.3",
+    "nodemailer": "^6.10.1",
+    "pdfkit": "^0.18.0",
     "qrcode": "^1.5.4",
-    "sequelize": "^6.37.5",
+    "sequelize": "^6.37.8",
     "speakeasy": "^2.0.0",
-    "ua-parser-js": "^2.0.0",
-    "uuid": "^9.0.1"
+    "ua-parser-js": "^2.0.9",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "nodemon": "^3.1.9",
-    "supertest": "^7.0.0"
+    "nodemon": "^3.1.11",
+    "supertest": "^7.2.2"
+  },
+  "overrides": {
+    "tar": "^7.5.15"
   }
 }
