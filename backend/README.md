@@ -4,6 +4,8 @@ Express-based REST API for the StrikeTech e-commerce platform. This package owns
 
 **← [Platform overview](../README.md)** · **Frontend → [../frontend/README.md](../frontend/README.md)**
 
+**Quick local start:** from the repo root, `npm run first-run`, edit `backend/.env`, optional `docker compose up -d` for MySQL, then `npm run dev` — see the root **README**.
+
 ---
 
 ## What this service does

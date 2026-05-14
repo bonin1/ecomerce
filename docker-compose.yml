@@ -1,0 +1,27 @@
+# Optional local MySQL for development (no production use).
+# From repo root: docker compose up -d
+# Match credentials in backend/.env — see README "Docker MySQL (optional)".
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ecomerce-mysql-dev
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_local_change_me
+      MYSQL_DATABASE: ecomerce
+      MYSQL_USER: ecomerce
+      MYSQL_PASSWORD: ecomerce_local
+    ports:
+      - '3306:3306'
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-proot_local_change_me']
+      interval: 8s
+      timeout: 5s
+      retries: 8
+      start_period: 25s
+    volumes:
+      - ecomerce_mysql_data:/var/lib/mysql
+
+volumes:
+  ecomerce_mysql_data:

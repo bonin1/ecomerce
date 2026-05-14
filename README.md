@@ -10,7 +10,7 @@
 ![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 
-[Quick start](#quick-start) · [Architecture](#architecture) · [Environment](#environment-variables) · [**Backend docs**](./backend/README.md) · [Contributing](#contributing)
+[First-time setup](#first-time-setup-recommended) · [Quick start](#quick-start) · [Architecture](#architecture) · [Environment](#environment-variables) · [**Backend docs**](./backend/README.md) · [Contributing](#contributing)
 
 </div>
 
@@ -25,7 +25,7 @@
 | | |
 |--|--|
 | **Basics** | [Highlights](#highlights) · [Repository map](#repository-map) · [Tech stack](#technology-stack) |
-| **Run** | [Prerequisites](#prerequisites) · [Install](#install) · [Quick start](#quick-start) · [Production build](#production-build-frontend) · [Scripts](#npm-scripts) |
+| **Run** | [Prerequisites](#prerequisites) · [First-time setup](#first-time-setup-recommended) · [Install](#install) · [Quick start](#quick-start) · [Production build](#production-build-frontend) · [Scripts](#npm-scripts) |
 | **Configure** | [Environment variables](#environment-variables) · [Troubleshooting](#troubleshooting) |
 | **Reference** | [API overview](#api-overview) · [Database](#database) · [Security](#security) |
 | **Community** | [Contributing](#contributing) · [Acknowledgments](#acknowledgments) |
@@ -39,7 +39,7 @@
 | **Experience** | App Router, TypeScript, Turbopack (dev), Tailwind, Bootstrap, SASS, MUI; admin tools (e.g. products) mix Tailwind-first UI with legacy SCSS where noted. |
 | **API** | REST-style Express app, JWT flows, Google verification, 2FA (TOTP), uploads (Multer), HTML email templates, PDF/QR helpers. |
 | **Data** | Sequelize models, MySQL, sync helper for local dev (see [Database](#database) for production notes). |
-| **DX** | Run **`backend/`** and **`frontend/`** independently—each has its own `package.json`, lockfile, and **`.env`**. |
+| **DX** | Optional **repo-root** `package.json`: one-command **`npm run first-run`**, **`npm run dev`**, and **`docker compose`** for local MySQL; each app still has its own `package.json` and **`.env`**. |
 
 ---
 
@@ -91,6 +91,10 @@ flowchart LR
 ```
 ecomerce/
 ├── README.md                 ← You are here (platform overview)
+├── package.json              ← Root scripts: first-run, dev, install:all, build
+├── docker-compose.yml        ← Optional local MySQL 8 for development
+├── scripts/
+│   └── bootstrap.cjs         ← Creates .env files from *.example (safe, no overwrite)
 ├── backend/
 │   ├── README.md             ← API deep dive, routes, env
 │   ├── package.json
@@ -125,32 +129,98 @@ ecomerce/
 
 - **Node.js** 18 or newer (LTS recommended)
 - **npm** 8+
-- **MySQL** 8 (or compatible)
+- **MySQL** 8 (or compatible), **or** [Docker](https://docs.docker.com/get-docker/) if you use the bundled `docker-compose.yml`
 - **Git**
 
 Optional: Google Cloud OAuth client if you enable Google sign-in.
 
 ---
 
-## Install
+## First-time setup (recommended)
 
-Each app installs **its own** dependencies (separate `node_modules`).
+From the **repository root** after `git clone` and `cd ecomerce`:
 
 ```bash
-git clone https://github.com/bonin1/ecomerce.git
-cd ecomerce
+npm run first-run
+```
 
-cd backend  && npm install
+This runs **`scripts/bootstrap.cjs`** (creates `backend/.env` and `frontend/.env.local` from the examples **only if they are missing**) and then **`npm run install:all`** to install both apps.
+
+Then **edit `backend/.env`**: set real `DB_*` values and strong `JWT_SECRET` / `ADMIN_JWT_SECRET`. If you use the optional Docker database (below), use the matching `DB_*` block from [Docker MySQL (optional)](#docker-mysql-optional).
+
+Start everything:
+
+```bash
+npm run dev
+```
+
+That runs the same **`dev:all`** script as in `frontend/package.json` (Next on **:3000** + API on **:8080**).
+
+| Command (repo root) | Purpose |
+|---------------------|---------|
+| `npm run bootstrap` | Env files only (no `npm install`) |
+| `npm run install:all` | `npm install` in `backend/` and `frontend/` |
+| `npm run first-run` | `bootstrap` + `install:all` |
+| `npm run dev` | Next + Express together |
+| `npm run dev:backend` | API only |
+| `npm run dev:frontend` | UI only |
+| `npm run build` | Production Next build + typecheck |
+
+You need **Node.js on your PATH** so `npm` can run `scripts/bootstrap.cjs`.
+
+---
+
+## Docker MySQL (optional)
+
+If you do not already have MySQL installed, you can start a **development-only** database:
+
+```bash
+docker compose up -d
+```
+
+Wait until the container is healthy, then set these in **`backend/.env`** (and keep `DB_HOST` as `127.0.0.1` if the API runs on your host, not inside Docker):
+
+| Variable | Value (matches `docker-compose.yml`) |
+|----------|--------------------------------------|
+| `DB_HOST` | `127.0.0.1` |
+| `DB_NAME` | `ecomerce` |
+| `DB_USER` | `ecomerce` |
+| `DB_PASSWORD` | `ecomerce_local` |
+
+The compose file also sets `MYSQL_ROOT_PASSWORD` for the root user (`root_local_change_me` by default); use your own values for anything beyond local dev.
+
+---
+
+## Install
+
+Dependencies live in **`backend/node_modules`** and **`frontend/node_modules`** (two installs).
+
+**Option A — from repo root (same as `first-run` without bootstrap):**
+
+```bash
+npm run install:all
+```
+
+**Option B — per folder:**
+
+```bash
+cd backend && npm install
 cd ../frontend && npm install
 ```
 
-Packages resolve from the **public npm registry** by default. If your org uses a private registry, add the appropriate `.npmrc` and run `npm install` again in **both** folders.
+Packages resolve from the **public npm registry** by default. If your org uses a private registry, add the appropriate `.npmrc` and run installs again in **both** folders.
 
 ---
 
 ## Quick start
 
+Use **[First-time setup](#first-time-setup-recommended)** for the shortest path. Below is the same flow in explicit steps.
+
 ### 1. Database
+
+**Option A — Docker (see above):** `docker compose up -d` and align `backend/.env`.
+
+**Option B — existing MySQL:**
 
 ```sql
 CREATE DATABASE your_database_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -167,6 +237,8 @@ FLUSH PRIVILEGES;
 | **`frontend/.env.local`** (or `.env`) | Browser: `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_GOOGLE_CLIENT_ID` |
 
 ```bash
+npm run bootstrap
+# or manually:
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env.local
 # Edit both with real values
@@ -175,6 +247,8 @@ cp frontend/.env.example frontend/.env.local
 **Windows (PowerShell), from repo root:**
 
 ```powershell
+node scripts/bootstrap.cjs
+# or:
 Copy-Item backend\.env.example backend\.env
 Copy-Item frontend\.env.example frontend\.env.local
 ```
@@ -183,7 +257,13 @@ Never commit real secrets. Keep passwords and JWT material **only** in `backend/
 
 ### 3. Run
 
-**Two terminals** (typical daily workflow):
+**Single command from repo root:**
+
+```bash
+npm run dev
+```
+
+**Or two terminals:**
 
 ```bash
 # Terminal 1 — API
@@ -193,7 +273,7 @@ cd backend && npm run dev
 cd frontend && npm run dev
 ```
 
-**Single terminal** (from `frontend/`):
+**Or one terminal from `frontend/` only:**
 
 ```bash
 cd frontend && npm run dev:all
@@ -247,6 +327,19 @@ Full examples live in **`backend/.env.example`** and **`frontend/.env.example`**
 ---
 
 ## npm scripts
+
+### Repository root (`./`)
+
+These scripts live in the **root** `package.json`. You do **not** need `npm install` at the repo root (there are no root dependencies); they use `npm --prefix` to run commands inside `backend/` and `frontend/`.
+
+| Script | What it does |
+|--------|----------------|
+| `npm run bootstrap` | Create `backend/.env` and `frontend/.env.local` from examples if missing |
+| `npm run install:all` | Install dependencies in both apps |
+| `npm run first-run` | `bootstrap` then `install:all` |
+| `npm run dev` | Next + API (same as `frontend` → `dev:all`) |
+| `npm run dev:backend` / `npm run dev:frontend` | One side only |
+| `npm run build` / `npm run start` / `npm run lint` | Delegate to `frontend/` |
 
 ### `backend/`
 
@@ -320,6 +413,7 @@ Static files are exposed at **`/static`** from `backend/static/`.
 | Email failures | **`EMAIL_*`** or SMTP vars; Gmail needs an **app password**. |
 | Next.js build: `useSearchParams` / prerender error | Client pages that call **`useSearchParams()`** must render that subtree inside a **`<Suspense>`** boundary (see Next.js docs: *Missing Suspense with CSR bailout*). |
 | Type check: `apiClient` / `response.data` | The shared **`apiClient`** returns a typed JSON envelope. Pass an explicit generic (e.g. `apiClient<MyType[]>(...)`) when you need a typed **`data`** payload, or unwrap in a small helper (see `app/utils/orderApi.ts`). |
+| `docker compose` / MySQL port **3306** in use | Stop the other MySQL or change the host port mapping in **`docker-compose.yml`**. |
 
 ---
 

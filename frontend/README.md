@@ -2,6 +2,8 @@
 
 This directory is the **Next.js 16** application (App Router, TypeScript, Turbopack in dev). The **Express API** is a sibling folder: **`../backend/`**.
 
+**Easiest start:** from the **repository root**, run `npm run first-run`, edit `../backend/.env`, then `npm run dev` (see [root README](../README.md)).
+
 ## Environment
 
 Create **`frontend/.env.local`** (or `.env`) here — at minimum:

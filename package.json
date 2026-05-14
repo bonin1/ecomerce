@@ -1,0 +1,19 @@
+{
+  "name": "ecomerce",
+  "private": true,
+  "description": "StrikeTech e-commerce — backend (Express) + frontend (Next.js). Run from repo root.",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "bootstrap": "node scripts/bootstrap.cjs",
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "first-run": "node scripts/bootstrap.cjs && npm run install:all",
+    "dev": "npm run dev:all --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "start": "npm start --prefix frontend",
+    "lint": "npm run lint --prefix frontend"
+  }
+}
