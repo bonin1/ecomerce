@@ -4,6 +4,15 @@ const ProduktMedia = require('../../../model/ProduktMediaModel');
 const ProductCategory = require('../../../model/ProductCategoryModel');
 const { Op } = require('sequelize');
 
+const ALLOWED_SORT_FIELDS = [
+    'createdAt',
+    'updatedAt',
+    'product_price',
+    'product_name',
+    'product_stock',
+    'product_brand',
+];
+
 const getAllProducts = async (req, res) => {
     try {
         const {
@@ -15,7 +24,12 @@ const getAllProducts = async (req, res) => {
             search,
             min_price,
             max_price,
-            brand
+            brand,
+            stock,
+            low_stock,
+            discount_only,
+            created_after,
+            ending_soon,
         } = req.query;
 
         const whereConditions = {};
@@ -43,13 +57,51 @@ const getAllProducts = async (req, res) => {
             whereConditions.product_brand = { [Op.like]: `%${brand}%` };
         }
 
-        const offset = (page - 1) * limit;
+        if (stock === 'in') {
+            whereConditions.product_stock = { ...(whereConditions.product_stock || {}), [Op.gt]: 0 };
+        } else if (stock === 'out') {
+            whereConditions.product_stock = { ...(whereConditions.product_stock || {}), [Op.lte]: 0 };
+        }
+
+        if (low_stock !== undefined && low_stock !== '' && String(stock) !== 'out') {
+            const n = parseInt(low_stock, 10);
+            if (!Number.isNaN(n) && n >= 0) {
+                whereConditions.product_stock = { [Op.gt]: 0, [Op.lte]: n };
+            }
+        }
+
+        if (String(discount_only) === '1' || String(discount_only).toLowerCase() === 'true') {
+            whereConditions.product_discount_active = true;
+        }
+
+        if (String(ending_soon) === '1' || String(ending_soon).toLowerCase() === 'true') {
+            const now = new Date();
+            const horizon = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+            whereConditions.product_discount_active = true;
+            whereConditions.product_discount_end = {
+                [Op.and]: [{ [Op.ne]: null }, { [Op.gte]: now }, { [Op.lte]: horizon }],
+            };
+        }
+
+        if (created_after) {
+            const d = new Date(`${created_after}T00:00:00.000Z`);
+            if (!Number.isNaN(d.getTime())) {
+                whereConditions.createdAt = { ...(whereConditions.createdAt || {}), [Op.gte]: d };
+            }
+        }
+
+        const sortField = ALLOWED_SORT_FIELDS.includes(String(sort)) ? String(sort) : 'createdAt';
+        const orderDir = String(order).toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
+
+        const pageNum = Math.max(1, parseInt(page, 10) || 1);
+        const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 10));
+        const offset = (pageNum - 1) * limitNum;
         
         const { count, rows: products } = await Produkt.findAndCountAll({
             where: whereConditions,
-            limit: parseInt(limit),
-            offset: parseInt(offset),
-            order: [[sort, order]]
+            limit: limitNum,
+            offset,
+            order: [[sortField, orderDir]]
         });
 
         const categoryIds = [...new Set(products.map(product => product.product_category_id))];
@@ -104,9 +156,9 @@ const getAllProducts = async (req, res) => {
             data: productsWithDetails,
             pagination: {
                 total: count,
-                page: parseInt(page),
-                limit: parseInt(limit),
-                pages: Math.ceil(count / limit)
+                page: pageNum,
+                limit: limitNum,
+                pages: Math.ceil(count / limitNum) || 1
             }
         });
     } catch (error) {

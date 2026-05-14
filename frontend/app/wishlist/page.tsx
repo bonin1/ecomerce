@@ -86,7 +86,11 @@ export default function WishlistPage() {
             typeof window !== 'undefined'
                 ? sessionStorage.getItem('accessToken') || localStorage.getItem('accessToken')
                 : null;
-        if (!token) {
+        const userRaw =
+            typeof window !== 'undefined'
+                ? localStorage.getItem('user') || sessionStorage.getItem('user')
+                : null;
+        if (!token && !userRaw) {
             router.replace('/login?next=/wishlist');
             return;
         }

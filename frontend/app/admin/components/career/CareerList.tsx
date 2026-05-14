@@ -72,14 +72,15 @@ const CareerList: React.FC = () => {
                 params.append('location', selectedLocation);
             }
             
-            const response = await apiClient(`/careers/listings?${params.toString()}`);
+            const response = await apiClient<Career[]>(`/careers/listings?${params.toString()}`);
             
             if (response.success) {
-                setCareers(response.data);
+                const rows = response.data ?? [];
+                setCareers(rows);
                 setTotalPages(response.totalPages || 1);
                 
                 const uniqueLocations = Array.from(
-                    new Set(response.data.map((career: Career) => career.location as string))
+                    new Set(rows.map((career) => career.location as string))
                 ) as string[];
                 setLocations(uniqueLocations);
             } else {

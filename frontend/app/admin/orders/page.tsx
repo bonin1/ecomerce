@@ -1,9 +1,11 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/app/admin/components/Sidebar/sidebar';
 import { apiClient } from '@/app/utils/apiClient';
 import { generateTrackingCode } from '@/app/utils/trackingCodeGenerator';
+import { SITE_NAME } from '@/app/config/site';
+import toast from 'react-hot-toast';
 import { 
     Box, 
     Button, 
@@ -43,7 +45,37 @@ import {
     Refresh as RefreshIcon,
     Autorenew as AutorenewIcon,
     Lock as LockIcon,
+    Print as PrintIcon,
 } from '@mui/icons-material';
+
+type DatePreset = 'all' | 'today' | '7d' | '30d' | 'custom';
+
+function localYmd(d: Date): string {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+}
+
+function rangeForPreset(preset: Exclude<DatePreset, 'all' | 'custom'>): { from: string; to: string } {
+    const now = new Date();
+    const to = localYmd(now);
+    if (preset === 'today') {
+        return { from: to, to };
+    }
+    const start = new Date(now);
+    const days = preset === '7d' ? 6 : 29;
+    start.setDate(start.getDate() - days);
+    return { from: localYmd(start), to };
+}
+
+function escapeHtml(s: string) {
+    return String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
 
 interface OrderItem {
     id: number;
@@ -128,6 +160,21 @@ const OrdersManagement = () => {
     const [autoGenerateTracking, setAutoGenerateTracking] = useState(true);
     const [trackingLocked, setTrackingLocked] = useState(false);
 
+    const [statusCounts, setStatusCounts] = useState<Record<string, number>>({});
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [datePreset, setDatePreset] = useState<DatePreset>('all');
+    const [dateCustomFrom, setDateCustomFrom] = useState('');
+    const [dateCustomTo, setDateCustomTo] = useState('');
+
+    useEffect(() => {
+        const id = setTimeout(() => setDebouncedSearch(searchTerm.trim()), 400);
+        return () => clearTimeout(id);
+    }, [searchTerm]);
+
+    useEffect(() => {
+        setPage(0);
+    }, [debouncedSearch]);
+
     // Auth check
     useEffect(() => {
         const token = localStorage.getItem('adminToken');
@@ -136,8 +183,7 @@ const OrdersManagement = () => {
         }
     }, [router]);
 
-    // Fetch orders
-    const fetchOrders = async () => {
+    const fetchOrders = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
@@ -152,15 +198,34 @@ const OrdersManagement = () => {
                 queryParams.append('status', statusFilter);
             }
 
-            if (searchTerm) {
-                queryParams.append('search', searchTerm);
+            if (debouncedSearch) {
+                queryParams.append('search', debouncedSearch);
             }
 
-            const response = await apiClient(`/admin/orders?${queryParams.toString()}`);
+            if (datePreset === 'custom') {
+                if (dateCustomFrom) queryParams.append('date_from', dateCustomFrom);
+                if (dateCustomTo) queryParams.append('date_to', dateCustomTo);
+            } else if (datePreset !== 'all') {
+                const r = rangeForPreset(datePreset);
+                queryParams.append('date_from', r.from);
+                queryParams.append('date_to', r.to);
+            }
+
+            const response = (await apiClient(`/admin/orders?${queryParams.toString()}`)) as {
+                success?: boolean;
+                data?: {
+                    orders: Order[];
+                    totalItems: number;
+                    statusCounts?: Record<string, number>;
+                };
+            };
             
-            if (response.success) {
+            if (response.success && response.data) {
                 setOrders(response.data.orders);
                 setTotalItems(response.data.totalItems);
+                if (response.data.statusCounts) {
+                    setStatusCounts(response.data.statusCounts);
+                }
             } else {
                 setError('Failed to fetch orders');
             }
@@ -170,17 +235,51 @@ const OrdersManagement = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [page, rowsPerPage, statusFilter, sortBy, sortOrder, debouncedSearch, datePreset, dateCustomFrom, dateCustomTo]);
 
     useEffect(() => {
-        fetchOrders();
-    }, [page, rowsPerPage, statusFilter, sortBy, sortOrder]);
+        void fetchOrders();
+    }, [fetchOrders]);
 
-    // Handle search submit
-    const handleSearchSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setPage(0);
-        fetchOrders();
+    const exportOrdersCsv = () => {
+        if (!orders.length) return;
+        const esc = (v: string | number | undefined | null) => {
+            const s = v === undefined || v === null ? '' : String(v);
+            if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+            return s;
+        };
+        const header = [
+            'order_number',
+            'status',
+            'payment_status',
+            'total_amount',
+            'customer',
+            'email',
+            'createdAt',
+        ];
+        const lines = [
+            header.join(','),
+            ...orders.map((o) =>
+                [
+                    o.order_number,
+                    o.status,
+                    o.payment_status,
+                    o.total_amount,
+                    o.user?.name,
+                    o.user?.email,
+                    o.createdAt,
+                ]
+                    .map(esc)
+                    .join(',')
+            ),
+        ];
+        const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `orders-page-${page + 1}-${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
     };
 
     // Pagination handlers
@@ -197,14 +296,15 @@ const OrdersManagement = () => {
     const handleOpenOrderDetails = async (orderId: number) => {
         try {
             setLoading(true);
-            const response = await apiClient(`/admin/orders/${orderId}`);
+            const response = await apiClient<Order>(`/admin/orders/${orderId}`);
             
-            if (response.success) {
-                setSelectedOrder(response.data);
+            if (response.success && response.data) {
+                const data = response.data;
+                setSelectedOrder(data);
                 setOpenOrderDialog(true);
                 
-                if (response.data.tracking_number) {
-                    setTrackingNumber(response.data.tracking_number);
+                if (data.tracking_number) {
+                    setTrackingNumber(data.tracking_number);
                     setTrackingLocked(true);
                 } else {
                     setTrackingLocked(false);
@@ -213,8 +313,8 @@ const OrdersManagement = () => {
                     }
                 }
                 
-                if (response.data.estimated_delivery_date) {
-                    setEstimatedDeliveryDate(response.data.estimated_delivery_date.split('T')[0]);
+                if (data.estimated_delivery_date) {
+                    setEstimatedDeliveryDate(data.estimated_delivery_date.split('T')[0]);
                 }
             } else {
                 setError('Failed to fetch order details');
@@ -238,7 +338,7 @@ const OrdersManagement = () => {
         try {
             setProcessingUpdate(true);
             
-            const response = await apiClient(`/admin/orders/${orderId}/status`, {
+            const response = await apiClient<Partial<Order>>(`/admin/orders/${orderId}/status`, {
                 method: 'PUT',
                 body: JSON.stringify({ status }),
             });
@@ -249,7 +349,7 @@ const OrdersManagement = () => {
                     return {
                         ...prev,
                         status: status,
-                        ...response.data
+                        ...(response.data ?? {})
                     };
                 });
                 
@@ -277,7 +377,7 @@ const OrdersManagement = () => {
         try {
             setProcessingUpdate(true);
             
-            const response = await apiClient(`/admin/orders/${orderId}/status`, {
+            const response = await apiClient<Partial<Order>>(`/admin/orders/${orderId}/status`, {
                 method: 'PUT',
                 body: JSON.stringify({ payment_status: paymentStatus }),
             });
@@ -288,7 +388,7 @@ const OrdersManagement = () => {
                     return {
                         ...prev,
                         payment_status: paymentStatus,
-                        ...response.data
+                        ...(response.data ?? {})
                     };
                 });
                 
@@ -378,6 +478,52 @@ const OrdersManagement = () => {
         return items.reduce((sum, item) => sum + Number(item.total_price), 0).toFixed(2);
     };
 
+    const printPackingSlip = () => {
+        if (!selectedOrder) return;
+        const w = window.open('', '_blank', 'width=720,height=900');
+        if (!w) {
+            toast.error('Allow pop-ups to print the packing slip');
+            return;
+        }
+        const o = selectedOrder;
+        const rows = o.items
+            .map(
+                (item) =>
+                    `<tr><td>${escapeHtml(item.product_name)}</td><td style="text-align:center">${item.quantity}</td><td style="text-align:right">$${Number(
+                        item.price
+                    ).toFixed(2)}</td></tr>`
+            )
+            .join('');
+        const html = `<!DOCTYPE html><html><head><meta charset="utf-8"/><title>Packing slip ${escapeHtml(
+            o.order_number
+        )}</title><style>
+          body{font-family:system-ui,sans-serif;padding:24px;color:#111;}
+          h1{font-size:1.25rem;margin:0 0 4px;}
+          .muted{color:#555;font-size:0.9rem;}
+          table{width:100%;border-collapse:collapse;margin-top:16px;font-size:0.9rem;}
+          th,td{border:1px solid #ddd;padding:8px;text-align:left;}
+          th{background:#f4f4f5;}
+          .addr{margin-top:16px;line-height:1.5;font-size:0.9rem;}
+        </style></head><body>
+          <h1>${escapeHtml(SITE_NAME)} — packing slip</h1>
+          <p class="muted">Order <strong>${escapeHtml(o.order_number)}</strong> · ${escapeHtml(formatDate(o.createdAt))}</p>
+          <div class="addr">
+            <strong>Ship to</strong><br/>
+            ${escapeHtml(o.user?.name || '')}<br/>
+            ${escapeHtml(o.shipping_address || '')}<br/>
+            ${escapeHtml(o.shipping_city || '')}, ${escapeHtml(o.shipping_postal_code || '')}<br/>
+            ${escapeHtml(o.shipping_country || '')}
+          </div>
+          <table><thead><tr><th>Item</th><th style="text-align:center">Qty</th><th style="text-align:right">Price</th></tr></thead>
+          <tbody>${rows}</tbody></table>
+          <p style="margin-top:16px;font-weight:600">Total: $${Number(o.total_amount).toFixed(2)}</p>
+        </body></html>`;
+        w.document.write(html);
+        w.document.close();
+        w.focus();
+        w.print();
+    };
+
     return (
         <div className="flex min-h-screen bg-slate-50">
             <Sidebar />
@@ -398,13 +544,118 @@ const OrdersManagement = () => {
                         </Alert>
                     )}
 
+                    <div className="mb-4 flex flex-wrap gap-2 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                        <p className="w-full text-xs font-semibold uppercase tracking-wide text-slate-500">
+                            Order volume by status (all orders)
+                        </p>
+                        {(['pending', 'processing', 'shipped', 'delivered', 'cancelled'] as const).map((key) => {
+                            const count = statusCounts[key] ?? 0;
+                            const active = statusFilter === key;
+                            return (
+                                <button
+                                    key={key}
+                                    type="button"
+                                    onClick={() => {
+                                        setStatusFilter(key);
+                                        setPage(0);
+                                    }}
+                                    className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition ${
+                                        active
+                                            ? 'border-indigo-500 bg-indigo-50 text-indigo-900'
+                                            : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300'
+                                    }`}
+                                >
+                                    <span className="capitalize">{key}</span>
+                                    <span
+                                        className={`rounded-md px-2 py-0.5 text-xs font-semibold ${
+                                            active ? 'bg-white text-indigo-700' : 'bg-white text-slate-600'
+                                        }`}
+                                    >
+                                        {count}
+                                    </span>
+                                </button>
+                            );
+                        })}
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setStatusFilter('all');
+                                setPage(0);
+                            }}
+                            className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition ${
+                                statusFilter === 'all'
+                                    ? 'border-indigo-500 bg-indigo-50 text-indigo-900'
+                                    : 'border-dashed border-slate-300 bg-white text-slate-600 hover:bg-slate-50'
+                            }`}
+                        >
+                            All statuses
+                        </button>
+                    </div>
+
+                    <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                        <span className="w-full text-xs font-semibold uppercase tracking-wide text-slate-500">
+                            Order date (filters the list below)
+                        </span>
+                        {(
+                            [
+                                { id: 'all' as const, label: 'Any time' },
+                                { id: 'today' as const, label: 'Today' },
+                                { id: '7d' as const, label: 'Last 7 days' },
+                                { id: '30d' as const, label: 'Last 30 days' },
+                                { id: 'custom' as const, label: 'Custom' },
+                            ] as const
+                        ).map((opt) => (
+                            <button
+                                key={opt.id}
+                                type="button"
+                                onClick={() => {
+                                    setDatePreset(opt.id);
+                                    setPage(0);
+                                }}
+                                className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition ${
+                                    datePreset === opt.id
+                                        ? 'border-indigo-500 bg-indigo-50 text-indigo-900'
+                                        : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300'
+                                }`}
+                            >
+                                {opt.label}
+                            </button>
+                        ))}
+                        {datePreset === 'custom' && (
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center', width: '100%', mt: 1 }}>
+                                <TextField
+                                    size="small"
+                                    label="From"
+                                    type="date"
+                                    value={dateCustomFrom}
+                                    onChange={(e) => {
+                                        setDateCustomFrom(e.target.value);
+                                        setPage(0);
+                                    }}
+                                    InputLabelProps={{ shrink: true }}
+                                />
+                                <TextField
+                                    size="small"
+                                    label="To"
+                                    type="date"
+                                    value={dateCustomTo}
+                                    onChange={(e) => {
+                                        setDateCustomTo(e.target.value);
+                                        setPage(0);
+                                    }}
+                                    InputLabelProps={{ shrink: true }}
+                                />
+                            </Box>
+                        )}
+                    </div>
+
                     <Card sx={{ mb: 4 }}>
                         <Box sx={{ p: 3, display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center', justifyContent: 'space-between' }}>
                             <Box sx={{ display: 'flex', gap: 2, flexGrow: 1, maxWidth: '600px' }}>
-                                <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '8px', width: '100%' }}>
+                                <form onSubmit={(e) => e.preventDefault()} style={{ display: 'flex', gap: '8px', width: '100%' }}>
                                     <TextField
                                         size="small"
-                                        placeholder="Search by order #, customer name, or email"
+                                        placeholder="Search — updates as you type"
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         fullWidth
@@ -416,9 +667,6 @@ const OrdersManagement = () => {
                                             ),
                                         }}
                                     />
-                                    <Button type="submit" variant="contained">
-                                        Search
-                                    </Button>
                                 </form>
                             </Box>
 
@@ -447,7 +695,10 @@ const OrdersManagement = () => {
                                     </Select>
                                 </FormControl>
 
-                                <IconButton onClick={() => fetchOrders()} color="primary">
+                                <Button variant="outlined" size="small" onClick={exportOrdersCsv} disabled={!orders.length}>
+                                    Export CSV
+                                </Button>
+                                <IconButton onClick={() => void fetchOrders()} color="primary" aria-label="Refresh orders">
                                     <RefreshIcon />
                                 </IconButton>
                             </Box>
@@ -852,6 +1103,14 @@ const OrdersManagement = () => {
                             </Grid>
                         </DialogContent>
                         <DialogActions>
+                            <Button
+                                startIcon={<PrintIcon />}
+                                onClick={printPackingSlip}
+                                color="secondary"
+                                variant="outlined"
+                            >
+                                Print packing slip
+                            </Button>
                             <Button onClick={handleCloseOrderDialog}>
                                 Close
                             </Button>

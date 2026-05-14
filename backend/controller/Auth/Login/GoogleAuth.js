@@ -1,9 +1,9 @@
 const User = require('../../../model/UserModel');
 const { OAuth2Client } = require('google-auth-library');
-const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const UAParser = require('ua-parser-js');
 const { updateTrustedDevices } = require('../utils/deviceUtils');
+const { generateAccessToken, setAuthCookies } = require('../../../utils/authTokens');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -79,11 +79,9 @@ exports.googleAuth = async (req, res) => {
             await user.reload();
         }
 
-        const accessToken = jwt.sign(
-            { userId: user.id },
-            process.env.JWT_SECRET,
-            { expiresIn: '24h' }
-        );
+        const accessToken = generateAccessToken(user.id);
+
+        setAuthCookies(res, user, accessToken, false);
 
         return res.status(200).json({
             success: true,

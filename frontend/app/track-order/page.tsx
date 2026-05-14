@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { apiClient } from '@/app/utils/apiClient';
 import { validateTrackingCode } from '@/app/utils/trackingCodeGenerator';
@@ -32,7 +32,7 @@ interface OrderTracking {
   trackingHistory: TrackingUpdate[];
 }
 
-export default function TrackOrderPage() {
+function TrackOrderPageInner() {
   const searchParams = useSearchParams();
   const [orderNumber, setOrderNumber] = useState(searchParams.get('order') || '');
   const [trackingNumber, setTrackingNumber] = useState(searchParams.get('track') || '');
@@ -77,10 +77,10 @@ export default function TrackOrderPage() {
         queryParams.append('trackingNumber', trackingNumber);
       }
       
-      const response = await apiClient(`/track-order/track?${queryParams.toString()}`);
+      const response = await apiClient<OrderTracking>(`/track-order/track?${queryParams.toString()}`);
       
       if (response.success) {
-        setTrackingInfo(response.data);
+        setTrackingInfo(response.data ?? null);
       } else {
         setError(response.message || 'Could not find tracking information for this order');
       }
@@ -348,5 +348,21 @@ export default function TrackOrderPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function TrackOrderPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="track-order-container">
+          <div className="track-order-header">
+            <p className="text-muted">Loading…</p>
+          </div>
+        </div>
+      }
+    >
+      <TrackOrderPageInner />
+    </Suspense>
   );
 }

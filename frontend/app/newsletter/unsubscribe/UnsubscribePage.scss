@@ -1,3 +1,5 @@
+@use "sass:color";
+
 .unsubscribe-container {
     min-height: 100vh;
     background-color: #f5f7fa;
@@ -105,7 +107,7 @@
                         color: white;
 
                         &:hover {
-                            background-color: darken(#05a7be, 8%);
+                            background-color: color.adjust(#05a7be, $lightness: -8%);
                             transform: translateY(-2px);
                         }
                     }

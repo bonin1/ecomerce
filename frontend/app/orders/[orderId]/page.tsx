@@ -49,8 +49,8 @@ const OrderDetailsPage = () => {
     const fetchOrderDetails = async () => {
       try {
         setLoading(true);
-        const response = await getOrderById(orderId);
-        setOrder(response);
+        const data = await getOrderById(orderId);
+        setOrder(data as Order | null);
       } catch (err) {
         console.error('Error fetching order details:', err);
         setError('Failed to load order details. Please try again later.');

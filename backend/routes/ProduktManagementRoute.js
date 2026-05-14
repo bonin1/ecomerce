@@ -4,8 +4,9 @@ const { getAllCategories, getCategoryById } = require('../controller/ProductMana
 const { createCategory, updateCategory, deleteCategory } = require('../controller/ProductManagement/Category/CRUDoperations');
 const { createProduct, updateProduct, deleteProduct } = require('../controller/ProductManagement/Product/CRUDoperations');
 const { getAllProducts, getProductById } = require('../controller/ProductManagement/Product/GetProduct');
+const { bulkInventory } = require('../controller/ProductManagement/Product/BulkProductOps');
 const { authenticate, isAdminOrStaff } = require('../middleware/authMiddleware');
-const { uploadProductMedia, getProductMedia, deleteProductMedia } = require('../controller/ProductManagement/Product/MediaOperations');
+const { uploadProductMedia, getProductMedia, deleteProductMedia, cloneProductMedia } = require('../controller/ProductManagement/Product/MediaOperations');
 
 const upload = require('../config/UploadConfig');
 
@@ -23,9 +24,11 @@ router.get('/products/:id', getProductById);
 // Product routes - Protected
 router.post('/products', authenticate, isAdminOrStaff, createProduct);
 router.put('/products/:id', authenticate, isAdminOrStaff, updateProduct);
+router.post('/products/bulk-inventory', authenticate, isAdminOrStaff, bulkInventory);
 router.delete('/products/:id', authenticate, isAdminOrStaff, deleteProduct);
 
 // Product Media routes
+router.post('/products/:id/clone-media', authenticate, isAdminOrStaff, cloneProductMedia);
 router.post('/products/:id/media', authenticate, isAdminOrStaff, upload.single('image'), uploadProductMedia);
 router.get('/products/:id/media', getProductMedia);
 router.delete('/products/:id/media/:mediaId', authenticate, isAdminOrStaff, deleteProductMedia);

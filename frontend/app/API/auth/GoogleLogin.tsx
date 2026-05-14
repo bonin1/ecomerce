@@ -22,6 +22,7 @@ export const googleLogin = async (token: string): Promise<ApiResponse<LoginRespo
         
         if (data.success && data.data?.accessToken) {
             localStorage.setItem('accessToken', data.data.accessToken);
+            sessionStorage.setItem('accessToken', data.data.accessToken);
             localStorage.setItem('user', JSON.stringify(data.data.user));
             
             dispatchUserLogin(data.data.user);

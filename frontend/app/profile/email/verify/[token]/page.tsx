@@ -16,7 +16,7 @@ export default function EmailVerificationPage() {
                 const response = await verifyEmailChange(params.token as string);
                 if (response.status === 'success') {
                     setStatus('success');
-                    setMessage(response.message);
+                    setMessage(response.message ?? '');
                     setTimeout(() => router.push('/profile'), 3000);
                 } else {
                     throw new Error(response.message || 'Verification failed');

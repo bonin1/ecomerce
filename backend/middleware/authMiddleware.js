@@ -79,11 +79,10 @@ exports.authenticate = async (req, res, next) => {
         const currentTime = Math.floor(Date.now() / 1000);
     
         if (tokenExp && (tokenExp - currentTime < 3600)) {
-            const newToken = jwt.sign(
-                { userId: user.id, email: user.email, role: user.role },
-                tokenSecret,
-                { expiresIn: '24h' }
-            );
+            const payload = isAdminRequest
+                ? { userId: user.id, email: user.email, role: user.role, isAdminToken: true }
+                : { userId: user.id, email: user.email, role: user.role };
+            const newToken = jwt.sign(payload, tokenSecret, { expiresIn: '24h' });
             
             res.cookie(isAdminRequest ? 'adminToken' : 'sessionToken', newToken, {
                 httpOnly: true,

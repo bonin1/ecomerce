@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { apiClient } from "@/app/utils/apiClient";
 import Link from "next/link";
 import Image from "next/image";
 import "./UnsubscribePage.scss";
 
-const UnsubscribePage = () => {
+const UnsubscribePageInner = () => {
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading"
   );
@@ -139,4 +139,18 @@ const UnsubscribePage = () => {
   );
 };
 
-export default UnsubscribePage;
+export default function UnsubscribePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="unsubscribe-container">
+          <div className="unsubscribe-card">
+            <p className="message">Loading…</p>
+          </div>
+        </div>
+      }
+    >
+      <UnsubscribePageInner />
+    </Suspense>
+  );
+}

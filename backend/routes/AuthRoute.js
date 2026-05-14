@@ -10,6 +10,7 @@ const { googleAuth } = require('../controller/Auth/Login/GoogleAuth');
 router.post('/register', register);
 router.post('/login', LoginSystem.login);
 router.post('/logout', LoginSystem.logout);
+router.post('/refresh', LoginSystem.refreshAccess);
 
 router.get('/verify-email', verifyEmail);
 router.post('/resend-verification', resendVerification);

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import Link from 'next/link';
 import { 
     Box, 
     Grid, 
@@ -26,6 +27,7 @@ import { Chart as ChartJS } from 'chart.js';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import { apiClient } from '../../../utils/apiClient';
 import { AffiliateStats } from '../../../types';
+import { SITE_NAME } from '@/app/config/site';
 
 ChartJS.register(
     ArcElement,
@@ -46,12 +48,16 @@ const AffiliateStatsDashboard: React.FC = () => {
         const fetchStats = async () => {
             setLoading(true);
             try {
-                const response = await apiClient('/affiliate/admin/stats');
-                if (response.success) {
-                    setStats(response.data);
-                } else {
-                    setError(response.message || 'Failed to fetch affiliate statistics');
-                }
+            const response = (await apiClient('/affiliate/admin/stats')) as {
+                success?: boolean;
+                data?: AffiliateStats;
+                message?: string;
+            };
+            if (response.success && response.data) {
+                setStats(response.data);
+            } else {
+                setError(response.message || 'Failed to fetch affiliate statistics');
+            }
             } catch (err) {
                 console.error('Error fetching affiliate stats:', err);
                 setError('Failed to load affiliate statistics. Please try again.');
@@ -84,7 +90,7 @@ const AffiliateStatsDashboard: React.FC = () => {
         },
         {
             title: 'Total Earnings',
-            value: `$${stats?.totalEarnings.toFixed(2) || '0.00'}`,
+            value: `$${Number(stats?.totalEarnings ?? 0).toFixed(2)}`,
             icon: <EarningsIcon sx={{ fontSize: 40, color: '#8b5cf6' }} />,
             color: '#8b5cf6'
         },
@@ -102,35 +108,41 @@ const AffiliateStatsDashboard: React.FC = () => {
         }
     ];
 
-    const statusChartData = {
-        labels: ['Pending', 'Approved', 'Rejected', 'Suspended'],
-        datasets: [
-            {
-                data: [
-                    stats?.pendingAffiliates || 0,
-                    stats?.approvedAffiliates || 0,
-                    stats?.rejectedAffiliates || 0,
-                    stats?.suspendedAffiliates || 0
-                ],
-                backgroundColor: ['#f59e0b', '#10b981', '#ef4444', '#6b7280'],
-                borderWidth: 2,
-                borderColor: '#ffffff'
-            }
-        ]
-    };
+    const statusChartData = useMemo(
+        () => ({
+            labels: ['Pending', 'Approved', 'Rejected', 'Suspended'],
+            datasets: [
+                {
+                    data: [
+                        stats?.pendingAffiliates || 0,
+                        stats?.approvedAffiliates || 0,
+                        stats?.rejectedAffiliates || 0,
+                        stats?.suspendedAffiliates || 0,
+                    ],
+                    backgroundColor: ['#f59e0b', '#10b981', '#ef4444', '#6b7280'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                },
+            ],
+        }),
+        [stats]
+    );
 
-    const performanceChartData = {
-        labels: ['Clicks', 'Conversions'],
-        datasets: [
-            {
-                label: 'Performance Metrics',
-                data: [stats?.totalClicks || 0, stats?.totalConversions || 0],
-                backgroundColor: ['#06b6d4', '#ec4899'],
-                borderColor: ['#0891b2', '#db2777'],
-                borderWidth: 1
-            }
-        ]
-    };
+    const performanceChartData = useMemo(
+        () => ({
+            labels: ['Clicks', 'Conversions'],
+            datasets: [
+                {
+                    label: 'Performance metrics',
+                    data: [stats?.totalClicks || 0, stats?.totalConversions || 0],
+                    backgroundColor: ['#06b6d4', '#ec4899'],
+                    borderColor: ['#0891b2', '#db2777'],
+                    borderWidth: 1,
+                },
+            ],
+        }),
+        [stats]
+    );
 
     if (loading) {
         return (
@@ -151,7 +163,7 @@ const AffiliateStatsDashboard: React.FC = () => {
     return (
         <Box sx={{ mb: 4, width: '100%' }}>
             <Typography variant="h5" sx={{ mb: 3 }}>
-                Affiliate Program Dashboard
+                {SITE_NAME} — affiliate overview
             </Typography>
 
             <Grid container spacing={3} sx={{ mb: 4 }}>

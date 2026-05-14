@@ -1,11 +1,19 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 import { verifyOTP } from '../API/auth/verifyOtp';
 
 export default function OTPVerification() {
+    return (
+        <Suspense fallback={<div className="container py-5 text-center text-muted">Loading…</div>}>
+            <OTPVerificationInner />
+        </Suspense>
+    );
+}
+
+function OTPVerificationInner() {
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [loading, setLoading] = useState(false);
     const [timeLeft, setTimeLeft] = useState(600); 

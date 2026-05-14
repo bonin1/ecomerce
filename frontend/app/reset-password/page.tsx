@@ -1,10 +1,10 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import './reset-password.scss';
 
-const ResetPasswordPage = () => {
+function ResetPasswordPageInner() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const token = searchParams?.get('token');
@@ -294,4 +294,18 @@ const ResetPasswordPage = () => {
     );
 };
 
-export default ResetPasswordPage;
+export default function ResetPasswordPage() {
+    return (
+        <Suspense
+            fallback={
+                <div className="reset-password-container">
+                    <div className="card shadow-sm">
+                        <div className="card-body p-4 text-center text-muted">Loading…</div>
+                    </div>
+                </div>
+            }
+        >
+            <ResetPasswordPageInner />
+        </Suspense>
+    );
+}

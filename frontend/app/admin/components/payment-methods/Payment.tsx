@@ -55,9 +55,9 @@ const PaymentMethodsManager = () => {
   const fetchPaymentMethods = async () => {
     setLoading(true);
     try {
-      const response = await apiClient('/payment-methods');
+      const response = await apiClient<PaymentMethod[]>('/payment-methods');
       if (response.success) {
-        setPaymentMethods(response.data);
+        setPaymentMethods(response.data ?? []);
       }
     } catch (error) {
       console.error('Error fetching payment methods:', error);

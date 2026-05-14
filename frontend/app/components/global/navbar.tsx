@@ -7,6 +7,7 @@ import { User } from '@/app/types';
 import { useCart } from '@/app/context/CartContext';
 import { dispatchUserLogout } from '@/app/utils/auth-events';
 import { apiClient } from '@/app/utils/apiClient';
+import { SITE_NAME } from '@/app/config/site';
 
 function readUserFromStorage(): User | null {
     if (typeof window === 'undefined') return null;
@@ -157,7 +158,7 @@ const Navbar = () => {
             <div className="bg-slate-100 border-b border-slate-200 hidden md:block">
                 <div className="mx-auto flex max-w-[1400px] items-center justify-between px-4 py-1.5 text-xs text-slate-500 sm:px-6">
                     <div className="flex gap-4">
-                        <span>Welcome to StrikeTech</span>
+                        <span>Welcome to {SITE_NAME}</span>
                     <Link href="/help/shipping" className="hover:text-brand-primary transition no-underline text-slate-500">Buyer Protection</Link>
                     <Link href="/contact" className="hover:text-brand-primary transition no-underline text-slate-500">Customer Service</Link>
                 </div>
@@ -175,7 +176,7 @@ const Navbar = () => {
                     <Link href="/" className="inline-flex items-center">
                         <img
                             src="/logo/STRIKETECH-1.png"
-                            alt="StrikeTech"
+                            alt={SITE_NAME}
                             className="h-10 w-auto sm:h-12 object-contain"
                         />
                     </Link>

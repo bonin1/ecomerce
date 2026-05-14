@@ -270,10 +270,10 @@ const ApplicationList: React.FC = () => {
                 params.append('careerId', selectedCareerId);
             }
             
-            const response = await apiClient(`/careers/applications?${params.toString()}`);
+            const response = await apiClient<CareerApplication[]>(`/careers/applications?${params.toString()}`);
             
             if (response.success) {
-                setApplications(response.data);
+                setApplications(response.data ?? []);
                 setTotalPages(response.totalPages || 1);
             } else {
                 setError('Failed to load applications');
@@ -288,9 +288,11 @@ const ApplicationList: React.FC = () => {
 
     const fetchCareers = async () => {
         try {
-            const response = await apiClient('/careers/listings?status=active&limit=100');
+            const response = await apiClient<{ id: number; title: string }[]>(
+                '/careers/listings?status=active&limit=100'
+            );
             if (response.success) {
-                setCareers(response.data.map((career: any) => ({
+                setCareers((response.data ?? []).map((career) => ({
                     id: career.id,
                     title: career.title
                 })));

@@ -1,8 +1,13 @@
 import { apiClient } from '@/app/utils/apiClient';
 
+type ProfileExportData = {
+    downloadUrl: string;
+    filename?: string;
+};
+
 export const exportProfileData = async (formats: string[]) => {
     try {
-        const response = await apiClient('/api/profile/export', {
+        const response = await apiClient<ProfileExportData>('/api/profile/export', {
             method: 'POST',
             body: JSON.stringify({ formats })
         });

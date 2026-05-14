@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateAdmin } = require('../middleware/adminAuthMiddleware');
-const { isAdmin } = require('../middleware/authMiddleware');
+const { requireFullAdmin } = require('../middleware/adminRoleMiddleware');
 const { 
     adminLogin,
     verifyAdminOTP,
@@ -30,15 +30,26 @@ const {
     getLatestTrackingStatusAdmin,
     resendTrackingNotification
 } = require('../controller/UserManagement/order/TrackingController');
+const { listUsers, updateUser } = require('../controller/Admin/AdminUserController');
+const { listCustomers, getCustomerSummary } = require('../controller/Admin/AdminCustomerController');
+const { getAdminSettings } = require('../controller/Admin/AdminSettingsController');
 
 router.post('/login', adminLogin);
 router.post('/verify-otp', verifyAdminOTP);
 router.post('/logout', authenticateAdmin, adminLogout);
 
-router.get('/change-requests', authenticateAdmin, getPendingRequests);
-router.post('/change-requests/:requestId/approve', authenticateAdmin, approveRequest);
-router.post('/change-requests/:requestId/reject', authenticateAdmin, rejectRequest);
+router.get('/change-requests', authenticateAdmin, requireFullAdmin, getPendingRequests);
+router.post('/change-requests/:requestId/approve', authenticateAdmin, requireFullAdmin, approveRequest);
+router.post('/change-requests/:requestId/reject', authenticateAdmin, requireFullAdmin, rejectRequest);
 router.get('/dashboard/stats', authenticateAdmin, getDashboardStats);
+
+router.get('/settings', authenticateAdmin, requireFullAdmin, getAdminSettings);
+
+router.get('/users', authenticateAdmin, requireFullAdmin, listUsers);
+router.patch('/users/:id', authenticateAdmin, requireFullAdmin, updateUser);
+
+router.get('/customers/summary', authenticateAdmin, getCustomerSummary);
+router.get('/customers', authenticateAdmin, listCustomers);
 
 router.get('/orders/statistics/advanced', authenticateAdmin, getAdvancedOrderStats);
 router.get('/orders/statistics/fulfillment', authenticateAdmin, getOrderFulfillmentStats);

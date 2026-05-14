@@ -43,18 +43,20 @@ export interface PaymentMethod {
 }
 
 export const createOrder = async (orderData: OrderData): Promise<OrderResponse> => {
-  return await apiClient('/orders', {
+  return (await apiClient('/orders', {
     method: 'POST',
     body: JSON.stringify(orderData),
-  });
+  })) as OrderResponse;
 };
 
 export const getOrders = async () => {
-  return await apiClient('/orders');
+  const res = await apiClient('/orders');
+  return Array.isArray(res.data) ? res.data : [];
 };
 
 export const getOrderById = async (orderId: string | number) => {
-  return await apiClient(`/orders/${orderId}`);
+  const res = await apiClient(`/orders/${orderId}`);
+  return res.data ?? null;
 };
 
 export const cancelOrder = async (orderId: string | number) => {
@@ -64,6 +66,6 @@ export const cancelOrder = async (orderId: string | number) => {
 };
 
 export const getPaymentMethods = async (): Promise<PaymentMethod[]> => {
-  const response = await apiClient('/payment-methods');
-  return response?.data || [];
+  const response = await apiClient<PaymentMethod[]>('/payment-methods');
+  return response.data ?? [];
 };

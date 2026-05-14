@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import LoginForm from '../components/login/login';
 import { login } from '../API/auth/login';
-import { LoginData } from '../types';
+import { LoginData, User } from '../types';
 import Link from 'next/link';
 import { dispatchUserLogin } from '../utils/auth-events';
 import { Toaster } from 'react-hot-toast';
@@ -33,7 +33,7 @@ const LoginPage = () => {
             if (response.data) {
                 toast.success('Login successful!');
                 localStorage.setItem('user', JSON.stringify(response.data.user));
-                dispatchUserLogin(response.data.user);
+                dispatchUserLogin(response.data.user as unknown as User);
                 router.push('/profile');
             }
         } catch (err) {

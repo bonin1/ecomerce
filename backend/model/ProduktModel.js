@@ -76,6 +76,10 @@ const Produkt = db.define('produkt', {
         type: DataTypes.STRING(100),
         allowNull: true  
     },
+    custom_attributes: {
+        type: DataTypes.JSON,
+        allowNull: true,
+    },
     product_category_id: {
         type: DataTypes.BIGINT,
         allowNull: false,

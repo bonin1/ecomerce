@@ -20,6 +20,7 @@ export const verifyOTP = async (email: string, otp: string): Promise<ApiResponse
 
         if (data.success && data.data?.accessToken) {
             localStorage.setItem('accessToken', data.data.accessToken);
+            sessionStorage.setItem('accessToken', data.data.accessToken);
             localStorage.setItem('user', JSON.stringify(data.data.user));
         }
 

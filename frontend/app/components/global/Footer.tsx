@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { apiClient } from "@/app/utils/apiClient";
+import { SITE_NAME } from "@/app/config/site";
 
 interface Category {
   id: number;
@@ -108,11 +109,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
           {/* Company Info */}
           <div className="lg:col-span-2">
-            <img src="/logo/STRIKETECH-1.png" alt="StrikeTech Logo" className="h-12 mb-6" />
+            <img src="/logo/STRIKETECH-1.png" alt={`${SITE_NAME} logo`} className="h-12 mb-6" />
             <p className="text-sm text-slate-500 leading-relaxed max-w-sm mb-6">
-              Founded in 2025, StrikeTech has quickly become the premier
-              destination for tech enthusiasts, offering cutting-edge
-              products and unparalleled customer service worldwide.
+              {SITE_NAME} — curated tech products and dependable customer service.
             </p>
             <div className="flex items-center gap-3">
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-brand-primary hover:text-white transition-colors">
@@ -179,7 +178,7 @@ const Footer = () => {
       <div className="border-t border-slate-200 bg-slate-50">
         <div className="mx-auto max-w-[1400px] px-4 py-6 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-slate-500">
-            &copy; {currentYear} StrikeTech. All Rights Reserved.
+            &copy; {currentYear} {SITE_NAME}. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-2">
             <span className="text-sm text-slate-500 mr-2">Secure Payments:</span>

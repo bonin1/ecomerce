@@ -194,4 +194,116 @@ const deleteProductMedia = async (req, res) => {
     }
 };
 
-module.exports = { uploadProductMedia, getProductMedia, deleteProductMedia };
+/**
+ * Copy all gallery images from another product (binary rows). Respects 10-image cap.
+ * POST body: { from_product_id: number }
+ */
+const cloneProductMedia = async (req, res) => {
+    const t = await db.transaction();
+    try {
+        const targetId = parseInt(req.params.id, 10);
+        const fromId = parseInt(req.body?.from_product_id, 10);
+
+        if (!targetId || !fromId || fromId === targetId) {
+            await t.rollback();
+            return res.status(400).json({
+                success: false,
+                message: 'from_product_id is required and must differ from target id',
+            });
+        }
+
+        const [target, source] = await Promise.all([
+            Produkt.findByPk(targetId, { transaction: t }),
+            Produkt.findByPk(fromId, { transaction: t }),
+        ]);
+
+        if (!target || !source) {
+            await t.rollback();
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        let existingCount = await ProduktMedia.count({
+            where: { product_id: targetId },
+            transaction: t,
+        });
+
+        const sources = await ProduktMedia.findAll({
+            where: { product_id: fromId },
+            order: [
+                ['is_primary', 'DESC'],
+                ['id', 'ASC'],
+            ],
+            transaction: t,
+        });
+
+        const anySourcePrimary = sources.some((s) => s.is_primary);
+        let added = 0;
+
+        for (const row of sources) {
+            if (existingCount >= 10) break;
+            if (!row.media || !Buffer.isBuffer(row.media) || row.media.length === 0) continue;
+
+            let isPrimary = Boolean(row.is_primary);
+            if (!anySourcePrimary && added === 0) {
+                isPrimary = true;
+            }
+
+            await ProduktMedia.create(
+                {
+                    product_id: targetId,
+                    media: Buffer.from(row.media),
+                    media_type: row.media_type || 'image/jpeg',
+                    is_primary: isPrimary,
+                },
+                { transaction: t }
+            );
+            existingCount += 1;
+            added += 1;
+        }
+
+        if (added > 0) {
+            const allNew = await ProduktMedia.findAll({
+                where: { product_id: targetId },
+                order: [['id', 'ASC']],
+                transaction: t,
+            });
+            let primarySeen = false;
+            for (const m of allNew) {
+                const want = Boolean(m.is_primary) && !primarySeen;
+                if (want) primarySeen = true;
+                if (Boolean(m.is_primary) !== want) {
+                    await m.update({ is_primary: want }, { transaction: t });
+                }
+            }
+        }
+
+        await AuditLog.create(
+            {
+                user_id: req.user.id,
+                action: 'CLONE_MEDIA',
+                entity_type: 'PRODUCT',
+                entity_id: targetId,
+                new_values: { from_product_id: fromId, copied: added },
+                status: 'approved',
+            },
+            { transaction: t }
+        );
+
+        await t.commit();
+        return res.status(200).json({
+            success: true,
+            message: added ? `Copied ${added} image(s)` : 'No images to copy from source product',
+            data: { copied: added },
+        });
+    } catch (error) {
+        await t.rollback();
+        console.error('cloneProductMedia error:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to clone product media',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        });
+    }
+};
+
+module.exports = { uploadProductMedia, getProductMedia, deleteProductMedia, cloneProductMedia };

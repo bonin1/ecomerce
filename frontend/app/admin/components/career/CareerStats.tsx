@@ -47,9 +47,9 @@ const CareerStatsDashboard: React.FC = () => {
         const fetchStats = async () => {
             setLoading(true);
             try {
-                const response = await apiClient('/careers/stats');
+                const response = await apiClient<CareerStats>('/careers/stats');
                 if (response.success) {
-                    setStats(response.data);
+                    setStats(response.data ?? null);
                 } else {
                     setError('Failed to load career statistics');
                 }

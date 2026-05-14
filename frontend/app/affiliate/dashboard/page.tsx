@@ -90,9 +90,9 @@ const AffiliateDashboard: React.FC = () => {
             }
 
             try {
-                const response = await apiClient(`/affiliate/performance/${affiliateCode}`);
+                const response = await apiClient<AffiliatePerformance>(`/affiliate/performance/${affiliateCode}`);
                 if (response.success) {
-                    setPerformance(response.data);
+                    setPerformance(response.data ?? null);
                 } else {
                     setError('Failed to load affiliate performance data');
                 }

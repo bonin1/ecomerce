@@ -1,9 +1,9 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Navbar from '@/app/components/global/navbar';
 
-const VerifyEmail = () => {
+const VerifyEmailInner = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
@@ -88,4 +88,10 @@ const VerifyEmail = () => {
     );
 };
 
-export default VerifyEmail;
+export default function VerifyEmailPage() {
+    return (
+        <Suspense fallback={<div className="container mt-5 text-center text-muted">Loading…</div>}>
+            <VerifyEmailInner />
+        </Suspense>
+    );
+}

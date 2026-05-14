@@ -34,9 +34,9 @@ const JobDetailsPage = () => {
     const fetchJobDetails = async () => {
       setLoading(true);
       try {
-        const response = await apiClient(`/careers/listings/${id}`);
+        const response = await apiClient<Career>(`/careers/listings/${id}`);
         if (response.success) {
-          setJob(response.data);
+          setJob(response.data ?? null);
         } else {
           setError('Failed to load job details');
         }

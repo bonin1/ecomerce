@@ -4,7 +4,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import Header from '../components/affiliate/header/header';
 import toast from 'react-hot-toast';
 import { apiClient } from '../utils/apiClient';
+import { AFFILIATE_DEFAULT_COMMISSION_PCT, SITE_NAME } from '@/app/config/site';
 import './affiliate.scss';
+
+const COMMISSION = AFFILIATE_DEFAULT_COMMISSION_PCT;
 
 const AffiliatePage = () => {
   const [formData, setFormData] = useState({
@@ -57,10 +60,10 @@ const AffiliatePage = () => {
 
     try {
       // Replace with your actual API endpoint
-      const response = await apiClient('/affiliate/apply', {
+      const response = (await apiClient('/affiliate/apply', {
         method: 'POST',
         body: JSON.stringify(formData),
-      });
+      })) as { success?: boolean; message?: string };
       
       if (response.success) {
         toast.success('Your application has been submitted successfully!');
@@ -84,8 +87,8 @@ const AffiliatePage = () => {
 
   const benefits = [
     {
-      title: 'Industry-Leading Commission',
-      description: 'Earn up to 15% commission on every qualified sale, with tiered rates that increase as you drive more sales.',
+      title: 'Competitive commission',
+      description: `Earn up to ${COMMISSION}% on qualifying sales, with room to adjust rates for top partners.`,
       icon: 'bi-coin'
     },
     {
@@ -133,8 +136,8 @@ const AffiliatePage = () => {
     },
     {
       number: 4,
-      title: 'Start Earning',
-      description: 'Promote StrikeTech products and earn competitive commissions on every qualified sale.'
+      title: 'Start earning',
+      description: `Promote ${SITE_NAME} products and earn commissions on every qualified sale you refer.`,
     }
   ];
 
@@ -146,11 +149,13 @@ const AffiliatePage = () => {
         <section 
           id="benefits-section" 
           className="benefits-section" 
-          ref={el => sectionRefs.current[0] = el}>
+          ref={el => {
+            sectionRefs.current[0] = el;
+          }}>
           <div className="container">
             <h2>Why Partner With Us</h2>
             <p className="section-intro">
-              Join the StrikeTech affiliate network and enjoy industry-leading benefits designed to maximize your earnings and provide everything you need for success.
+              Partner with {SITE_NAME} for clear terms, solid tracking, and marketing support that fits your audience.
             </p>
             
             <div className="benefits-grid">
@@ -169,11 +174,13 @@ const AffiliatePage = () => {
 
         <section 
           className="how-it-works" 
-          ref={el => sectionRefs.current[1] = el}>
+          ref={el => {
+            sectionRefs.current[1] = el;
+          }}>
           <div className="container">
             <h2>How Our Program Works</h2>
             <p className="section-intro">
-              Becoming a StrikeTech affiliate partner is simple. Follow these four easy steps to start earning commissions on your referrals.
+              Becoming a {SITE_NAME} affiliate is straightforward: apply, get approved, share your links, and track results in the partner dashboard.
             </p>
             <div className="steps-container">
               {steps.map((step) => (
@@ -189,7 +196,9 @@ const AffiliatePage = () => {
 
         <section 
           className="commission-structure" 
-          ref={el => sectionRefs.current[2] = el}>
+          ref={el => {
+            sectionRefs.current[2] = el;
+          }}>
           <div className="container">
             <h2>Tiered Commission Structure</h2>
             <p className="section-intro">
@@ -232,7 +241,9 @@ const AffiliatePage = () => {
         <section 
           id="apply-section" 
           className="apply-section" 
-          ref={el => sectionRefs.current[3] = el}>
+          ref={el => {
+            sectionRefs.current[3] = el;
+          }}>
           <div className="container">
             <h2>Apply to Become a Partner</h2>
             <p className="apply-intro">
@@ -297,7 +308,7 @@ const AffiliatePage = () => {
                   name="message" 
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="Describe your audience demographics, size, and how you plan to promote StrikeTech products..."
+                  placeholder={`Describe your audience and how you plan to promote ${SITE_NAME}…`}
                   rows={5} 
                   required
                 ></textarea>
@@ -312,11 +323,13 @@ const AffiliatePage = () => {
 
         <section 
           className="faq-section" 
-          ref={el => sectionRefs.current[4] = el}>
+          ref={el => {
+            sectionRefs.current[4] = el;
+          }}>
           <div className="container">
             <h2>Frequently Asked Questions</h2>
             <p className="section-intro">
-              Get answers to common questions about the StrikeTech affiliate program. If you don't find what you're looking for, please contact our affiliate team.
+              Get answers to common questions about the {SITE_NAME} affiliate program. Contact our team if you need anything else.
             </p>
             <div className="faqs">
               <div className="faq-item">
@@ -326,7 +339,7 @@ const AffiliatePage = () => {
               
               <div className="faq-item">
                 <h3>Which products can I promote?</h3>
-                <p>You can promote any product in the StrikeTech catalog. Premium and limited edition items carry the same commission rates, giving you flexibility in your promotion strategy.</p>
+                <p>You can promote products across our catalog. Commission rules are shared during onboarding so you know what to expect.</p>
               </div>
               
               <div className="faq-item">

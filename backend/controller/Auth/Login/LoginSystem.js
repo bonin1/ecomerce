@@ -5,16 +5,14 @@ const UAParser = require('ua-parser-js');
 const { sendNewDeviceLoginAlert, sendOTPEmail } = require('../../../services/emailServices');
 const { Op } = require('sequelize');
 const { updateTrustedDevices } = require('../utils/deviceUtils');
+const {
+    generateAccessToken,
+    getRefreshSecret,
+    setAuthCookies,
+    clearAuthCookies,
+} = require('../../../utils/authTokens');
 
 const blacklistedTokens = new Set();
-
-const generateToken = (userId) => {
-    return jwt.sign(
-        { userId },
-        process.env.JWT_SECRET,
-        { expiresIn: '24h' }
-    );
-};
 
 const getDeviceFingerprint = (req) => {
     const parser = new UAParser(req.headers['user-agent']);
@@ -97,7 +95,7 @@ exports.login = async (req, res) => {
             await sendNewDeviceLoginAlert(user.email, deviceInfo);
         }
 
-        const accessToken = generateToken(user.id);
+        const accessToken = generateAccessToken(user.id);
 
         await User.update({
             ...updates,
@@ -107,35 +105,7 @@ exports.login = async (req, res) => {
             where: { id: user.id }
         });
 
-        const cookieOptions = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
-            path: '/'
-        };
-
-        if (rememberMe) {
-            const rememberMeToken = jwt.sign(
-                { userId: user.id, email: user.email, role: user.role },
-                process.env.JWT_SECRET,
-                { expiresIn: '30d' }
-            );
-
-            res.cookie('rememberMeToken', rememberMeToken, {
-                ...cookieOptions,
-                maxAge: 30 * 24 * 3600000 
-            });
-            
-            res.cookie('sessionToken', accessToken, {
-                ...cookieOptions,
-                maxAge: 24 * 3600000 
-            });
-        } else {
-            res.cookie('sessionToken', accessToken, {
-                ...cookieOptions,
-                maxAge: 24 * 3600000 
-            });
-        }
+        setAuthCookies(res, user, accessToken, Boolean(rememberMe));
 
         return res.status(200).json({
             success: true,
@@ -197,7 +167,9 @@ exports.verifyOTP = async (req, res) => {
             where: { id: user.id }
         });
 
-        const accessToken = generateToken(user.id);
+        const accessToken = generateAccessToken(user.id);
+
+        setAuthCookies(res, user, accessToken, false);
 
         return res.status(200).json({
             success: true,
@@ -224,21 +196,18 @@ exports.verifyOTP = async (req, res) => {
 
 exports.logout = async (req, res) => {
     try {
-        const token = req.cookies.sessionToken;
-        if (token) {
-            blacklistedTokens.add(token);
+        for (const name of ['sessionToken', 'refreshToken', 'rememberMeToken']) {
+            const t = req.cookies[name];
+            if (t) blacklistedTokens.add(t);
         }
 
-        const cookieOptions = {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
-            path: '/'
-        };
+        const authHeader = req.headers.authorization;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            blacklistedTokens.add(authHeader.split(' ')[1]);
+        }
 
-        res.clearCookie('rememberMeToken', cookieOptions);
-        res.clearCookie('sessionToken', cookieOptions);
-        
+        clearAuthCookies(res);
+
         return res.status(200).json({
             success: true,
             message: 'Logged out successfully'
@@ -248,6 +217,69 @@ exports.logout = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: 'Internal server error during logout'
+        });
+    }
+};
+
+exports.refreshAccess = async (req, res) => {
+    try {
+        const refreshSecret = getRefreshSecret();
+        let userId = null;
+
+        const decodeRefresh = (raw, secret, requireRefreshTyp) => {
+            try {
+                if (!raw || blacklistedTokens.has(raw)) return null;
+                const decoded = jwt.verify(raw, secret);
+                if (requireRefreshTyp && decoded.typ !== 'refresh') return null;
+                return decoded.userId || decoded.id || null;
+            } catch {
+                return null;
+            }
+        };
+
+        if (req.cookies.refreshToken) {
+            userId = decodeRefresh(req.cookies.refreshToken, refreshSecret, true);
+        }
+        if (!userId && req.cookies.rememberMeToken) {
+            userId = decodeRefresh(req.cookies.rememberMeToken, process.env.JWT_SECRET, false);
+        }
+
+        if (!userId) {
+            return res.status(401).json({
+                success: false,
+                message: 'Session expired. Please sign in again.',
+            });
+        }
+
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: 'User not found',
+            });
+        }
+
+        const accessToken = generateAccessToken(user.id);
+        const opts = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+            path: '/',
+        };
+        res.cookie('sessionToken', accessToken, {
+            ...opts,
+            maxAge: 24 * 3600000,
+        });
+
+        return res.status(200).json({
+            success: true,
+            data: { accessToken },
+        });
+    } catch (error) {
+        console.error('Refresh access error:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error',
         });
     }
 };

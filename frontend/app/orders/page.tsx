@@ -40,8 +40,8 @@ const OrdersPage = () => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const response = await getOrders();
-        setOrders(response || []);
+        const list = await getOrders();
+        setOrders((list as Order[]) || []);
       } catch (err) {
         console.error('Error fetching orders:', err);
         setError('Failed to load orders. Please try again later.');

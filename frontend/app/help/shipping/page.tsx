@@ -18,7 +18,7 @@ const ShippingPage = () => {
   const [shippingMethod, setShippingMethod] = useState("standard");
   const [activeTab, setActiveTab] = useState(0);
   const [isCalculating, setIsCalculating] = useState(false);
-  const [shippingCost, setShippingCost] = useState(null);
+  const [shippingCost, setShippingCost] = useState<string | null>(null);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [activeDot, setActiveDot] = useState(0);
 

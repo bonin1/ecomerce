@@ -9,11 +9,20 @@ const createProduct = async (req, res) => {
     const t = await db.transaction();
     try {
         const { product, additionalDetails } = req.body;
-        
+
+        const safeProduct = { ...product };
+        delete safeProduct.id;
+        delete safeProduct.media;
+        delete safeProduct.category;
+        delete safeProduct.additional_details;
+        delete safeProduct.createdAt;
+        delete safeProduct.updatedAt;
+
         // Validate required fields
-        if (!product.product_name || !product.product_description || 
-            !product.product_price || !product.product_brand || 
-            !product.product_category_id) {
+        if (!safeProduct.product_name || !safeProduct.product_description || 
+            !safeProduct.product_price || !safeProduct.product_brand || 
+            !safeProduct.product_category_id) {
+            await t.rollback();
             return res.status(400).json({ 
                 success: false,
                 message: 'Missing required fields' 
@@ -21,8 +30,9 @@ const createProduct = async (req, res) => {
         }
 
         // Check if category exists
-        const category = await ProductCategory.findByPk(product.product_category_id);
+        const category = await ProductCategory.findByPk(safeProduct.product_category_id);
         if (!category) {
+            await t.rollback();
             return res.status(400).json({
                 success: false,
                 message: 'Invalid category ID. Category does not exist.'
@@ -33,13 +43,13 @@ const createProduct = async (req, res) => {
         if (req.user.role === 'admin' || req.user.role === 'superadmin') {
             // Direct creation for admin
             const newProduct = await Produkt.create({
-                ...product,
-                product_price: Number(product.product_price),
-                product_stock: Number(product.product_stock),
-                product_category_id: Number(product.product_category_id),
+                ...safeProduct,
+                product_price: Number(safeProduct.product_price),
+                product_stock: Number(safeProduct.product_stock),
+                product_category_id: Number(safeProduct.product_category_id),
                 // Parse discount fields if they exist
-                product_discount_price: product.product_discount_price ? Number(product.product_discount_price) : null,
-                product_discount_percentage: product.product_discount_percentage ? Number(product.product_discount_percentage) : null
+                product_discount_price: safeProduct.product_discount_price ? Number(safeProduct.product_discount_price) : null,
+                product_discount_percentage: safeProduct.product_discount_percentage ? Number(safeProduct.product_discount_percentage) : null
             }, { transaction: t });
 
             // Create additional details if provided
@@ -57,7 +67,7 @@ const createProduct = async (req, res) => {
                 action: 'CREATE',
                 entity_type: 'PRODUCT',
                 entity_id: newProduct.id,
-                new_values: { product, additionalDetails },
+                new_values: { product: safeProduct, additionalDetails },
                 status: 'approved'
             }, { transaction: t });
 
@@ -76,7 +86,7 @@ const createProduct = async (req, res) => {
                 action: 'CREATE',
                 entity_type: 'PRODUCT',
                 entity_id: 0,
-                new_values: { product, additionalDetails },
+                new_values: { product: safeProduct, additionalDetails },
                 status: 'pending'
             }, { transaction: t });
 
@@ -105,6 +115,14 @@ const updateProduct = async (req, res) => {
         const { product, additionalDetails } = req.body;
         const productId = req.params.id;
 
+        const safeProduct = { ...product };
+        delete safeProduct.id;
+        delete safeProduct.media;
+        delete safeProduct.category;
+        delete safeProduct.additional_details;
+        delete safeProduct.createdAt;
+        delete safeProduct.updatedAt;
+
         // Verify product exists
         const existingProduct = await Produkt.findByPk(productId);
         if (!existingProduct) {
@@ -119,11 +137,11 @@ const updateProduct = async (req, res) => {
         if (req.user.role === 'admin' || req.user.role === 'superadmin') {
             // Direct update for admin
             await Produkt.update({
-                ...product,
-                product_price: product.product_price ? Number(product.product_price) : existingProduct.product_price,
-                product_stock: product.product_stock !== undefined ? Number(product.product_stock) : existingProduct.product_stock,
-                product_discount_price: product.product_discount_price ? Number(product.product_discount_price) : null,
-                product_discount_percentage: product.product_discount_percentage ? Number(product.product_discount_percentage) : null
+                ...safeProduct,
+                product_price: safeProduct.product_price ? Number(safeProduct.product_price) : existingProduct.product_price,
+                product_stock: safeProduct.product_stock !== undefined ? Number(safeProduct.product_stock) : existingProduct.product_stock,
+                product_discount_price: safeProduct.product_discount_price ? Number(safeProduct.product_discount_price) : null,
+                product_discount_percentage: safeProduct.product_discount_percentage ? Number(safeProduct.product_discount_percentage) : null
             }, { 
                 where: { id: productId },
                 transaction: t 
@@ -159,7 +177,7 @@ const updateProduct = async (req, res) => {
                 entity_type: 'PRODUCT',
                 entity_id: productId,
                 old_values: existingProduct.dataValues,
-                new_values: { product, additionalDetails },
+                new_values: { product: safeProduct, additionalDetails },
                 status: 'approved'
             }, { transaction: t });
 
@@ -179,7 +197,7 @@ const updateProduct = async (req, res) => {
                 entity_type: 'PRODUCT',
                 entity_id: productId,
                 old_values: existingProduct.dataValues,
-                new_values: { product, additionalDetails },
+                new_values: { product: safeProduct, additionalDetails },
                 status: 'pending'
             }, { transaction: t });
 

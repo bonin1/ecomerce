@@ -152,8 +152,15 @@ const getProductReviews = async (req, res) => {
             const reviewData = review.toJSON();
             
             if (reviewData.User && reviewData.User.profile_picture) {
-                const profilePic = Buffer.from(reviewData.User.profile_picture).toString('base64');
-                reviewData.User.profile_picture = `data:image/jpeg;base64,${profilePic}`;
+                try {
+                    const pic = reviewData.User.profile_picture;
+                    if (Buffer.isBuffer(pic) && pic.length > 0) {
+                        const profilePic = pic.toString('base64');
+                        reviewData.User.profile_picture = `data:image/jpeg;base64,${profilePic}`;
+                    }
+                } catch (e) {
+                    reviewData.User.profile_picture = null;
+                }
             }
             
             return {
@@ -293,7 +300,7 @@ const deleteReview = async (req, res) => {
     try {
         const { reviewId } = req.params;
         const userId = req.user.id;
-        const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
+        const canModerateOthers = ['admin', 'superadmin', 'staff'].includes(req.user.role);
 
         const review = await ProduktReview.findByPk(reviewId);
         
@@ -305,7 +312,7 @@ const deleteReview = async (req, res) => {
             });
         }
 
-        if (review.user_id !== userId && !isAdmin) {
+        if (review.user_id !== userId && !canModerateOthers) {
             await t.rollback();
             return res.status(403).json({
                 success: false,
@@ -390,9 +397,7 @@ const moderateReview = async (req, res) => {
             user_agent: req.headers['user-agent']
         }, { transaction: t });
 
-        if (status === 'approved') {
-            await updateProductRating(review.product_id, t);
-        }
+        await updateProductRating(review.product_id, t);
 
         await t.commit();
 
@@ -486,7 +491,7 @@ const deleteReviewMedia = async (req, res) => {
     try {
         const { reviewId, mediaId } = req.params;
         const userId = req.user.id;
-        const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
+        const canModerateOthers = ['admin', 'superadmin', 'staff'].includes(req.user.role);
 
         const review = await ProduktReview.findByPk(reviewId);
         
@@ -498,7 +503,7 @@ const deleteReviewMedia = async (req, res) => {
             });
         }
 
-        if (review.user_id !== userId && !isAdmin) {
+        if (review.user_id !== userId && !canModerateOthers) {
             await t.rollback();
             return res.status(403).json({
                 success: false,

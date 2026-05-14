@@ -12,10 +12,26 @@ exports.getAllOrders = async (req, res) => {
         const offset = (page - 1) * limit;
         const status = req.query.status;
         const search = req.query.search;
+        const date_from = req.query.date_from;
+        const date_to = req.query.date_to;
         const sortBy = req.query.sortBy || 'createdAt';
         const order = req.query.order || 'DESC';
         
         const whereClause = {};
+
+        if (date_from) {
+            const df = new Date(String(date_from));
+            if (!Number.isNaN(df.getTime())) {
+                whereClause.createdAt = { ...(whereClause.createdAt || {}), [Op.gte]: df };
+            }
+        }
+        if (date_to) {
+            const dt = new Date(String(date_to));
+            if (!Number.isNaN(dt.getTime())) {
+                dt.setHours(23, 59, 59, 999);
+                whereClause.createdAt = { ...(whereClause.createdAt || {}), [Op.lte]: dt };
+            }
+        }
         
         if (status && status !== 'all') {
             whereClause.status = status;
@@ -54,6 +70,24 @@ exports.getAllOrders = async (req, res) => {
             limit,
             distinct: true
         });
+
+        const statusRows = await Order.findAll({
+            attributes: ['status', [db.fn('COUNT', db.col(`${Order.tableName}.id`)), 'count']],
+            group: ['status'],
+            raw: true
+        });
+        const statusCounts = {
+            pending: 0,
+            processing: 0,
+            shipped: 0,
+            delivered: 0,
+            cancelled: 0
+        };
+        for (const row of statusRows) {
+            if (row.status && Object.prototype.hasOwnProperty.call(statusCounts, row.status)) {
+                statusCounts[row.status] = parseInt(row.count, 10) || 0;
+            }
+        }
         
         return res.status(200).json({
             success: true,
@@ -61,7 +95,8 @@ exports.getAllOrders = async (req, res) => {
                 totalItems: count,
                 totalPages: Math.ceil(count / limit),
                 currentPage: page,
-                orders
+                orders,
+                statusCounts
             }
         });
     } catch (error) {

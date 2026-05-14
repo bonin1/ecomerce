@@ -1,6 +1,7 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Sidebar from '@/app/admin/components/Sidebar/sidebar';
 import { Line, Bar, Pie, Doughnut } from 'react-chartjs-2';
 import { apiClient } from '@/app/utils/apiClient';
@@ -17,7 +18,7 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
-import { Box, Card, CardContent, Grid, Typography, CircularProgress, useTheme, Tabs, Tab } from '@mui/material';
+import { Box, Card, CardContent, Grid, Typography, CircularProgress } from '@mui/material';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
@@ -55,6 +56,18 @@ interface DashboardStats {
         products: number;
         orders: number;
         revenue: number;
+    };
+    operations?: {
+        pendingReviews: number;
+        lowStockProducts: number;
+        outOfStockProducts: number;
+        ordersPending: number;
+        ordersProcessing: number;
+        ordersShipped: number;
+        affiliatePending: number;
+        affiliateApproved: number;
+        affiliateRejected: number;
+        affiliateSuspended: number;
     };
 }
 
@@ -127,7 +140,15 @@ interface CustomerInsights {
 
 const Dashboard = () => {
     const router = useRouter();
-    const [adminUser, setAdminUser] = useState<any>(null);
+    const [adminUser, setAdminUser] = useState<any>(() => {
+        if (typeof window === 'undefined') return null;
+        try {
+            const raw = localStorage.getItem('adminUser');
+            return raw ? JSON.parse(raw) : null;
+        } catch {
+            return null;
+        }
+    });
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const [orderStats, setOrderStats] = useState<OrderStatistics | null>(null);
     const [fulfillmentStats, setFulfillmentStats] = useState<FulfillmentStats | null>(null);
@@ -135,17 +156,46 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [tabValue, setTabValue] = useState(0);
 
-    const theme = useTheme();
-
-    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    const handleTabChange = (newValue: number) => {
         setTabValue(newValue);
     };
 
+    const loadDashboard = useCallback(async () => {
+        setLoading(true);
+        try {
+            const [dashRes, advancedStats, fulfillment, customers] = await Promise.all([
+                apiClient('/admin/dashboard/stats'),
+                apiClient('/admin/orders/statistics/advanced'),
+                apiClient('/admin/orders/statistics/fulfillment'),
+                apiClient('/admin/orders/statistics/customer-insights'),
+            ]);
+
+            const dash = dashRes as { success?: boolean; data?: DashboardStats };
+            if (dash.success && dash.data) {
+                setStats(dash.data);
+            }
+
+            if ((advancedStats as { success?: boolean }).success) {
+                setOrderStats((advancedStats as { data: OrderStatistics }).data);
+            }
+
+            if ((fulfillment as { success?: boolean }).success) {
+                setFulfillmentStats((fulfillment as { data: FulfillmentStats }).data);
+            }
+
+            if ((customers as { success?: boolean }).success) {
+                setCustomerInsights((customers as { data: CustomerInsights }).data);
+            }
+        } catch (error) {
+            console.error('Error loading dashboard:', error);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
     useEffect(() => {
-        const user = localStorage.getItem('adminUser');
         const token = localStorage.getItem('adminToken');
-        
-        if (!user || !token) {
+        if (!token) {
             router.push('/admin/login');
             return;
         }
@@ -153,53 +203,109 @@ const Dashboard = () => {
         const syncCookie = Cookies.get('adminTokenSync');
         if (token && !syncCookie) {
             Cookies.set('adminTokenSync', token, {
-                expires: 1/6, 
+                expires: 1 / 6,
                 path: '/',
-                sameSite: 'Strict'
+                sameSite: 'Strict',
             });
         }
-        
-        setAdminUser(JSON.parse(user));
-        fetchDashboardStats();
-        fetchOrderStatistics();
-    }, [router]);
 
-    const fetchDashboardStats = async () => {
         try {
-            const response = await apiClient('/admin/dashboard/stats');
-            if (response.success) {
-                setStats(response.data);
-            }
-        } catch (error) {
-            console.error('Error fetching stats:', error);
-        } finally {
-            setLoading(false);
+            const raw = localStorage.getItem('adminUser');
+            if (raw) setAdminUser(JSON.parse(raw));
+        } catch {
+            router.push('/admin/login');
+            return;
         }
-    };
-    
-    const fetchOrderStatistics = async () => {
-        try {
-            const [advancedStats, fulfillment, customers] = await Promise.all([
-                apiClient('/admin/orders/statistics/advanced'),
-                apiClient('/admin/orders/statistics/fulfillment'),
-                apiClient('/admin/orders/statistics/customer-insights')
-            ]);
-            
-            if (advancedStats.success) {
-                setOrderStats(advancedStats.data);
-            }
-            
-            if (fulfillment.success) {
-                setFulfillmentStats(fulfillment.data);
-            }
-            
-            if (customers.success) {
-                setCustomerInsights(customers.data);
-            }
-        } catch (error) {
-            console.error('Error fetching order statistics:', error);
-        }
-    };
+
+        void loadDashboard();
+    }, [router, loadDashboard]);
+
+    const growthChartData = useMemo(() => {
+        const series = stats?.timeSeriesData ?? [];
+        const labels = series.map((d) => {
+            const date = new Date(d.date);
+            return date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+            });
+        });
+        return {
+            labels,
+            datasets: [
+                {
+                    label: 'Users',
+                    data: series.map((d) => d.users),
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    fill: true,
+                    cubicInterpolationMode: 'monotone' as const,
+                },
+                {
+                    label: 'Products',
+                    data: series.map((d) => d.products),
+                    borderColor: '#f43f5e',
+                    backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                    fill: true,
+                    cubicInterpolationMode: 'monotone' as const,
+                },
+                {
+                    label: 'Orders',
+                    data: series.map((d) => d.orders),
+                    borderColor: '#0ea5e9',
+                    backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                    fill: true,
+                    cubicInterpolationMode: 'monotone' as const,
+                },
+                {
+                    label: 'Revenue ($)',
+                    data: series.map((d) => d.revenue),
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    cubicInterpolationMode: 'monotone' as const,
+                },
+            ],
+        };
+    }, [stats?.timeSeriesData]);
+
+    const staffRole = String(adminUser?.role || '').toLowerCase() === 'staff';
+
+    const quickNavItems = useMemo(
+        () =>
+            [
+                { href: '/admin/products', title: 'Products', desc: 'Catalog, pricing, media', icon: 'bi-box-seam' },
+                { href: '/admin/categories', title: 'Categories', desc: 'Browse taxonomy', icon: 'bi-tags' },
+                { href: '/admin/orders', title: 'Orders', desc: 'Fulfillment & payments', icon: 'bi-receipt' },
+                { href: '/admin/reviews', title: 'Reviews', desc: 'Moderation queue', icon: 'bi-chat-square-text' },
+                { href: '/admin/customers', title: 'Customers', desc: 'Profiles & history', icon: 'bi-person-badge' },
+                ...(!staffRole
+                    ? [{ href: '/admin/affiliate', title: 'Affiliates', desc: 'Partners & payouts', icon: 'bi-share' } as const]
+                    : []),
+            ],
+        [staffRole]
+    );
+
+    const operationsTiles = useMemo(() => {
+        const op = stats?.operations;
+        const base = [
+            { label: 'Reviews pending', value: op?.pendingReviews ?? 0, href: '/admin/reviews' },
+            { label: 'Low stock (1–10)', value: op?.lowStockProducts ?? 0, href: '/admin/products' },
+            { label: 'Out of stock', value: op?.outOfStockProducts ?? 0, href: '/admin/products' },
+            {
+                label: 'Orders (pending / proc. / ship)',
+                value: `${op?.ordersPending ?? 0} / ${op?.ordersProcessing ?? 0} / ${op?.ordersShipped ?? 0}`,
+                href: '/admin/orders',
+            },
+        ];
+        if (staffRole) return base;
+        return [
+            ...base,
+            { label: 'Affiliate apps pending', value: op?.affiliatePending ?? 0, href: '/admin/affiliate' },
+            { label: 'Active affiliates', value: op?.affiliateApproved ?? 0, href: '/admin/affiliate' },
+            { label: 'Affiliate rejected', value: op?.affiliateRejected ?? 0, href: '/admin/affiliate' },
+            { label: 'Affiliate suspended', value: op?.affiliateSuspended ?? 0, href: '/admin/affiliate' },
+        ];
+    }, [stats?.operations, staffRole]);
 
     const lineChartOptions = {
         responsive: true,
@@ -217,7 +323,7 @@ const Dashboard = () => {
                     font: {
                         family: "'Inter', sans-serif",
                         size: 12,
-                        weight: '500'
+                        weight: 500 as const,
                     }
                 }
             },
@@ -283,7 +389,10 @@ const Dashboard = () => {
                 hoverRadius: 6,
                 hitRadius: 30
             }
-        }
+        },
+        animation: {
+            duration: 400,
+        },
     };
 
     const doughnutOptions = {
@@ -304,126 +413,172 @@ const Dashboard = () => {
         cutout: '70%'
     };
 
-    if (!adminUser || loading) return <CircularProgress />;
+    if (!adminUser) {
+        return (
+            <div className="flex min-h-screen bg-slate-50">
+                <Sidebar />
+                <main className="flex flex-1 flex-col items-center justify-center gap-3 p-8">
+                    <CircularProgress />
+                    <Typography variant="body2" color="text.secondary">
+                        Loading session…
+                    </Typography>
+                </main>
+            </div>
+        );
+    }
+
+    if (loading && !stats) {
+        return (
+            <div className="flex min-h-screen bg-slate-50">
+                <Sidebar />
+                <main className="flex flex-1 flex-col items-center justify-center gap-3 p-8">
+                    <CircularProgress />
+                    <Typography variant="body2" color="text.secondary">
+                        Loading dashboard data…
+                    </Typography>
+                </main>
+            </div>
+        );
+    }
 
     return (
         <div className="flex min-h-screen bg-slate-50">
             <Sidebar />
-            <main className="flex-1 overflow-x-hidden p-6 md:p-8">
-                <Typography variant="h4" gutterBottom>
-                    Welcome, {adminUser.name}
-                </Typography>
+            <main className="flex-1 overflow-x-hidden bg-slate-100/90">
+                <div className="mx-auto max-w-7xl space-y-8 px-4 py-8 md:px-8 md:py-10">
+                    <header className="border-b border-slate-200/90 pb-8">
+                        <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Dashboard</p>
+                        <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">
+                            Welcome, {adminUser.name}
+                        </h1>
+                        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 md:text-base">
+                            Revenue, catalog health, fulfillment, and shortcuts to the screens you use most.
+                        </p>
+                    </header>
 
-                <Tabs 
-                    value={tabValue} 
-                    onChange={handleTabChange}
-                    variant="scrollable"
-                    scrollButtons="auto"
-                    sx={{ mb: 3 }}
-                >
-                    <Tab label="Overview" />
-                    <Tab label="Order Analytics" />
-                    <Tab label="Customer Insights" />
-                </Tabs>
+                    <div
+                        className="flex flex-wrap gap-1 rounded-2xl border border-slate-200 bg-white p-1 shadow-sm"
+                        role="tablist"
+                        aria-label="Dashboard sections"
+                    >
+                        {(['Overview', 'Order analytics', 'Customer insights'] as const).map((label, i) => (
+                            <button
+                                key={label}
+                                type="button"
+                                role="tab"
+                                aria-selected={tabValue === i}
+                                onClick={() => handleTabChange(i)}
+                                className={`min-w-[120px] flex-1 rounded-xl px-4 py-2.5 text-center text-sm font-semibold transition sm:min-w-[160px] md:flex-none ${
+                                    tabValue === i
+                                        ? 'bg-brand-primary text-white shadow-md'
+                                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                                }`}
+                            >
+                                {label}
+                            </button>
+                        ))}
+                    </div>
 
                 {tabValue === 0 && (
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={3}>
+                    <div className="space-y-8">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                             <StatsCard
                                 title="Total Users"
                                 value={stats?.totalUsers || 0}
                                 growth={stats?.growth.users || 0}
                                 icon={<PeopleIcon color="primary" />}
                             />
-                        </Grid>
-                        <Grid item xs={12} md={3}>
                             <StatsCard
                                 title="Total Products"
                                 value={stats?.totalProducts || 0}
                                 growth={stats?.growth.products || 0}
                                 icon={<ShoppingBasketIcon sx={{ color: '#f43f5e' }} />}
                             />
-                        </Grid>
-                        <Grid item xs={12} md={3}>
                             <StatsCard
                                 title="Total Orders"
                                 value={stats?.totalOrders || 0}
                                 growth={stats?.growth.orders || 0}
                                 icon={<LocalShippingIcon sx={{ color: '#0ea5e9' }} />}
                             />
-                        </Grid>
-                        <Grid item xs={12} md={3}>
                             <StatsCard
                                 title="Revenue"
                                 value={`$${(stats?.totalRevenue || 0).toFixed(2)}`}
                                 growth={stats?.growth.revenue || 0}
                                 icon={<AttachMoneyIcon sx={{ color: '#10b981' }} />}
                             />
-                        </Grid>
+                        </div>
 
-                        <Grid item xs={12}>
-                            <Card sx={{
-                                background: 'linear-gradient(to bottom right, #ffffff, #fafafa)',
-                                borderRadius: '16px',
-                                boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
-                                p: 3
-                            }}>
-                                <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
-                                    Growth Overview
-                                </Typography>
-                                <Box sx={{ height: 400, position: 'relative' }}>
-                                    <Line
-                                        data={{
-                                            labels: stats?.timeSeriesData.map(d => {
-                                                const date = new Date(d.date);
-                                                return date.toLocaleDateString('en-US', { 
-                                                    month: 'short', 
-                                                    day: 'numeric' 
-                                                });
-                                            }) || [],
-                                            datasets: [
-                                                {
-                                                    label: 'Users',
-                                                    data: stats?.timeSeriesData.map(d => d.users) || [],
-                                                    borderColor: '#6366f1',
-                                                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                                                    fill: true,
-                                                    cubicInterpolationMode: 'monotone'
-                                                },
-                                                {
-                                                    label: 'Products',
-                                                    data: stats?.timeSeriesData.map(d => d.products) || [],
-                                                    borderColor: '#f43f5e',
-                                                    backgroundColor: 'rgba(244, 63, 94, 0.1)',
-                                                    fill: true,
-                                                    cubicInterpolationMode: 'monotone'
-                                                },
-                                                {
-                                                    label: 'Orders',
-                                                    data: stats?.timeSeriesData.map(d => d.orders) || [],
-                                                    borderColor: '#0ea5e9',
-                                                    backgroundColor: 'rgba(14, 165, 233, 0.1)',
-                                                    fill: true,
-                                                    cubicInterpolationMode: 'monotone'
-                                                },
-                                                {
-                                                    label: 'Revenue ($)',
-                                                    data: stats?.timeSeriesData.map(d => d.revenue) || [],
-                                                    borderColor: '#10b981',
-                                                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                                                    fill: true,
-                                                    cubicInterpolationMode: 'monotone'
-                                                }
-                                            ]
-                                        }}
-                                    />
+                        <section className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm ring-1 ring-slate-900/[0.02]">
+                            <Card sx={{ borderRadius: 0, boxShadow: 'none' }}>
+                                <Box sx={{ px: 2.5, py: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                                        Operations overview
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Live counts for reviews, inventory, pipeline orders, and affiliates.
+                                    </Typography>
                                 </Box>
+                                <div className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4">
+                                    {operationsTiles.map((item) => (
+                                        <Link
+                                            key={item.label}
+                                            href={item.href}
+                                            className="group flex flex-col rounded-xl border border-slate-200 bg-slate-50/80 p-4 no-underline transition hover:border-indigo-300 hover:bg-white hover:shadow-sm"
+                                        >
+                                            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 group-hover:text-indigo-600">
+                                                {item.label}
+                                            </span>
+                                            <span className="mt-2 text-2xl font-bold text-slate-900">{item.value}</span>
+                                            <span className="mt-2 text-xs font-medium text-indigo-600">Open →</span>
+                                        </Link>
+                                    ))}
+                                </div>
                             </Card>
-                        </Grid>
-                    </Grid>
+                        </section>
+
+                        <section className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm ring-1 ring-slate-900/[0.02]">
+                            <Card sx={{ borderRadius: 0, boxShadow: 'none' }}>
+                                <Box sx={{ px: 2.5, py: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                                        Quick navigation
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        Jump to the areas you manage most often.
+                                    </Typography>
+                                </Box>
+                                <div className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
+                                    {quickNavItems.map((q) => (
+                                        <Link
+                                            key={q.href}
+                                            href={q.href}
+                                            className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 no-underline shadow-sm transition hover:border-indigo-400 hover:shadow-md"
+                                        >
+                                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                                                <i className={`bi ${q.icon} text-lg`} aria-hidden />
+                                            </span>
+                                            <span>
+                                                <span className="block text-sm font-bold text-slate-900">{q.title}</span>
+                                                <span className="mt-0.5 block text-xs text-slate-500">{q.desc}</span>
+                                            </span>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </Card>
+                        </section>
+
+                        <section className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-4 shadow-sm ring-1 ring-slate-900/[0.02] md:p-6">
+                            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+                                Growth overview
+                            </Typography>
+                            <Box sx={{ height: 400, position: 'relative' }}>
+                                <Line data={growthChartData} options={lineChartOptions} />
+                            </Box>
+                        </section>
+                    </div>
                 )}
 
                 {tabValue === 1 && (
+                    <div className="space-y-8">
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={4}>
                             <StatsCard
@@ -619,9 +774,11 @@ const Dashboard = () => {
                             </Card>
                         </Grid>
                     </Grid>
+                    </div>
                 )}
 
                 {tabValue === 2 && (
+                    <div className="space-y-8">
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={4}>
                             <Card>
@@ -754,41 +911,44 @@ const Dashboard = () => {
                             </Card>
                         </Grid>
                     </Grid>
+                    </div>
                 )}
+                </div>
             </main>
         </div>
     );
 };
 
-const StatsCard = ({ title, value, growth, icon }: { title: string, value: number | string, growth?: number, icon?: React.ReactNode }) => (
-    <Card>
-        <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography color="textSecondary" gutterBottom>
-                    {title}
-                </Typography>
+const StatsCard = ({
+    title,
+    value,
+    growth,
+    icon,
+}: {
+    title: string;
+    value: number | string;
+    growth?: number;
+    icon?: React.ReactNode;
+}) => (
+    <div className="flex h-full flex-col rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm ring-1 ring-slate-900/[0.02]">
+        <div className="flex items-start justify-between gap-3">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">{title}</p>
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-50 text-slate-600 [&_svg]:text-current">
                 {icon}
-            </Box>
-            <Typography variant="h4">
-                {value}
-            </Typography>
-            {growth !== undefined && (
-                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                    {growth >= 0 ? (
-                        <TrendingUpIcon color="success" />
-                    ) : (
-                        <TrendingDownIcon color="error" />
-                    )}
-                    <Typography
-                        color={growth >= 0 ? 'success.main' : 'error.main'}
-                        sx={{ ml: 1 }}
-                    >
-                        {Math.abs(growth).toFixed(1)}% {growth >= 0 ? 'increase' : 'decrease'}
-                    </Typography>
-                </Box>
-            )}
-        </CardContent>
-    </Card>
+            </span>
+        </div>
+        <p className="mt-3 text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">{value}</p>
+        {growth !== undefined && (
+            <div
+                className={`mt-3 flex items-center gap-1.5 text-sm font-semibold ${
+                    growth >= 0 ? 'text-emerald-600' : 'text-red-600'
+                }`}
+            >
+                {growth >= 0 ? <TrendingUpIcon sx={{ fontSize: 18 }} /> : <TrendingDownIcon sx={{ fontSize: 18 }} />}
+                <span>{Math.abs(growth).toFixed(1)}% vs prior period</span>
+            </div>
+        )}
+    </div>
 );
 
 export default Dashboard;

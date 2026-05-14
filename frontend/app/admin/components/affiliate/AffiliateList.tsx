@@ -78,7 +78,7 @@ const AffiliateList: React.FC = () => {
                 params.append('search', searchQuery.trim());
             }
 
-            const response: AffiliatesResponse = await apiClient(`/affiliate/admin/all?${params.toString()}`);
+            const response = (await apiClient(`/affiliate/admin/all?${params.toString()}`)) as AffiliatesResponse;
             
             if (response.success) {
                 setAffiliates(response.data.affiliates);

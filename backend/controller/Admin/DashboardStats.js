@@ -2,6 +2,8 @@ const User = require('../../model/UserModel');
 const Produkt = require('../../model/ProduktModel');
 const ProductCategory = require('../../model/ProductCategoryModel');
 const Order = require('../../model/OrderModel');
+const ProduktReview = require('../../model/ProduktReview');
+const Affiliate = require('../../model/AffiliateModel');
 const { Op, Sequelize } = require('sequelize');
 const { subDays, format } = require('date-fns');
 
@@ -57,7 +59,23 @@ exports.getDashboardStats = async (req, res) => {
             raw: true
         });
 
-        const [totalUsers, totalProducts, totalCategories, totalOrders, totalRevenue] = await Promise.all([
+        const [
+            totalUsers,
+            totalProducts,
+            totalCategories,
+            totalOrders,
+            totalRevenue,
+            pendingReviews,
+            lowStockProducts,
+            outOfStockProducts,
+            ordersPending,
+            ordersProcessing,
+            ordersShipped,
+            affiliatePending,
+            affiliateApproved,
+            affiliateRejected,
+            affiliateSuspended,
+        ] = await Promise.all([
             User.count(),
             Produkt.count(),
             ProductCategory.count(),
@@ -68,7 +86,21 @@ exports.getDashboardStats = async (req, res) => {
                         [Op.ne]: 'cancelled'
                     }
                 }
-            })
+            }),
+            ProduktReview.count({ where: { status: 'pending' } }),
+            Produkt.count({
+                where: {
+                    [Op.and]: [{ product_stock: { [Op.gt]: 0 } }, { product_stock: { [Op.lte]: 10 } }],
+                },
+            }),
+            Produkt.count({ where: { product_stock: { [Op.lte]: 0 } } }),
+            Order.count({ where: { status: 'pending' } }),
+            Order.count({ where: { status: 'processing' } }),
+            Order.count({ where: { status: 'shipped' } }),
+            Affiliate.count({ where: { status: 'pending' } }),
+            Affiliate.count({ where: { status: 'approved' } }),
+            Affiliate.count({ where: { status: 'rejected' } }),
+            Affiliate.count({ where: { status: 'suspended' } }),
         ]);
 
         const timeSeriesData = [];
@@ -107,7 +139,19 @@ exports.getDashboardStats = async (req, res) => {
                     products: productGrowth,
                     orders: orderGrowth,
                     revenue: revenueGrowth
-                }
+                },
+                operations: {
+                    pendingReviews,
+                    lowStockProducts,
+                    outOfStockProducts,
+                    ordersPending,
+                    ordersProcessing,
+                    ordersShipped,
+                    affiliatePending,
+                    affiliateApproved,
+                    affiliateRejected,
+                    affiliateSuspended,
+                },
             }
         });
     } catch (error) {

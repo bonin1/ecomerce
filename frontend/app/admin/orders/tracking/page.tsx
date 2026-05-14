@@ -112,6 +112,11 @@ interface Order {
     tracking_history?: TrackingUpdate[];
 }
 
+type AdminOrdersListPayload = {
+    orders: Order[];
+    totalItems: number;
+};
+
 const statusColors: Record<string, string> = {
     order_placed: '#f59e0b', // amber-500
     processing: '#3b82f6', // blue-500
@@ -201,9 +206,9 @@ const TrackingManagementPage = () => {
     const fetchPendingOrders = async () => {
         try {
             setLoading(true);
-            const response = await apiClient('/admin/orders?status=processing&limit=10');
+            const response = await apiClient<AdminOrdersListPayload>('/admin/orders?status=processing&limit=10');
             
-            if (response.success) {
+            if (response.success && response.data) {
                 setPendingOrders(response.data.orders);
             }
         } catch (error) {
@@ -232,9 +237,9 @@ const TrackingManagementPage = () => {
                 queryParams.append('search', searchTerm);
             }
 
-            const response = await apiClient(`/admin/orders?${queryParams.toString()}`);
+            const response = await apiClient<AdminOrdersListPayload>(`/admin/orders?${queryParams.toString()}`);
             
-            if (response.success) {
+            if (response.success && response.data) {
                 setOrders(response.data.orders);
                 setTotalItems(response.data.totalItems);
             }
@@ -298,10 +303,10 @@ const TrackingManagementPage = () => {
     const fetchOrderTrackingHistory = async (orderId: number) => {
         try {
             setLoadingHistory(true);
-            const response = await apiClient(`/admin/orders/${orderId}/tracking`);
+            const response = await apiClient<TrackingUpdate[]>(`/admin/orders/${orderId}/tracking`);
             
             if (response.success) {
-                setTrackingHistory(response.data || []);
+                setTrackingHistory(response.data ?? []);
             } else {
                 setTrackingHistory([]);
             }

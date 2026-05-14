@@ -5,10 +5,20 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Cookies from 'js-cookie'; 
 
+type AdminRole = 'admin' | 'superadmin' | 'staff';
+
 interface AdminUser {
     name: string;
     role: string;
     email: string;
+}
+
+interface NavItem {
+    path: string;
+    label: string;
+    icon: string;
+    /** If set, only these roles see the link (matched case-insensitively). */
+    roles?: AdminRole[];
 }
 
 const Sidebar = () => {
@@ -45,55 +55,68 @@ const Sidebar = () => {
         }
     };
 
-    const navigation = [
+    const navigation: { section: string; items: NavItem[] }[] = [
         {
             section: 'Dashboard',
-            items: [
-                { path: '/admin/dashboard', label: 'Overview', icon: 'bi-grid-1x2' }
-            ]
+            items: [{ path: '/admin/dashboard', label: 'Overview', icon: 'bi-grid-1x2' }],
         },
         {
             section: 'Products',
-            items: [
-                { path: '/admin/products', label: 'Products', icon: 'bi-box-seam' }
-            ]
+            items: [{ path: '/admin/products', label: 'Products', icon: 'bi-box-seam' }],
         },
         {
             section: 'Categories',
-            items: [
-                { path: '/admin/categories', label: 'Categories', icon: 'bi-tags' }
-            ]
+            items: [{ path: '/admin/categories', label: 'Categories', icon: 'bi-tags' }],
         },
         {
             section: 'Careers',
             items: [
                 { path: '/admin/careers', label: 'Job Listings', icon: 'bi-briefcase' },
-                { path: '/admin/careers/applications', label: 'Applications', icon: 'bi-file-earmark-person' }
-            ]
+                { path: '/admin/careers/applications', label: 'Applications', icon: 'bi-file-earmark-person' },
+            ],
         },
         {
             section: 'Affiliate Program',
             items: [
-                { path: '/admin/affiliate', label: 'Affiliate Management', icon: 'bi-people' }
-            ]
+                {
+                    path: '/admin/affiliate',
+                    label: 'Affiliate Management',
+                    icon: 'bi-people',
+                    roles: ['admin', 'superadmin'],
+                },
+            ],
         },
         {
             section: 'Sales',
             items: [
                 { path: '/admin/orders', label: 'Orders', icon: 'bi-receipt' },
                 { path: '/admin/orders/tracking', label: 'Order Tracking', icon: 'bi-truck' },
-                { path: '/admin/customers', label: 'Customers', icon: 'bi-person-badge' }
-            ]
+                { path: '/admin/customers', label: 'Customers', icon: 'bi-person-badge' },
+                { path: '/admin/reviews', label: 'Reviews', icon: 'bi-chat-square-text' },
+            ],
         },
         {
             section: 'Settings',
             items: [
-                { path: '/admin/payment-methods', label: 'Payment Methods', icon: 'bi-credit-card' },
-                { path: '/admin/users', label: 'Users', icon: 'bi-shield-lock' },
-                { path: '/admin/settings', label: 'General Settings', icon: 'bi-gear' }
-            ]
-        }
+                {
+                    path: '/admin/payment-methods',
+                    label: 'Payment Methods',
+                    icon: 'bi-credit-card',
+                    roles: ['admin', 'superadmin'],
+                },
+                { path: '/admin/users', label: 'Users', icon: 'bi-shield-lock', roles: ['admin', 'superadmin'] },
+                { path: '/admin/settings', label: 'General Settings', icon: 'bi-gear', roles: ['admin', 'superadmin'] },
+            ],
+        },
     ];
+
+    const normalizedRole = (adminUser?.role?.toLowerCase() as AdminRole) || 'staff';
+    const visibleNavigation = navigation
+        .map((nav) => ({
+            ...nav,
+            items: nav.items.filter((item) => !item.roles || item.roles.includes(normalizedRole)),
+        }))
+        .filter((nav) => nav.items.length > 0);
 
     return (
         <div className="w-[260px] h-screen bg-brand-secondary text-white flex flex-col shrink-0 overflow-hidden sticky top-0">
@@ -105,7 +128,7 @@ const Sidebar = () => {
             </div>
             
             <nav className="flex-1 overflow-y-auto py-6 px-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                {navigation.map((nav, index) => (
+                {visibleNavigation.map((nav, index) => (
                     <div className="mb-6" key={index}>
                         <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 px-3">
                             {nav.section}

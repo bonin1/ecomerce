@@ -252,16 +252,25 @@ exports.deleteAffiliate = async (req, res) => {
 // Get affiliate statistics
 exports.getAffiliateStats = async (req, res) => {
     try {
-        const totalAffiliates = await Affiliate.count();
-        const pendingAffiliates = await Affiliate.count({ where: { status: 'pending' } });
-        const approvedAffiliates = await Affiliate.count({ where: { status: 'approved' } });
-        const rejectedAffiliates = await Affiliate.count({ where: { status: 'rejected' } });
-        const suspendedAffiliates = await Affiliate.count({ where: { status: 'suspended' } });
-
-        // Calculate total earnings
-        const totalEarningsResult = await Affiliate.sum('totalEarnings') || 0;
-        const totalClicks = await Affiliate.sum('totalClicks') || 0;
-        const totalConversions = await Affiliate.sum('totalConversions') || 0;
+        const [
+            totalAffiliates,
+            pendingAffiliates,
+            approvedAffiliates,
+            rejectedAffiliates,
+            suspendedAffiliates,
+            totalEarningsResult,
+            totalClicks,
+            totalConversions,
+        ] = await Promise.all([
+            Affiliate.count(),
+            Affiliate.count({ where: { status: 'pending' } }),
+            Affiliate.count({ where: { status: 'approved' } }),
+            Affiliate.count({ where: { status: 'rejected' } }),
+            Affiliate.count({ where: { status: 'suspended' } }),
+            Affiliate.sum('totalEarnings'),
+            Affiliate.sum('totalClicks'),
+            Affiliate.sum('totalConversions'),
+        ]);
 
         res.json({
             success: true,
@@ -271,9 +280,9 @@ exports.getAffiliateStats = async (req, res) => {
                 approvedAffiliates,
                 rejectedAffiliates,
                 suspendedAffiliates,
-                totalEarnings: parseFloat(totalEarningsResult),
-                totalClicks,
-                totalConversions,
+                totalEarnings: parseFloat(totalEarningsResult || 0),
+                totalClicks: totalClicks || 0,
+                totalConversions: totalConversions || 0,
                 conversionRate: totalClicks > 0 ? ((totalConversions / totalClicks) * 100).toFixed(2) : 0
             }
         });
