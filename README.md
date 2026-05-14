@@ -5,7 +5,7 @@
 **Production-style full stack for commerce, accounts, and operations.**
 
 ![Node.js](https://img.shields.io/badge/Node.js-18%2B-43853d?logo=nodedotjs&logoColor=white)
-![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=nextdotjs&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-4-404040?logo=express&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
@@ -16,7 +16,7 @@
 
 ---
 
-> A **Next.js 15** storefront and admin experience talks to an **Express** API and **MySQL** (Sequelize). Authentication, catalog, checkout, orders, email flows, newsletters, careers, and affiliates live behind clear boundaries: **`frontend/`** for the UI, **`backend/`** for the API.
+> A **Next.js 16** storefront and admin experience talks to an **Express** API and **MySQL** (Sequelize). Authentication, catalog (including a public **`/categories`** index), checkout, orders, email flows, newsletters, careers, and affiliates live behind clear boundaries: **`frontend/`** for the UI, **`backend/`** for the API.
 
 ---
 
@@ -25,7 +25,7 @@
 | | |
 |--|--|
 | **Basics** | [Highlights](#highlights) · [Repository map](#repository-map) · [Tech stack](#technology-stack) |
-| **Run** | [Prerequisites](#prerequisites) · [Install](#install) · [Quick start](#quick-start) · [Scripts](#npm-scripts) |
+| **Run** | [Prerequisites](#prerequisites) · [Install](#install) · [Quick start](#quick-start) · [Production build](#production-build-frontend) · [Scripts](#npm-scripts) |
 | **Configure** | [Environment variables](#environment-variables) · [Troubleshooting](#troubleshooting) |
 | **Reference** | [API overview](#api-overview) · [Database](#database) · [Security](#security) |
 | **Community** | [Contributing](#contributing) · [Acknowledgments](#acknowledgments) |
@@ -36,7 +36,7 @@
 
 | Area | What you get |
 |------|----------------|
-| **Experience** | App Router, TypeScript, Turbopack (dev), Tailwind, Bootstrap, SASS, MUI, polished admin and storefront patterns. |
+| **Experience** | App Router, TypeScript, Turbopack (dev), Tailwind, Bootstrap, SASS, MUI; admin tools (e.g. products) mix Tailwind-first UI with legacy SCSS where noted. |
 | **API** | REST-style Express app, JWT flows, Google verification, 2FA (TOTP), uploads (Multer), HTML email templates, PDF/QR helpers. |
 | **Data** | Sequelize models, MySQL, sync helper for local dev (see [Database](#database) for production notes). |
 | **DX** | Run **`backend/`** and **`frontend/`** independently—each has its own `package.json`, lockfile, and **`.env`**. |
@@ -51,7 +51,7 @@ flowchart LR
     B[Browser]
   end
   subgraph fe [frontend]
-    N[Next.js 15]
+    N[Next.js 16]
   end
   subgraph be [backend]
     A[Express API]
@@ -114,7 +114,7 @@ ecomerce/
 
 | Layer | Choices |
 |-------|---------|
-| **Web** | Next.js 15, React 19, TypeScript, Turbopack (dev) |
+| **Web** | Next.js 16, React 19, TypeScript, Turbopack (dev) |
 | **API** | Express 4, Sequelize 6, mysql2, express-validator |
 | **Auth & utilities** | JWT, bcrypt, Google Auth Library, Speakeasy (2FA), Multer, Nodemailer, PDFKit, QRCode |
 | **Tooling** | npm, ESLint (frontend), Jest (optional / per package) |
@@ -201,6 +201,16 @@ cd frontend && npm run dev:all
 
 Default URLs: app **http://localhost:3000**, API **http://localhost:8080** (override with `PORT` / env).
 
+### Production build (frontend)
+
+Before deploying or opening a release PR, validate the Next app:
+
+```bash
+cd frontend && npm run build
+```
+
+This runs the full compiler and TypeScript check. Fix any reported errors before shipping static export or Node hosting.
+
 ---
 
 ## Environment variables
@@ -253,7 +263,7 @@ Full examples live in **`backend/.env.example`** and **`frontend/.env.example`**
 | `npm run dev` | Next.js dev (Turbopack) |
 | `npm run server` | Delegates to `npm run dev` in `../backend` |
 | `npm run dev:all` | Next + backend concurrently |
-| `npm run build` | Production build |
+| `npm run build` | Production build (includes TypeScript); required before many deploy paths |
 | `npm start` | Next production + backend `npm start` |
 | `npm run lint` | ESLint |
 
@@ -308,6 +318,8 @@ Static files are exposed at **`/static`** from `backend/static/`.
 | UI cannot reach API | **`NEXT_PUBLIC_API_URL`** matches `PORT` / `BASE_URL`. |
 | `/static` 404 | File exists under **`backend/static/`**; restart API after changes. |
 | Email failures | **`EMAIL_*`** or SMTP vars; Gmail needs an **app password**. |
+| Next.js build: `useSearchParams` / prerender error | Client pages that call **`useSearchParams()`** must render that subtree inside a **`<Suspense>`** boundary (see Next.js docs: *Missing Suspense with CSR bailout*). |
+| Type check: `apiClient` / `response.data` | The shared **`apiClient`** returns a typed JSON envelope. Pass an explicit generic (e.g. `apiClient<MyType[]>(...)`) when you need a typed **`data`** payload, or unwrap in a small helper (see `app/utils/orderApi.ts`). |
 
 ---
 
