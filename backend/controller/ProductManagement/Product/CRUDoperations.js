@@ -44,6 +44,10 @@ const createProduct = async (req, res) => {
             // Direct creation for admin
             const newProduct = await Produkt.create({
                 ...safeProduct,
+                listing_status:
+                    safeProduct.listing_status === 'draft' || safeProduct.listing_status === 'published'
+                        ? safeProduct.listing_status
+                        : 'published',
                 product_price: Number(safeProduct.product_price),
                 product_stock: Number(safeProduct.product_stock),
                 product_category_id: Number(safeProduct.product_category_id),
@@ -86,7 +90,10 @@ const createProduct = async (req, res) => {
                 action: 'CREATE',
                 entity_type: 'PRODUCT',
                 entity_id: 0,
-                new_values: { product: safeProduct, additionalDetails },
+                new_values: {
+                    product: { ...safeProduct, listing_status: 'draft' },
+                    additionalDetails,
+                },
                 status: 'pending'
             }, { transaction: t });
 
@@ -138,6 +145,9 @@ const updateProduct = async (req, res) => {
             // Direct update for admin
             await Produkt.update({
                 ...safeProduct,
+                ...(safeProduct.listing_status === 'draft' || safeProduct.listing_status === 'published'
+                    ? { listing_status: safeProduct.listing_status }
+                    : {}),
                 product_price: safeProduct.product_price ? Number(safeProduct.product_price) : existingProduct.product_price,
                 product_stock: safeProduct.product_stock !== undefined ? Number(safeProduct.product_stock) : existingProduct.product_stock,
                 product_discount_price: safeProduct.product_discount_price ? Number(safeProduct.product_discount_price) : null,

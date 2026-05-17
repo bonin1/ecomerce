@@ -15,6 +15,7 @@ export interface OrderData {
   contactEmail: string;
   paymentMethod: string;
   notes?: string;
+  couponCode?: string;
 }
 
 export interface OrderResponse {
@@ -23,6 +24,9 @@ export interface OrderResponse {
     id: number;
     order_number: string;
     total_amount: number;
+    subtotal?: number;
+    discount_amount?: number;
+    coupon_code?: string | null;
     status: string;
     createdAt: string;
   };

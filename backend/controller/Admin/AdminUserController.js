@@ -1,5 +1,6 @@
 const { Op } = require('sequelize');
 const User = require('../../model/UserModel');
+const { logAdminActivity } = require('../../utils/logAdminActivity');
 
 const ROLE_VALUES = ['admin', 'user', 'staff', 'superadmin', 'moderator', 'guest', 'banned'];
 const PRIVILEGED_ROLES = ['admin', 'superadmin'];
@@ -80,10 +81,13 @@ exports.updateUser = async (req, res) => {
         }
 
         const actor = req.user;
-        if (id === actor.id) {
+        const actorId = Number(actor?.id);
+        const targetId = Number(id);
+        if (Number.isFinite(actorId) && Number.isFinite(targetId) && actorId === targetId) {
             return res.status(400).json({
                 success: false,
-                message: 'Use profile tools to change your own account.',
+                message:
+                    'You cannot change your own role, lock or verify status, or remove yourself from the admin user list. Use your profile or ask another administrator.',
             });
         }
 
@@ -120,7 +124,20 @@ exports.updateUser = async (req, res) => {
             return res.status(400).json({ success: false, message: 'No valid fields to update' });
         }
 
+        const before = {
+            role: target.role,
+            account_locked: target.account_locked,
+            verified: target.verified,
+        };
+
         await target.update(updates);
+
+        await logAdminActivity(req, {
+            action: 'admin.user.patch',
+            entity_type: 'user',
+            entity_id: id,
+            metadata: { before, updates },
+        });
 
         const fresh = await User.findByPk(id, {
             attributes: [

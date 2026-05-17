@@ -30,20 +30,35 @@ const ProductGrid = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [showHomeGrid, setShowHomeGrid] = useState(true);
   const { addToCart } = useCart();
   const router = useRouter();
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    let cancelled = false;
+
+    const load = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        setLoading(true);
-        const response = await apiClient('/product/products?limit=18', { 
-          method: 'GET', 
-          skipAuth: true 
+        const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+        const cfgRes = await fetch(`${base}/public/site-config`, { credentials: 'omit' });
+        const cfg = (await cfgRes.json().catch(() => ({}))) as {
+          data?: { feature_home_trending?: boolean };
+        };
+        if (cancelled) return;
+        if (cfg?.data && cfg.data.feature_home_trending === false) {
+          setShowHomeGrid(false);
+          setLoading(false);
+          return;
+        }
+        setShowHomeGrid(true);
+        const response = await apiClient('/product/products?limit=18', {
+          method: 'GET',
+          skipAuth: true,
         });
-        
+
         if (response && response.success && Array.isArray(response.data)) {
-          console.log('Product data sample:', response.data[0]);
           setProducts(response.data);
         } else {
           console.error('Unexpected API response structure:', response);
@@ -53,11 +68,14 @@ const ProductGrid = () => {
         console.error('Error fetching products:', err);
         setError('Failed to load products. Please try again later.');
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
-    fetchProducts();
+    void load();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const formatPrice = (price: number | string): string => {
@@ -104,6 +122,16 @@ const ProductGrid = () => {
     e.stopPropagation(); 
     router.push(`/product/${productId}`);
   };
+
+  if (!showHomeGrid) {
+    return (
+      <div className="product-section">
+        <p className="no-products-message" style={{ padding: '2rem', textAlign: 'center' }}>
+          Featured products are temporarily unavailable. Please check back soon.
+        </p>
+      </div>
+    );
+  }
 
   if (loading) {
     return <div className="loading-container">Loading products...</div>;

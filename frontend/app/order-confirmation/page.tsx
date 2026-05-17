@@ -11,6 +11,9 @@ interface OrderDetails {
   email: string;
   date: string;
   paymentMethod?: string;
+  subtotalAmount?: number;
+  discountAmount?: number;
+  couponCode?: string;
 }
 
 export default function OrderConfirmationPage() {
@@ -99,6 +102,31 @@ export default function OrderConfirmationPage() {
               })}</strong>
             </div>
             
+            {orderDetails.subtotalAmount != null &&
+              orderDetails.discountAmount != null &&
+              Number(orderDetails.discountAmount) > 0 && (
+                <>
+                  <div className="order-confirmation__detail-row">
+                    <span>Subtotal:</span>
+                    <strong className="price">
+                      $
+                      {typeof orderDetails.subtotalAmount === 'number'
+                        ? orderDetails.subtotalAmount.toFixed(2)
+                        : parseFloat(String(orderDetails.subtotalAmount)).toFixed(2)}
+                    </strong>
+                  </div>
+                  <div className="order-confirmation__detail-row">
+                    <span>Discount{orderDetails.couponCode ? ` (${orderDetails.couponCode})` : ''}:</span>
+                    <strong className="price">
+                      -$
+                      {typeof orderDetails.discountAmount === 'number'
+                        ? orderDetails.discountAmount.toFixed(2)
+                        : parseFloat(String(orderDetails.discountAmount)).toFixed(2)}
+                    </strong>
+                  </div>
+                </>
+              )}
+
             <div className="order-confirmation__detail-row">
               <span>Total Amount:</span>
               <strong className="price">${typeof orderDetails.totalAmount === 'number' ? 

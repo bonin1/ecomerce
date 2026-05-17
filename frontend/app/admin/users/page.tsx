@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import Sidebar from '@/app/admin/components/Sidebar/sidebar';
 import { apiClient } from '@/app/utils/apiClient';
 
-type AdminMe = { name?: string; role?: string; email?: string };
+type AdminMe = { id?: number; name?: string; role?: string; email?: string };
 
 type UserRow = {
     id: number;
@@ -22,6 +22,13 @@ type UserRow = {
     phone_number: string | null;
     city: string | null;
     createdAt: string;
+};
+
+type AdminUserNoteRow = {
+    id: number;
+    body: string;
+    createdAt: string;
+    author_user_id?: number;
 };
 
 const ROLES = ['admin', 'user', 'staff', 'superadmin', 'moderator', 'guest', 'banned'] as const;
@@ -44,7 +51,14 @@ export default function AdminUsersPage() {
     const [editLocked, setEditLocked] = useState(false);
     const [saving, setSaving] = useState(false);
 
+    const [notesUser, setNotesUser] = useState<UserRow | null>(null);
+    const [userNotes, setUserNotes] = useState<AdminUserNoteRow[]>([]);
+    const [userNoteDraft, setUserNoteDraft] = useState('');
+    const [notesLoading, setNotesLoading] = useState(false);
+    const [notesSaving, setNotesSaving] = useState(false);
+
     const isSuperAdmin = adminUser?.role === 'superadmin';
+    const myUserId = adminUser?.id != null ? Number(adminUser.id) : NaN;
 
     const [ready, setReady] = useState(false);
 
@@ -101,14 +115,82 @@ export default function AdminUsersPage() {
     }, [ready, adminUser, load]);
 
     const openEdit = (u: UserRow) => {
+        if (Number.isFinite(myUserId) && u.id === myUserId) {
+            toast.error('You cannot edit your own account here. Use your profile or ask another admin.');
+            return;
+        }
         setEditing(u);
         setEditRole(u.role);
         setEditVerified(Boolean(u.verified));
         setEditLocked(Boolean(u.account_locked));
     };
 
+    const openUserNotes = async (u: UserRow) => {
+        setNotesUser(u);
+        setUserNoteDraft('');
+        setNotesLoading(true);
+        setUserNotes([]);
+        try {
+            const res = (await apiClient(`/admin/ops/users/${u.id}/notes`)) as {
+                success?: boolean;
+                data?: AdminUserNoteRow[];
+                message?: string;
+            };
+            if (res?.success && Array.isArray(res.data)) {
+                setUserNotes(res.data);
+            } else {
+                toast.error(res?.message || 'Could not load notes');
+            }
+        } catch {
+            toast.error('Could not load notes');
+        } finally {
+            setNotesLoading(false);
+        }
+    };
+
+    const closeUserNotes = () => {
+        setNotesUser(null);
+        setUserNotes([]);
+        setUserNoteDraft('');
+    };
+
+    const submitUserNote = async () => {
+        if (!notesUser) return;
+        const body = userNoteDraft.trim();
+        if (!body) {
+            toast.error('Note cannot be empty');
+            return;
+        }
+        setNotesSaving(true);
+        try {
+            const res = (await apiClient(`/admin/ops/users/${notesUser.id}/notes`, {
+                method: 'POST',
+                body: JSON.stringify({ body }),
+            })) as { success?: boolean; message?: string };
+            if (res?.success) {
+                toast.success('Note saved');
+                setUserNoteDraft('');
+                const list = (await apiClient(`/admin/ops/users/${notesUser.id}/notes`)) as {
+                    success?: boolean;
+                    data?: AdminUserNoteRow[];
+                };
+                if (list?.success && Array.isArray(list.data)) setUserNotes(list.data);
+            } else {
+                toast.error(res?.message || 'Save failed');
+            }
+        } catch {
+            toast.error('Save failed');
+        } finally {
+            setNotesSaving(false);
+        }
+    };
+
     const saveEdit = async () => {
         if (!editing) return;
+        if (Number.isFinite(myUserId) && editing.id === myUserId) {
+            toast.error('You cannot demote, ban, or lock your own account from this screen.');
+            return;
+        }
         setSaving(true);
         try {
             const res = (await apiClient(`/admin/users/${editing.id}`, {
@@ -149,7 +231,8 @@ export default function AdminUsersPage() {
                         <h1 className="text-2xl font-bold text-slate-800">Users &amp; roles</h1>
                         <p className="mt-1 text-sm text-slate-500">
                             Search accounts, verify users, lock suspicious logins, and assign roles. Only superadmins
-                            can grant admin or superadmin.
+                            can grant admin or superadmin. Use <strong>Notes</strong> for internal account comments (stored
+                            via <code className="rounded bg-slate-100 px-1 text-xs">/admin/ops/users/:id/notes</code>).
                         </p>
                     </div>
                     <Link
@@ -217,15 +300,24 @@ export default function AdminUsersPage() {
                                         <th className="border-b border-slate-200 px-4 py-3">Status</th>
                                         <th className="border-b border-slate-200 px-4 py-3">Last IP</th>
                                         <th className="border-b border-slate-200 px-4 py-3">Joined</th>
-                                        <th className="border-b border-slate-200 px-4 py-3 text-right">Actions</th>
+                                        <th className="border-b border-slate-200 px-4 py-3 text-right">Notes / edit</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {rows.map((u) => (
+                                    {rows.map((u) => {
+                                        const isSelf = Number.isFinite(myUserId) && u.id === myUserId;
+                                        return (
                                         <tr key={u.id} className="hover:bg-slate-50">
                                             <td className="border-b border-slate-100 px-4 py-3">
-                                                <div className="font-semibold text-slate-800">
-                                                    {u.name} {u.lastname}
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    <div className="font-semibold text-slate-800">
+                                                        {u.name} {u.lastname}
+                                                    </div>
+                                                    {isSelf ? (
+                                                        <span className="rounded-full bg-slate-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                                                            You
+                                                        </span>
+                                                    ) : null}
                                                 </div>
                                                 <div className="text-xs text-slate-500">{u.email}</div>
                                             </td>
@@ -259,17 +351,41 @@ export default function AdminUsersPage() {
                                                 {new Date(u.createdAt).toLocaleDateString()}
                                             </td>
                                             <td className="border-b border-slate-100 px-4 py-3 text-right">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => openEdit(u)}
-                                                    className="rounded border border-slate-200 px-3 py-1.5 text-xs font-bold text-brand-primary hover:bg-brand-primary/10"
-                                                >
-                                                    <i className="bi bi-pencil-square me-1" />
-                                                    Edit
-                                                </button>
+                                                <div className="flex flex-wrap justify-end gap-1">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => void openUserNotes(u)}
+                                                        className="rounded border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-800 hover:bg-slate-50"
+                                                        title="Internal notes for this account"
+                                                    >
+                                                        <i className="bi bi-sticky me-1" />
+                                                        Notes
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        disabled={isSelf}
+                                                        title={
+                                                            isSelf
+                                                                ? 'You cannot edit your own account from the admin user list'
+                                                                : undefined
+                                                        }
+                                                        onClick={() => openEdit(u)}
+                                                        className="rounded border border-slate-200 px-3 py-1.5 text-xs font-bold text-brand-primary hover:bg-brand-primary/10 disabled:cursor-not-allowed disabled:opacity-40"
+                                                    >
+                                                        {isSelf ? (
+                                                            <span className="text-slate-400">—</span>
+                                                        ) : (
+                                                            <>
+                                                                <i className="bi bi-pencil-square me-1" />
+                                                                Edit
+                                                            </>
+                                                        )}
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
-                                    ))}
+                                    );
+                                    })}
                                 </tbody>
                             </table>
                         </div>
@@ -299,6 +415,66 @@ export default function AdminUsersPage() {
                         </button>
                     </div>
                 </div>
+
+                {notesUser ? (
+                    <div className="fixed inset-0 z-[3000] flex items-center justify-center bg-black/50 p-4">
+                        <div className="w-full max-w-lg rounded border border-slate-200 bg-white p-6 shadow-xl">
+                            <h2 className="text-lg font-bold text-slate-800">Internal notes — user #{notesUser.id}</h2>
+                            <p className="mt-1 text-sm text-slate-500">
+                                {notesUser.name} {notesUser.lastname} · {notesUser.email}
+                            </p>
+                            <p className="mt-2 text-xs text-slate-500">
+                                Visible to admin-panel users with access to this API. Not shown to the customer.
+                            </p>
+                            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                                <textarea
+                                    className="min-h-[72px] flex-1 rounded border border-slate-200 px-3 py-2 text-sm"
+                                    placeholder="Write an internal note…"
+                                    value={userNoteDraft}
+                                    onChange={(e) => setUserNoteDraft(e.target.value)}
+                                />
+                                <button
+                                    type="button"
+                                    disabled={notesSaving}
+                                    onClick={() => void submitUserNote()}
+                                    className="h-fit shrink-0 rounded bg-slate-900 px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+                                >
+                                    {notesSaving ? 'Saving…' : 'Add note'}
+                                </button>
+                            </div>
+                            <div className="mt-4 max-h-72 overflow-y-auto border-t border-slate-100 pt-3">
+                                {notesLoading ? (
+                                    <div className="flex justify-center py-8">
+                                        <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-primary/30 border-t-brand-primary" />
+                                    </div>
+                                ) : userNotes.length === 0 ? (
+                                    <p className="text-sm text-slate-500">No notes yet.</p>
+                                ) : (
+                                    <ul className="space-y-3 text-sm">
+                                        {userNotes.map((n) => (
+                                            <li key={n.id} className="rounded-lg bg-slate-50 px-3 py-2">
+                                                <div className="text-xs text-slate-500">
+                                                    {new Date(n.createdAt).toLocaleString()}
+                                                    {n.author_user_id != null ? ` · author #${n.author_user_id}` : null}
+                                                </div>
+                                                <div className="mt-1 whitespace-pre-wrap text-slate-800">{n.body}</div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                            <div className="mt-6 flex justify-end">
+                                <button
+                                    type="button"
+                                    className="rounded border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700"
+                                    onClick={() => closeUserNotes()}
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ) : null}
 
                 {editing ? (
                     <div className="fixed inset-0 z-[3000] flex items-center justify-center bg-black/50 p-4">

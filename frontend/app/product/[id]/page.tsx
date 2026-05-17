@@ -10,19 +10,17 @@ export default function ProductPage() {
 
   if (!params?.id || isNaN(productId)) {
     return (
-      <main className="wrapper">
-        <section className="wrapper-assist">
-          <div className="container mt-5 text-center">Invalid product ID</div>
-        </section>
+      <main className="min-h-screen bg-slate-50">
+        <div className="mx-auto max-w-7xl px-4 py-16 text-center text-slate-600">
+          Invalid product ID
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="wrapper">
-      <section className="wrapper-assist">
-        <ProductDetail productId={productId} />
-      </section>
+    <main className="min-h-screen bg-slate-50">
+      <ProductDetail productId={productId} />
     </main>
   );
 }

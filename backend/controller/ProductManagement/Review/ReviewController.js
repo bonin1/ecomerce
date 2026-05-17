@@ -5,6 +5,7 @@ const User = require('../../../model/UserModel');
 const UserActivityLog = require('../../../model/UserActivityLogModel');
 const db = require('../../../database');
 const { Op } = require('sequelize');
+const { logAdminActivity } = require('../../../utils/logAdminActivity');
 
 const createReview = async (req, res) => {
     const t = await db.transaction();
@@ -400,6 +401,13 @@ const moderateReview = async (req, res) => {
         await updateProductRating(review.product_id, t);
 
         await t.commit();
+
+        await logAdminActivity(req, {
+            action: 'review.moderate',
+            entity_type: 'review',
+            entity_id: Number(reviewId),
+            metadata: { product_id: review.product_id, status },
+        });
 
         return res.status(200).json({
             success: true,

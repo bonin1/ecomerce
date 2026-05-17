@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import Navbar from './navbar';
 import Footer from './Footer';
 import CartSidebar from '../cart/CartSidebar';
+import SiteMaintenanceBanner from './SiteMaintenanceBanner';
 import React from 'react';
 
 const ConditionalLayout: React.FC<{children: React.ReactNode}> = ({ children }) => {
@@ -23,6 +24,7 @@ const ConditionalLayout: React.FC<{children: React.ReactNode}> = ({ children }) 
   return (
     <>
       {shouldShowNavbarFooter && <Navbar />}
+      {shouldShowNavbarFooter && <SiteMaintenanceBanner />}
       {isAdminRoute || isExcludedRoute() ? (
         children
       ) : (

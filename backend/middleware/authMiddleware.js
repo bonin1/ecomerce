@@ -143,7 +143,7 @@ exports.isAdminOrStaff = async (req, res, next) => {
         });
     }
     
-    if (!['admin', 'staff','superadmin'].includes(req.user.role)) {
+    if (!['admin', 'staff', 'superadmin', 'moderator'].includes(req.user.role)) {
         return res.status(403).json({
             success: false,
             message: 'Access denied. Admin or Staff rights required.'

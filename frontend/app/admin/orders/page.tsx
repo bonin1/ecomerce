@@ -85,12 +85,28 @@ interface OrderItem {
     price: number;
     quantity: number;
     total_price: number;
+    shipped_quantity?: number;
     product: {
         id: number;
         product_name: string;
         product_primary_image: string;
         product_price: number;
     };
+}
+
+interface AdminOrderNoteRow {
+    id: number;
+    body: string;
+    createdAt: string;
+    author_user_id?: number;
+}
+
+interface OrderShipmentRow {
+    id: number;
+    tracking_number: string;
+    carrier?: string | null;
+    notes?: string | null;
+    createdAt: string;
 }
 
 interface Order {
@@ -111,6 +127,10 @@ interface Order {
     contact_email: string;
     tracking_number?: string;
     estimated_delivery_date?: string;
+    respond_by?: string | null;
+    ship_by?: string | null;
+    coupon_code?: string | null;
+    discount_amount?: number | string;
     user: {
         id: number;
         name: string;
@@ -166,6 +186,12 @@ const OrdersManagement = () => {
     const [dateCustomFrom, setDateCustomFrom] = useState('');
     const [dateCustomTo, setDateCustomTo] = useState('');
 
+    const [orderOpsNotes, setOrderOpsNotes] = useState<AdminOrderNoteRow[]>([]);
+    const [orderShipments, setOrderShipments] = useState<OrderShipmentRow[]>([]);
+    const [orderNoteDraft, setOrderNoteDraft] = useState('');
+    const [partialShipInput, setPartialShipInput] = useState<Record<number, string>>({});
+    const [adminPanelRole, setAdminPanelRole] = useState('');
+
     useEffect(() => {
         const id = setTimeout(() => setDebouncedSearch(searchTerm.trim()), 400);
         return () => clearTimeout(id);
@@ -182,6 +208,18 @@ const OrdersManagement = () => {
             router.push('/admin/login');
         }
     }, [router]);
+
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem('adminUser');
+            const u = raw ? (JSON.parse(raw) as { role?: string }) : {};
+            setAdminPanelRole(String(u?.role || ''));
+        } catch {
+            setAdminPanelRole('');
+        }
+    }, []);
+
+    const canEditShippedQty = ['admin', 'superadmin'].includes(adminPanelRole);
 
     const fetchOrders = useCallback(async () => {
         setLoading(true);
@@ -292,17 +330,106 @@ const OrdersManagement = () => {
         setPage(0);
     };
 
+    const refreshOrderOpsExtras = async (orderId: number) => {
+        try {
+            const [notesRes, shipRes] = await Promise.all([
+                apiClient(`/admin/ops/orders/${orderId}/notes`),
+                apiClient(`/admin/ops/orders/${orderId}/shipments`),
+            ]);
+            const notesData = (notesRes as { success?: boolean; data?: AdminOrderNoteRow[] }).data;
+            const shipData = (shipRes as { success?: boolean; data?: OrderShipmentRow[] }).data;
+            setOrderOpsNotes(Array.isArray(notesData) ? notesData : []);
+            setOrderShipments(Array.isArray(shipData) ? shipData : []);
+        } catch {
+            setOrderOpsNotes([]);
+            setOrderShipments([]);
+        }
+    };
+
+    const submitInternalOrderNote = async () => {
+        if (!selectedOrder) return;
+        const body = orderNoteDraft.trim();
+        if (!body) {
+            toast.error('Note cannot be empty');
+            return;
+        }
+        try {
+            setProcessingUpdate(true);
+            const res = await apiClient(`/admin/ops/orders/${selectedOrder.id}/notes`, {
+                method: 'POST',
+                body: JSON.stringify({ body }),
+            });
+            if ((res as { success?: boolean }).success) {
+                toast.success('Note saved');
+                setOrderNoteDraft('');
+                await refreshOrderOpsExtras(selectedOrder.id);
+            } else {
+                toast.error('Failed to save note');
+            }
+        } catch {
+            toast.error('Failed to save note');
+        } finally {
+            setProcessingUpdate(false);
+        }
+    };
+
+    const submitPartialShip = async (lineId: number) => {
+        if (!['admin', 'superadmin'].includes(adminPanelRole)) {
+            toast.error('Only administrators can update shipped quantities.');
+            return;
+        }
+        const raw = partialShipInput[lineId] ?? '0';
+        const add_qty = parseInt(String(raw), 10);
+        if (!Number.isFinite(add_qty) || add_qty <= 0) {
+            toast.error('Enter a positive quantity to add to shipped count.');
+            return;
+        }
+        if (!selectedOrder) return;
+        try {
+            setProcessingUpdate(true);
+            const res = await apiClient(`/admin/ops/order-items/${lineId}/shipped`, {
+                method: 'PATCH',
+                body: JSON.stringify({ add_qty }),
+            });
+            if ((res as { success?: boolean }).success) {
+                toast.success('Shipped quantity updated');
+                setPartialShipInput((prev) => ({ ...prev, [lineId]: '' }));
+                const detailRes = await apiClient(`/admin/orders/${selectedOrder.id}`);
+                if (detailRes.success && detailRes.data) {
+                    setSelectedOrder(detailRes.data as Order);
+                }
+            } else {
+                toast.error((res as { message?: string }).message || 'Update failed');
+            }
+        } catch {
+            toast.error('Update failed');
+        } finally {
+            setProcessingUpdate(false);
+        }
+    };
+
     // Order details handlers
     const handleOpenOrderDetails = async (orderId: number) => {
         try {
             setLoading(true);
-            const response = await apiClient<Order>(`/admin/orders/${orderId}`);
-            
-            if (response.success && response.data) {
-                const data = response.data;
+            const [detailRes, notesRes, shipRes] = await Promise.all([
+                apiClient(`/admin/orders/${orderId}`),
+                apiClient(`/admin/ops/orders/${orderId}/notes`),
+                apiClient(`/admin/ops/orders/${orderId}/shipments`),
+            ]);
+
+            if (detailRes.success && detailRes.data) {
+                const data = detailRes.data as Order;
                 setSelectedOrder(data);
                 setOpenOrderDialog(true);
-                
+                setOrderNoteDraft('');
+                setPartialShipInput({});
+
+                const notesData = (notesRes as { success?: boolean; data?: AdminOrderNoteRow[] }).data;
+                const shipData = (shipRes as { success?: boolean; data?: OrderShipmentRow[] }).data;
+                setOrderOpsNotes(Array.isArray(notesData) ? notesData : []);
+                setOrderShipments(Array.isArray(shipData) ? shipData : []);
+
                 if (data.tracking_number) {
                     setTrackingNumber(data.tracking_number);
                     setTrackingLocked(true);
@@ -312,7 +439,7 @@ const OrdersManagement = () => {
                         setTrackingNumber(generateTrackingCode(orderId));
                     }
                 }
-                
+
                 if (data.estimated_delivery_date) {
                     setEstimatedDeliveryDate(data.estimated_delivery_date.split('T')[0]);
                 }
@@ -331,6 +458,10 @@ const OrdersManagement = () => {
         setOpenOrderDialog(false);
         setSelectedOrder(null);
         setUpdateSuccess(false);
+        setOrderOpsNotes([]);
+        setOrderShipments([]);
+        setOrderNoteDraft('');
+        setPartialShipInput({});
     };
 
     // Update order status
@@ -858,6 +989,30 @@ const OrdersManagement = () => {
                                                     }}
                                                 />
                                             </Grid>
+                                            {selectedOrder.respond_by && (
+                                                <Grid item xs={12} sm={6}>
+                                                    <Typography variant="body2" color="textSecondary">Respond by (SLA)</Typography>
+                                                    <Typography variant="body1">{formatDate(selectedOrder.respond_by)}</Typography>
+                                                </Grid>
+                                            )}
+                                            {selectedOrder.ship_by && (
+                                                <Grid item xs={12} sm={6}>
+                                                    <Typography variant="body2" color="textSecondary">Ship by (SLA)</Typography>
+                                                    <Typography variant="body1">{formatDate(selectedOrder.ship_by)}</Typography>
+                                                </Grid>
+                                            )}
+                                            {selectedOrder.coupon_code && (
+                                                <Grid item xs={12} sm={6}>
+                                                    <Typography variant="body2" color="textSecondary">Coupon</Typography>
+                                                    <Typography variant="body1">{selectedOrder.coupon_code}</Typography>
+                                                </Grid>
+                                            )}
+                                            {Number(selectedOrder.discount_amount || 0) > 0 && (
+                                                <Grid item xs={12} sm={6}>
+                                                    <Typography variant="body2" color="textSecondary">Discount</Typography>
+                                                    <Typography variant="body1">${Number(selectedOrder.discount_amount).toFixed(2)}</Typography>
+                                                </Grid>
+                                            )}
                                             {selectedOrder.tracking_number && (
                                                 <Grid item xs={12}>
                                                     <Typography variant="body2" color="textSecondary">Tracking Number</Typography>
@@ -899,6 +1054,10 @@ const OrdersManagement = () => {
                                                     <TableCell>Product</TableCell>
                                                     <TableCell align="right">Price</TableCell>
                                                     <TableCell align="right">Quantity</TableCell>
+                                                    <TableCell align="right">Shipped</TableCell>
+                                                    {canEditShippedQty && (
+                                                        <TableCell align="right">Add shipped</TableCell>
+                                                    )}
                                                     <TableCell align="right">Total</TableCell>
                                                 </TableRow>
                                             </TableHead>
@@ -923,21 +1082,168 @@ const OrdersManagement = () => {
                                                         </TableCell>
                                                         <TableCell align="right">${Number(item.price).toFixed(2)}</TableCell>
                                                         <TableCell align="right">{item.quantity}</TableCell>
+                                                        <TableCell align="right">
+                                                            {item.shipped_quantity ?? 0} / {item.quantity}
+                                                        </TableCell>
+                                                        {canEditShippedQty && (
+                                                            <TableCell align="right">
+                                                                <Box
+                                                                    sx={{
+                                                                        display: 'flex',
+                                                                        gap: 0.5,
+                                                                        justifyContent: 'flex-end',
+                                                                        alignItems: 'center',
+                                                                        flexWrap: 'wrap',
+                                                                    }}
+                                                                >
+                                                                    <TextField
+                                                                        size="small"
+                                                                        type="number"
+                                                                        value={partialShipInput[item.id] ?? ''}
+                                                                        onChange={(e) =>
+                                                                            setPartialShipInput((prev) => ({
+                                                                                ...prev,
+                                                                                [item.id]: e.target.value,
+                                                                            }))
+                                                                        }
+                                                                        inputProps={{ min: 1 }}
+                                                                        sx={{ width: 80 }}
+                                                                    />
+                                                                    <Button
+                                                                        size="small"
+                                                                        variant="outlined"
+                                                                        onClick={() => void submitPartialShip(item.id)}
+                                                                        disabled={processingUpdate}
+                                                                    >
+                                                                        Add
+                                                                    </Button>
+                                                                </Box>
+                                                            </TableCell>
+                                                        )}
                                                         <TableCell align="right">${Number(item.total_price).toFixed(2)}</TableCell>
                                                     </TableRow>
                                                 ))}
                                                 <TableRow>
-                                                    <TableCell colSpan={2} />
-                                                    <TableCell align="right"><strong>Total:</strong></TableCell>
+                                                    <TableCell
+                                                        colSpan={canEditShippedQty ? 5 : 4}
+                                                        align="right"
+                                                    >
+                                                        <strong>Lines subtotal</strong>
+                                                    </TableCell>
                                                     <TableCell align="right">
                                                         <Typography fontWeight={600}>
                                                             ${calculateOrderTotal(selectedOrder.items)}
                                                         </Typography>
                                                     </TableCell>
                                                 </TableRow>
+                                                {Number(selectedOrder.discount_amount || 0) > 0 && (
+                                                    <TableRow>
+                                                        <TableCell
+                                                            colSpan={canEditShippedQty ? 5 : 4}
+                                                            align="right"
+                                                        >
+                                                            <strong>
+                                                                Discount
+                                                                {selectedOrder.coupon_code
+                                                                    ? ` (${selectedOrder.coupon_code})`
+                                                                    : ''}
+                                                            </strong>
+                                                        </TableCell>
+                                                        <TableCell align="right">
+                                                            <Typography fontWeight={600}>
+                                                                -${Number(selectedOrder.discount_amount).toFixed(2)}
+                                                            </Typography>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )}
+                                                <TableRow>
+                                                    <TableCell
+                                                        colSpan={canEditShippedQty ? 5 : 4}
+                                                        align="right"
+                                                    >
+                                                        <strong>Charged total</strong>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <Typography fontWeight={600}>
+                                                            ${Number(selectedOrder.total_amount).toFixed(2)}
+                                                        </Typography>
+                                                    </TableCell>
+                                                </TableRow>
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
+                                </Grid>
+
+                                <Grid item xs={12}>
+                                    <Typography variant="subtitle2" gutterBottom>Internal notes</Typography>
+                                    <Paper variant="outlined" sx={{ p: 2 }}>
+                                        <Box sx={{ display: 'flex', gap: 1, mb: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                                            <TextField
+                                                fullWidth
+                                                multiline
+                                                minRows={2}
+                                                size="small"
+                                                label="New internal note"
+                                                value={orderNoteDraft}
+                                                onChange={(e) => setOrderNoteDraft(e.target.value)}
+                                            />
+                                            <Button
+                                                variant="contained"
+                                                onClick={() => void submitInternalOrderNote()}
+                                                disabled={processingUpdate}
+                                                sx={{ alignSelf: { sm: 'flex-start' }, flexShrink: 0 }}
+                                            >
+                                                Save
+                                            </Button>
+                                        </Box>
+                                        <Divider sx={{ my: 1 }} />
+                                        {orderOpsNotes.length === 0 ? (
+                                            <Typography variant="body2" color="textSecondary">
+                                                No internal notes yet.
+                                            </Typography>
+                                        ) : (
+                                            orderOpsNotes.map((n) => (
+                                                <Box key={n.id} sx={{ mb: 1.5 }}>
+                                                    <Typography variant="caption" color="textSecondary">
+                                                        {formatDate(n.createdAt)}
+                                                    </Typography>
+                                                    <Typography variant="body2">{n.body}</Typography>
+                                                </Box>
+                                            ))
+                                        )}
+                                    </Paper>
+                                </Grid>
+
+                                <Grid item xs={12}>
+                                    <Typography variant="subtitle2" gutterBottom>Shipments</Typography>
+                                    <Paper variant="outlined" sx={{ p: 2 }}>
+                                        {orderShipments.length === 0 ? (
+                                            <Typography variant="body2" color="textSecondary">
+                                                No shipment records for this order.
+                                            </Typography>
+                                        ) : (
+                                            orderShipments.map((s) => (
+                                                <Box key={s.id} sx={{ mb: 1.5 }}>
+                                                    <Typography variant="body2" fontWeight={600}>
+                                                        {s.tracking_number}
+                                                    </Typography>
+                                                    {s.carrier && (
+                                                        <Typography variant="caption" display="block">
+                                                            {s.carrier}
+                                                        </Typography>
+                                                    )}
+                                                    <Typography variant="caption" color="textSecondary">
+                                                        {formatDate(s.createdAt)}
+                                                    </Typography>
+                                                    {s.notes && (
+                                                        <Typography variant="body2" sx={{ mt: 0.5 }}>
+                                                            {s.notes}
+                                                        </Typography>
+                                                    )}
+                                                </Box>
+                                            ))
+                                        )}
+                                    </Paper>
                                 </Grid>
 
                                 <Grid item xs={12}>

@@ -26,6 +26,7 @@ const registerRoutes = (app) => {
     app.use('/auth', authRoutes);
     app.use('/api', profileRoutes); 
     app.use('/admin', adminRoutes);
+    app.use('/public', require('./PublicRoutes'));
     app.use('/product', productRoutes);
     app.use('/payment-methods', paymentMethodRoutes);
     app.use('/orders', orderRoutes);

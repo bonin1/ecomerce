@@ -5,9 +5,10 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Cookies from 'js-cookie'; 
 
-type AdminRole = 'admin' | 'superadmin' | 'staff';
+type AdminRole = 'admin' | 'superadmin' | 'staff' | 'moderator';
 
 interface AdminUser {
+    id?: number;
     name: string;
     role: string;
     email: string;
@@ -56,6 +57,29 @@ const Sidebar = () => {
     };
 
     const navigation: { section: string; items: NavItem[] }[] = [
+        {
+            section: 'Operations',
+            items: [
+                {
+                    path: '/admin/operations',
+                    label: 'Operations hub',
+                    icon: 'bi-sliders',
+                    roles: ['admin', 'superadmin', 'staff', 'moderator'],
+                },
+                {
+                    path: '/admin/coupons',
+                    label: 'Coupons',
+                    icon: 'bi-ticket-perforated',
+                    roles: ['admin', 'superadmin'],
+                },
+                {
+                    path: '/admin/audit-log',
+                    label: 'Audit log',
+                    icon: 'bi-journal-text',
+                    roles: ['admin', 'superadmin'],
+                },
+            ],
+        },
         {
             section: 'Dashboard',
             items: [{ path: '/admin/dashboard', label: 'Overview', icon: 'bi-grid-1x2' }],

@@ -35,6 +35,7 @@ const Checkout: React.FC = () => {
     paymentMethod: '',
     notes: '',
   });
+  const [couponCode, setCouponCode] = useState('');
 
   useEffect(() => {
     const loadPaymentMethods = async () => {
@@ -80,12 +81,26 @@ const Checkout: React.FC = () => {
       const response = await createOrder({
         items: orderItems,
         ...formData,
+        ...(couponCode.trim() ? { couponCode: couponCode.trim() } : {}),
       });
 
+      if (!response?.order?.order_number) {
+        const msg =
+          typeof (response as { message?: string }).message === 'string'
+            ? (response as { message: string }).message
+            : 'Failed to place order. Please try again.';
+        toast.error(msg);
+        return;
+      }
+
+      const ord = response.order;
       sessionStorage.setItem('orderConfirmation', 'true');
       sessionStorage.setItem('orderDetails', JSON.stringify({
-        orderNumber: response.order?.order_number || 'Unknown',
-        totalAmount: response.order?.total_amount || 0,
+        orderNumber: ord.order_number || 'Unknown',
+        totalAmount: ord.total_amount ?? 0,
+        subtotalAmount: ord.subtotal ?? totalPrice,
+        discountAmount: ord.discount_amount ?? 0,
+        couponCode: ord.coupon_code || '',
         email: formData.contactEmail,
         date: new Date().toISOString(),
         paymentMethod: formData.paymentMethod
@@ -176,7 +191,7 @@ const Checkout: React.FC = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="shippingCountry">Country2</label>
+              <label htmlFor="shippingCountry">Country</label>
               <input
                 type="text"
                 id="shippingCountry"
@@ -234,6 +249,19 @@ const Checkout: React.FC = () => {
             )}
 
             <div className="form-group">
+              <label htmlFor="couponCode">Promo code (optional)</label>
+              <input
+                type="text"
+                id="couponCode"
+                name="couponCode"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                placeholder="SAVE10"
+                autoComplete="off"
+              />
+            </div>
+
+            <div className="form-group">
               <label htmlFor="notes">Order Notes (Optional)</label>
               <textarea
                 id="notes"
@@ -250,7 +278,11 @@ const Checkout: React.FC = () => {
               className="checkout-button"
               disabled={isSubmitting || cartItems.length === 0}
             >
-              {isSubmitting ? 'Processing...' : `Place Order ($${totalPrice.toFixed(2)})`}
+              {isSubmitting
+                ? 'Processing...'
+                : couponCode.trim()
+                  ? 'Place order'
+                  : `Place Order ($${totalPrice.toFixed(2)})`}
             </button>
           </form>
         </div>
@@ -292,9 +324,14 @@ const Checkout: React.FC = () => {
               <span>Free</span>
             </div>
             <div className="total-row grand-total">
-              <span>Total</span>
+              <span>{couponCode.trim() ? 'Estimated total' : 'Total'}</span>
               <span>${totalPrice.toFixed(2)}</span>
             </div>
+            {couponCode.trim() ? (
+              <p style={{ fontSize: 12, color: '#64748b', marginTop: 8, marginBottom: 0 }}>
+                Promo code <strong>{couponCode.trim()}</strong> is applied at payment if it is valid for these items.
+              </p>
+            ) : null}
           </div>
         </div>
       </div>

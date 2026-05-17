@@ -1,7 +1,12 @@
 const Order = require('../../../model/OrderModel');
 const OrderItem = require('../../../model/OrderItemModel');
 const Product = require('../../../model/ProduktModel');
+const Coupon = require('../../../model/CouponModel');
 const User = require('../../../model/UserModel');
+const {
+    computeOrderCouponDiscount,
+    validateCouponWindow,
+} = require('../../../utils/computeOrderCouponDiscount');
 const { v4: uuidv4 } = require('uuid');
 const { Op } = require('sequelize');
 const db = require('../../../database');
@@ -17,7 +22,7 @@ exports.createOrder = async (req, res) => {
     const transaction = await db.transaction();
 
     try {
-        const { 
+        const {
             items,
             shippingAddress,
             shippingCity,
@@ -26,18 +31,28 @@ exports.createOrder = async (req, res) => {
             contactPhone,
             contactEmail,
             paymentMethod,
-            notes
+            notes,
+            couponCode,
+            coupon_code,
         } = req.body;
 
+        const rawCoupon = couponCode ?? coupon_code;
+        const couponCodeNormalized =
+            typeof rawCoupon === 'string' && rawCoupon.trim()
+                ? rawCoupon.trim().toUpperCase()
+                : '';
+
         if (!items || !Array.isArray(items) || items.length === 0) {
+            await transaction.rollback();
             return res.status(400).json({ message: 'No items provided' });
         }
 
-        let totalAmount = 0;
+        let subtotalBeforeDiscount = 0;
         const validatedItems = [];
+        const couponLines = [];
 
         for (const item of items) {
-            const product = await Product.findByPk(item.id);
+            const product = await Product.findByPk(item.id, { transaction });
             if (!product) {
                 await transaction.rollback();
                 return res.status(404).json({ message: `Product with ID ${item.id} not found` });
@@ -45,46 +60,84 @@ exports.createOrder = async (req, res) => {
 
             if (product.product_stock < item.quantity) {
                 await transaction.rollback();
-                return res.status(400).json({ 
-                    message: `Not enough stock for product ${product.product_name}. Available: ${product.product_stock}` 
+                return res.status(400).json({
+                    message: `Not enough stock for product ${product.product_name}. Available: ${product.product_stock}`,
                 });
             }
 
-            const price = product.product_discount_active ? 
-                Number(product.product_discount_price) : 
-                Number(product.product_price);
+            const price = product.product_discount_active
+                ? Number(product.product_discount_price)
+                : Number(product.product_price);
 
             const itemTotal = price * item.quantity;
-            totalAmount += itemTotal;
+            subtotalBeforeDiscount += itemTotal;
+            couponLines.push({ product, itemTotal });
 
             validatedItems.push({
                 product_id: product.id,
                 product_name: product.product_name,
                 price,
                 quantity: item.quantity,
-                total_price: itemTotal
+                total_price: itemTotal,
             });
 
-            await product.update({
-                product_stock: product.product_stock - item.quantity
-            }, { transaction });
+            await product.update(
+                {
+                    product_stock: product.product_stock - item.quantity,
+                },
+                { transaction }
+            );
         }
 
-        const order = await Order.create({
-            user_id: req.user.id,
-            order_number: generateOrderNumber(),
-            total_amount: totalAmount,
-            shipping_address: shippingAddress,
-            shipping_city: shippingCity,
-            shipping_postal_code: shippingPostalCode,
-            shipping_country: shippingCountry,
-            contact_phone: contactPhone,
-            contact_email: contactEmail,
-            payment_method: paymentMethod,
-            notes,
-            status: 'pending',
-            payment_status: 'pending'
-        }, { transaction });
+        let discountAmount = 0;
+        let couponCodeToStore = null;
+
+        if (couponCodeNormalized) {
+            const couponRow = await Coupon.findOne({
+                where: { code: couponCodeNormalized },
+                transaction,
+                lock: transaction.LOCK.UPDATE,
+            });
+            const win = validateCouponWindow(couponRow, new Date());
+            if (!win.ok) {
+                await transaction.rollback();
+                return res.status(400).json({ message: win.message });
+            }
+            const disc = computeOrderCouponDiscount(couponRow, couponLines);
+            if (!disc.ok) {
+                await transaction.rollback();
+                return res.status(400).json({ message: disc.message });
+            }
+            discountAmount = disc.discount;
+            couponCodeToStore = couponRow.code;
+            await couponRow.increment('used_count', { transaction });
+        }
+
+        const totalAmount = Math.max(
+            0,
+            Math.round((subtotalBeforeDiscount - discountAmount) * 100) / 100
+        );
+
+        const order = await Order.create(
+            {
+                user_id: req.user.id,
+                order_number: generateOrderNumber(),
+                total_amount: totalAmount,
+                coupon_code: couponCodeToStore,
+                discount_amount: discountAmount,
+                shipping_address: shippingAddress,
+                shipping_city: shippingCity,
+                shipping_postal_code: shippingPostalCode,
+                shipping_country: shippingCountry,
+                contact_phone: contactPhone,
+                contact_email: contactEmail,
+                payment_method: paymentMethod,
+                notes,
+                status: 'pending',
+                payment_status: 'pending',
+            },
+            { transaction }
+        );
 
         for (const item of validatedItems) {
             await OrderItem.create({
@@ -120,9 +173,12 @@ exports.createOrder = async (req, res) => {
                 id: order.id,
                 order_number: order.order_number,
                 total_amount: order.total_amount,
+                subtotal: subtotalBeforeDiscount,
+                discount_amount: discountAmount,
+                coupon_code: couponCodeToStore,
                 status: order.status,
-                createdAt: order.createdAt
-            }
+                createdAt: order.createdAt,
+            },
         });
     } catch (error) {
         await transaction.rollback();

@@ -42,6 +42,11 @@ const OrderItem = db.define('order_item', {
     total_price: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false
+    },
+    shipped_quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
     }
 }, {
     timestamps: true,

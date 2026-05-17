@@ -3,6 +3,20 @@ const ProduktAdditionalDetails = require('../../../model/ProduktAdditionalDetail
 const ProduktMedia = require('../../../model/ProduktMediaModel');
 const ProductCategory = require('../../../model/ProductCategoryModel');
 const { Op } = require('sequelize');
+const jwt = require('jsonwebtoken');
+
+function adminPanelRoleFromRequest(req) {
+    const h = req.headers?.authorization;
+    if (!h || !h.startsWith('Bearer ')) return null;
+    try {
+        const t = h.slice(7);
+        const d = jwt.verify(t, process.env.ADMIN_JWT_SECRET);
+        if (!d?.isAdminToken) return null;
+        return String(d.role || '').toLowerCase();
+    } catch {
+        return null;
+    }
+}
 
 const ALLOWED_SORT_FIELDS = [
     'createdAt',
@@ -88,6 +102,11 @@ const getAllProducts = async (req, res) => {
             if (!Number.isNaN(d.getTime())) {
                 whereConditions.createdAt = { ...(whereConditions.createdAt || {}), [Op.gte]: d };
             }
+        }
+
+        const adminRole = adminPanelRoleFromRequest(req);
+        if (!adminRole || !['admin', 'superadmin', 'staff', 'moderator'].includes(adminRole)) {
+            whereConditions.listing_status = 'published';
         }
 
         const sortField = ALLOWED_SORT_FIELDS.includes(String(sort)) ? String(sort) : 'createdAt';
@@ -178,14 +197,25 @@ const getProductById = async (req, res) => {
         
         // Get the product
         const product = await Produkt.findByPk(id);
-        
+
         if (!product) {
             return res.status(404).json({
                 success: false,
                 message: 'Product not found'
             });
         }
-        
+
+        const adminRole = adminPanelRoleFromRequest(req);
+        if (
+            product.listing_status === 'draft' &&
+            (!adminRole || !['admin', 'superadmin', 'staff', 'moderator'].includes(adminRole))
+        ) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found',
+            });
+        }
+
         // Get additional details
         const additionalDetails = await ProduktAdditionalDetails.findOne({
             where: { product_id: id }

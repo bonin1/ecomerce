@@ -1,3 +1,5 @@
+import { isAdminDiagnosticsRoute, pushAdminDiagnostic } from '@/app/admin/adminDiagnosticsBus';
+
 interface RequestOptions extends RequestInit {
     skipAuth?: boolean;
 }
@@ -245,6 +247,19 @@ export const apiClient = async <D = any>(
     } catch (error) {
         if (isDev) {
             console.error('API Client Error:', { error, endpoint });
+        }
+        if (typeof window !== 'undefined' && isAdminDiagnosticsRoute(window.location.pathname)) {
+            const msg = error instanceof Error ? error.message : String(error);
+            pushAdminDiagnostic({
+                kind: 'network',
+                message: `${endpoint}: ${msg}`,
+                detail: error instanceof Error ? error.stack : undefined,
+            });
+            const friendly =
+                msg === 'Failed to fetch' || /network/i.test(msg)
+                    ? 'Request failed (often CORS, wrong API URL, or the backend is down). Check the diagnostics panel and server logs.'
+                    : msg;
+            return { success: false, message: friendly } as ApiClientJson<D>;
         }
         throw error;
     }

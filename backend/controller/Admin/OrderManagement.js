@@ -2,8 +2,10 @@ const Order = require('../../model/OrderModel');
 const OrderItem = require('../../model/OrderItemModel');
 const User = require('../../model/UserModel');
 const Product = require('../../model/ProduktModel');
+const PlatformSetting = require('../../model/PlatformSettingModel');
 const { Op } = require('sequelize');
 const db = require('../../database');
+const { logAdminActivity } = require('../../utils/logAdminActivity');
 
 exports.getAllOrders = async (req, res) => {
     try {
@@ -186,7 +188,22 @@ exports.updateOrderStatus = async (req, res) => {
         if (payment_status) updateData.payment_status = payment_status;
         if (tracking_number) updateData.tracking_number = tracking_number;
         if (estimated_delivery_date) updateData.estimated_delivery_date = estimated_delivery_date;
-        
+
+        const prevStatus = order.status;
+        if (status === 'processing' && prevStatus !== 'processing') {
+            try {
+                const rRow = await PlatformSetting.findByPk('order_sla_respond_hours');
+                const sRow = await PlatformSetting.findByPk('order_sla_ship_hours');
+                const respondH = Math.max(1, parseInt(rRow?.value ?? 24, 10) || 24);
+                const shipH = Math.max(1, parseInt(sRow?.value ?? 72, 10) || 72);
+                const now = Date.now();
+                updateData.respond_by = new Date(now + respondH * 3600 * 1000);
+                updateData.ship_by = new Date(now + shipH * 3600 * 1000);
+            } catch {
+                /* ignore SLA if settings unavailable */
+            }
+        }
+
         await order.update(updateData, { transaction });
         
         if (status === 'cancelled' && order.previous('status') !== 'cancelled') {
@@ -206,7 +223,17 @@ exports.updateOrderStatus = async (req, res) => {
         }
         
         await transaction.commit();
-        
+
+        await logAdminActivity(req, {
+            action: 'admin.order.status_update',
+            entity_type: 'order',
+            entity_id: Number(orderId),
+            metadata: {
+                prevStatus,
+                updateData,
+            },
+        });
+
         const updatedOrder = await Order.findByPk(orderId, {
             include: [
                 {

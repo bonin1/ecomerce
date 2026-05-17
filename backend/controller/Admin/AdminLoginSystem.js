@@ -18,7 +18,7 @@ exports.adminLogin = async (req, res) => {
         const user = await User.findOne({ 
             where: { 
                 email,
-                role: { [Op.or]: ['admin', 'superadmin','staff'] }
+                role: { [Op.or]: ['admin', 'superadmin', 'staff', 'moderator'] }
             }
         });
 
@@ -74,7 +74,7 @@ exports.verifyAdminOTP = async (req, res) => {
                 id: userId,
                 otp,
                 otpExpires: { [Op.gt]: new Date() },
-                role: { [Op.or]: ['admin', 'superadmin', 'staff'] }
+                role: { [Op.or]: ['admin', 'superadmin', 'staff', 'moderator'] }
             }
         });
 

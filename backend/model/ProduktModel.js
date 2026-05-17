@@ -89,6 +89,12 @@ const Produkt = db.define('produkt', {
         },
         onDelete: 'CASCADE'
     },
+    /** draft = staff work-in-progress; published = visible catalog (when storefront checks this). */
+    listing_status: {
+        type: DataTypes.ENUM('draft', 'published'),
+        allowNull: false,
+        defaultValue: 'published',
+    },
 }, {
     timestamps: true,
     freezeTableName: true,

@@ -78,6 +78,23 @@ const Order = db.define('order', {
     estimated_delivery_date: {
         type: DataTypes.DATE,
         allowNull: true
+    },
+    respond_by: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+    ship_by: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+    coupon_code: {
+        type: DataTypes.STRING(64),
+        allowNull: true
+    },
+    discount_amount: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0
     }
 }, {
     timestamps: true,

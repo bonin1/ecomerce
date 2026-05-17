@@ -2,6 +2,7 @@ const PaymentMethod = require('../../model/PaymentMethodsModel');
 const ProductPaymentMethod = require('../../model/ProductPaymentMethodsModel');
 const AuditLog = require('../../model/AuditLogModel');
 const db = require('../../database');
+const { logAdminActivity } = require('../../utils/logAdminActivity');
 
 // Get all payment methods
 const getAllPaymentMethods = async (req, res) => {
@@ -96,7 +97,14 @@ const createPaymentMethod = async (req, res) => {
         }, { transaction: t });
         
         await t.commit();
-        
+
+        await logAdminActivity(req, {
+            action: 'payment_method.create',
+            entity_type: 'payment_method',
+            entity_id: newPaymentMethod.id,
+            metadata: { name },
+        });
+
         return res.status(201).json({
             success: true,
             message: 'Payment method created successfully',
@@ -162,7 +170,14 @@ const updatePaymentMethod = async (req, res) => {
         }, { transaction: t });
         
         await t.commit();
-        
+
+        await logAdminActivity(req, {
+            action: 'payment_method.update',
+            entity_type: 'payment_method',
+            entity_id: Number(id),
+            metadata: { old: oldValues, body: req.body },
+        });
+
         return res.status(200).json({
             success: true,
             message: 'Payment method updated successfully',
@@ -211,11 +226,20 @@ const deletePaymentMethod = async (req, res) => {
             status: 'approved'
         }, { transaction: t });
         
+        const deletedName = paymentMethod.name;
+
         // Delete the payment method
         await paymentMethod.destroy({ transaction: t });
-        
+
         await t.commit();
-        
+
+        await logAdminActivity(req, {
+            action: 'payment_method.delete',
+            entity_type: 'payment_method',
+            entity_id: Number(id),
+            metadata: { name: deletedName },
+        });
+
         return res.status(200).json({
             success: true,
             message: 'Payment method deleted successfully'
