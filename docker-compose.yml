@@ -1,4 +1,4 @@
-# Optional local MySQL for development (no production use).
+# Optional local MySQL for development (no production use)
 # From repo root: docker compose up -d
 # Match credentials in backend/.env — see README "Docker MySQL (optional)".
 
